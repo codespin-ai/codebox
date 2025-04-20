@@ -115,7 +115,7 @@ describe("File Handlers with Sessions", function () {
       const filePath = path.join(workspaceDir, "append.txt");
       fs.writeFileSync(filePath, "Initial content\n");
 
-      // Open a project session
+      // Open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
@@ -146,7 +146,7 @@ describe("File Handlers with Sessions", function () {
     });
 
     it("should create directories as needed", async function () {
-      // Open a project session
+      // Open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
@@ -191,7 +191,7 @@ describe("File Handlers with Sessions", function () {
     });
 
     it("should return error for invalid file paths", async function () {
-      // Open a project session
+      // Open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
@@ -219,7 +219,7 @@ describe("File Handlers with Sessions", function () {
 
   describe("write_file with Copy Mode", function () {
     it("should write to a copy of the project and not modify original files", async function () {
-      // Open a project session with copy=true
+      // Open a workspace with copy=true
       const openResponse = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });
@@ -249,7 +249,7 @@ describe("File Handlers with Sessions", function () {
     });
 
     it("should allow multiple write operations in the same session", async function () {
-      // Open a project session with copy=true
+      // Open a workspace with copy=true
       const openResponse = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });

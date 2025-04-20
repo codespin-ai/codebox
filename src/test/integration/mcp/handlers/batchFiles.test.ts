@@ -129,7 +129,7 @@ describe("Batch File Handlers with Sessions", function () {
       const validFilePath = path.join(workspaceDir, "valid.txt");
       fs.writeFileSync(validFilePath, "Initial content\n");
 
-      // Open a project session
+      // Open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
@@ -174,7 +174,7 @@ describe("Batch File Handlers with Sessions", function () {
       const validFilePath = path.join(workspaceDir, "valid2.txt");
       fs.writeFileSync(validFilePath, "Initial content\n");
 
-      // Open a project session
+      // Open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
@@ -236,7 +236,7 @@ describe("Batch File Handlers with Sessions", function () {
 
   describe("write_batch_files with Copy Mode", function () {
     it("should write multiple files to a copy without modifying original files", async function () {
-      // Open a project session with copy=true
+      // Open a workspace with copy=true
       const openResponse = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });

@@ -54,7 +54,7 @@ export function registerProjectHandlers(server: McpServer): void {
 
   server.tool(
     "open_project_session",
-    "Open a project session, optionally creating a copy of the project files if the project has copy=true",
+    "Open a workspace, optionally creating a copy of the project files if the project has copy=true",
     {
       projectName: zod.string().describe("The name of the project to open"),
     },
