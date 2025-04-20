@@ -1,5 +1,5 @@
 // src/config/types.ts
-export interface ProjectConfig {
+export interface WorkspaceConfig {
   name: string;
   hostPath: string;
   containerPath?: string;
@@ -10,6 +10,6 @@ export interface ProjectConfig {
 }
 
 export interface SystemConfig {
-  projects: ProjectConfig[];
+  workspaces: WorkspaceConfig[];
   debug?: boolean;
 }

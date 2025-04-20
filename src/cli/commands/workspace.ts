@@ -91,32 +91,32 @@ export async function addProject(
   const config = getConfig();
 
   // Check if project already exists by name
-  const existingIndex = config.projects.findIndex(
+  const existingIndex = config.workspaces.findIndex(
     (p) => p.name === projectName
   );
 
   if (existingIndex !== -1) {
     // Update existing project's configuration
     if (image) {
-      config.projects[existingIndex].dockerImage = image;
+      config.workspaces[existingIndex].dockerImage = image;
     }
     if (containerName) {
-      config.projects[existingIndex].containerName = containerName;
+      config.workspaces[existingIndex].containerName = containerName;
     }
     if (containerPath) {
-      config.projects[existingIndex].containerPath = containerPath;
+      config.workspaces[existingIndex].containerPath = containerPath;
     }
     if (network) {
-      config.projects[existingIndex].network = network;
+      config.workspaces[existingIndex].network = network;
     }
     // Update copy setting
-    config.projects[existingIndex].copy = copy;
-    config.projects[existingIndex].hostPath = projectPath;
+    config.workspaces[existingIndex].copy = copy;
+    config.workspaces[existingIndex].hostPath = projectPath;
     saveConfig(config);
     console.log(`Updated project: ${projectName}`);
   } else {
     // Add new project
-    config.projects.push({
+    config.workspaces.push({
       name: projectName,
       hostPath: projectPath,
       ...(containerPath && { containerPath }),
@@ -140,10 +140,10 @@ export async function removeProject(
 
   // If name is explicitly provided via --name, look for it first
   if (name) {
-    index = config.projects.findIndex((p) => p.name === name);
+    index = config.workspaces.findIndex((p) => p.name === name);
     if (index !== -1) {
-      const removedName = config.projects[index].name;
-      config.projects.splice(index, 1);
+      const removedName = config.workspaces[index].name;
+      config.workspaces.splice(index, 1);
       saveConfig(config);
       console.log(`Removed project: ${removedName}`);
       return;
@@ -156,11 +156,11 @@ export async function removeProject(
   if (target.includes("/") || target.includes("\\")) {
     // It's a path - resolve it and find the matching project
     const projectPath = path.resolve(context.workingDir, target);
-    index = config.projects.findIndex((p) => p.hostPath === projectPath);
+    index = config.workspaces.findIndex((p) => p.hostPath === projectPath);
 
     if (index !== -1) {
-      const removedName = config.projects[index].name;
-      config.projects.splice(index, 1);
+      const removedName = config.workspaces[index].name;
+      config.workspaces.splice(index, 1);
       saveConfig(config);
       console.log(`Removed project: ${removedName}`);
       return;
@@ -168,11 +168,11 @@ export async function removeProject(
     console.log(`Project not found for path: ${projectPath}`);
   } else {
     // It's a name - look for exact name match
-    index = config.projects.findIndex((p) => p.name === target);
+    index = config.workspaces.findIndex((p) => p.name === target);
 
     if (index !== -1) {
-      const removedName = config.projects[index].name;
-      config.projects.splice(index, 1);
+      const removedName = config.workspaces[index].name;
+      config.workspaces.splice(index, 1);
       saveConfig(config);
       console.log(`Removed project: ${removedName}`);
       return;
@@ -184,7 +184,7 @@ export async function removeProject(
 export async function listProjects(): Promise<void> {
   const config = getConfig();
 
-  if (config.projects.length === 0) {
+  if (config.workspaces.length === 0) {
     console.log(
       "No projects are registered. Use 'codebox project add <dirname> --image <image_name>' or 'codebox project add <dirname> --container <container_name>' to add projects."
     );
@@ -194,7 +194,7 @@ export async function listProjects(): Promise<void> {
   console.log("Registered projects:");
   console.log("-------------------");
 
-  config.projects.forEach((project, index) => {
+  config.workspaces.forEach((project, index) => {
     const exists = fs.existsSync(project.hostPath);
 
     console.log(`${index + 1}. ${project.name}`);

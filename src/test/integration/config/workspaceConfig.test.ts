@@ -39,7 +39,7 @@ describe("Project Configuration", function () {
 
     it("should save and read the config file correctly", function () {
       const testConfig = {
-        projects: [
+        workspaces: [
           {
             name: "test-project",
             hostPath: projectDir,
@@ -65,7 +65,7 @@ describe("Project Configuration", function () {
     it("should find a project by name", function () {
       // Create test config with a project
       const testConfig = {
-        projects: [
+        workspaces: [
           {
             name: "test-project",
             hostPath: projectDir,
@@ -88,7 +88,7 @@ describe("Project Configuration", function () {
     it("should validate project names", function () {
       // Create test config with a project
       const testConfig = {
-        projects: [
+        workspaces: [
           {
             name: "test-project",
             hostPath: projectDir,
@@ -106,7 +106,7 @@ describe("Project Configuration", function () {
     it("should validate project directories", function () {
       // Create test config with a project
       const testConfig = {
-        projects: [
+        workspaces: [
           {
             name: "test-project",
             hostPath: projectDir,
@@ -134,7 +134,7 @@ describe("Project Configuration", function () {
 
       // Create config with debug: true
       const testConfig = {
-        projects: [],
+        workspaces: [],
         debug: true,
       };
       saveConfig(testConfig);

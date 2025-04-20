@@ -2,7 +2,7 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { ProjectConfig, SystemConfig } from "./types.js";
+import { WorkspaceConfig, SystemConfig } from "./types.js";
 
 // Configurable base path for testing
 let configBasePath = os.homedir();
@@ -40,18 +40,18 @@ export function getConfig(): SystemConfig {
   const configFile = getConfigFilePath();
 
   if (!fs.existsSync(configFile)) {
-    return { projects: [] };
+    return { workspaces: [] };
   }
 
   try {
     const data = JSON.parse(fs.readFileSync(configFile, "utf8"));
     return {
-      projects: Array.isArray(data.projects) ? data.projects : [],
+      workspaces: Array.isArray(data.projects) ? data.projects : [],
       debug: data.debug,
     };
   } catch {
     console.error("Failed to parse config file, creating new one");
-    return { projects: [] };
+    return { workspaces: [] };
   }
 }
 
@@ -66,15 +66,15 @@ export function saveConfig(config: SystemConfig): void {
 /**
  * Get all registered projects
  */
-export function getProjects(): ProjectConfig[] {
+export function getProjects(): WorkspaceConfig[] {
   const config = getConfig();
-  return config.projects;
+  return config.workspaces;
 }
 
 /**
  * Find a project by name
  */
-export function getProjectByName(projectName: string): ProjectConfig | null {
+export function getProjectByName(projectName: string): WorkspaceConfig | null {
   const projects = getProjects();
   return projects.find((p) => p.name === projectName) || null;
 }
@@ -96,7 +96,7 @@ export function validateProjectName(projectName: string): boolean {
  */
 export function getProjectForDirectory(
   projectDir: string
-): ProjectConfig | null {
+): WorkspaceConfig | null {
   const resolvedPath = path.resolve(projectDir);
   const projects = getProjects();
 
