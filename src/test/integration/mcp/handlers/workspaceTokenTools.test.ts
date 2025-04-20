@@ -1,4 +1,4 @@
-// src/test/integration/mcp/handlers/sessionTools.test.ts
+// src/test/integration/mcp/handlers/workspaceTokenTools.test.ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { expect } from "chai";
 import * as fs from "fs";
@@ -20,7 +20,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Session-Based Tools", function () {
+describe("Workspace Token based Tools", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;
@@ -107,7 +107,7 @@ describe("Session-Based Tools", function () {
 
   describe("close_workspace", function () {
     it("should close a valid workspace token", async function () {
-      // First open a session
+      // First open a workspace
       const openResponse = await openWorkspaceHandler({
         workspaceName: "test-workspace",
       });
@@ -120,7 +120,7 @@ describe("Session-Based Tools", function () {
 
       // Verify the response
       expect(closeResponse.isError).to.equal(undefined);
-      expect(closeResponse.content[0].text).to.include("Workspace closed");
+      expect(closeResponse.content[0].text).to.include("Workspace Token closed");
     });
 
     it("should return an error for invalid workspace tokens", async function () {

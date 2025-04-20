@@ -21,7 +21,7 @@ const activeWorkspaceTokens: Record<string, WorkspaceTokenInfo> = {};
 /**
  * Open a workspace and return a workspace token
  * @param workspaceName The name of the workspace to open
- * @returns Workspace token ID or null if workspace doesn't exist
+ * @returns Workspace token or null if workspace doesn't exist
  */
 export function openWorkspace(workspaceName: string): string | null {
   const workspace = getWorkspaceByName(workspaceName);
@@ -71,7 +71,7 @@ export function getWorkspaceNameForWorkspaceToken(workspaceToken: string): strin
 }
 
 /**
- * Get the working directory for a session
+ * Get the working directory for a workspace token
  * @param workspaceToken The workspace token
  * @returns Working directory path or null if workspace token doesn't exist
  */

@@ -283,13 +283,13 @@ describe("Execute Handlers with Workspace Tokens", function () {
       // Execute a command that creates a file
       await executeCommandHandler({
         workspaceToken: workspaceToken,
-        command: "echo 'First command' > /workspace/session-test.txt",
+        command: "echo 'First command' > /workspace/token-test.txt",
       });
 
       // Execute a second command that reads the file created by the first command
       const response = await executeCommandHandler({
         workspaceToken: workspaceToken,
-        command: "cat /workspace/session-test.txt",
+        command: "cat /workspace/token-test.txt",
       });
 
       // Verify the second command can see the file created by the first
@@ -297,7 +297,7 @@ describe("Execute Handlers with Workspace Tokens", function () {
       expect(response.content[0].text).to.include("First command");
 
       // The file should not exist in the original workspace directory
-      expect(fs.existsSync(path.join(workspaceDir, "session-test.txt"))).to.equal(
+      expect(fs.existsSync(path.join(workspaceDir, "token-test.txt"))).to.equal(
         false
       );
 

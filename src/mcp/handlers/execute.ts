@@ -45,7 +45,7 @@ export function registerExecuteHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Workspace token mapping not found: ${workspaceToken}`,
+              text: `Error: Workspace Token mapping not found: ${workspaceToken}`,
             },
           ],
         };

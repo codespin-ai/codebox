@@ -359,21 +359,21 @@ describe("Docker Execution with Workspace Tokens", function () {
       // Verify they are different directories
       expect(workingDir1).to.not.equal(workingDir2);
 
-      // Modify file in first session
+      // Modify file with first workspace token
       await executeDockerCommand(
         workspaceName,
         "echo 'Modified in workspace token 1' > /workspace/test.txt",
         workingDir1 as string
       );
 
-      // Modify file in second session
+      // Modify file with second workspace token
       await executeDockerCommand(
         workspaceName,
         "echo 'Modified in workspace token 2' > /workspace/test.txt",
         workingDir2 as string
       );
 
-      // Verify changes are isolated to each session
+      // Verify changes are isolated to each token
       expect(
         fs.readFileSync(path.join(workingDir1 as string, "test.txt"), "utf8")
       ).to.include("Modified in workspace token 1");

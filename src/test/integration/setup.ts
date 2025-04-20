@@ -22,17 +22,17 @@ export function createTestEnvironment(): string {
 /**
  * Creates a test workspace token for a workspace
  * @param workspaceName The name of the workspace
- * @returns Workspace token ID or null
+ * @returns Workspace Token or null
  */
-export function createTestWorkspaceToken(workspaceName: string): string | null {
+export function openTestWorkspace(workspaceName: string): string | null {
   return openWorkspace(workspaceName);
 }
 
 /**
- * Closes a test session
+ * Closes a workspace
  * @param workspaceToken The workspace token to close
  */
-export function closeTestWorkspaceToken(workspaceToken: string): void {
+export function closeTestWorkspace(workspaceToken: string): void {
   closeWorkspace(workspaceToken);
 }
 

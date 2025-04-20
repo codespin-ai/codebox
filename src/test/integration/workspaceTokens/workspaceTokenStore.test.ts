@@ -46,7 +46,7 @@ describe("Workspace Token Store", function () {
         ],
       });
 
-      // Open a session
+      // Open a workspace
       const workspaceToken = openWorkspace("test-workspace");
       expect(workspaceToken).to.be.a("string");
       expect(workspaceToken).to.not.equal(undefined);
@@ -77,7 +77,7 @@ describe("Workspace Token Store", function () {
         ],
       });
 
-      // Open a session
+      // Open a workspace
       const workspaceToken = openWorkspace("test-workspace");
       expect(workspaceToken).to.be.a("string");
       expect(workspaceToken).to.not.equal(undefined);
@@ -135,7 +135,7 @@ describe("Workspace Token Store", function () {
         ],
       });
 
-      // Open a session
+      // Open a workspace
       const workspaceToken = openWorkspace("test-workspace");
       expect(workspaceToken).to.be.a("string");
 
@@ -165,7 +165,7 @@ describe("Workspace Token Store", function () {
         ],
       });
 
-      // Open a session
+      // Open a workspace
       const workspaceToken = openWorkspace("test-workspace");
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
 
@@ -204,13 +204,13 @@ describe("Workspace Token Store", function () {
       // Verify working directories are different
       expect(workingDir1).to.not.equal(workingDir2);
 
-      // Make changes in first session
+      // Make changes in first workspace token
       fs.writeFileSync(
         path.join(workingDir1 as string, "test.txt"),
         "Modified in workspace token 1"
       );
 
-      // Make changes in second session
+      // Make changes in second workspace token
       fs.writeFileSync(
         path.join(workingDir2 as string, "test.txt"),
         "Modified in workspace token 2"
