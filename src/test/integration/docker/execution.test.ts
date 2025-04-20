@@ -132,7 +132,7 @@ describe("Docker Execution with Sessions", function () {
       const workingDir = getWorkingDirForSession(workspaceToken as string);
       expect(workingDir).to.equal(workspaceDir);
 
-      // Execute command using project name and session working directory
+      // Execute command using workspace name and session working directory
       const { stdout } = await executeDockerCommand(
         projectName,
         "cat /workspace/test.txt",
@@ -192,7 +192,7 @@ describe("Docker Execution with Sessions", function () {
       const workingDir = getWorkingDirForSession(workspaceToken as string);
       expect(workingDir).to.equal(workspaceDir);
 
-      // Execute command using project name and session working directory
+      // Execute command using workspace name and session working directory
       const { stdout } = await executeDockerCommand(
         projectName,
         "cat /workspace/test.txt",

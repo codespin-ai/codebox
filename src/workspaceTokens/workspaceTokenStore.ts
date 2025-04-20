@@ -62,7 +62,7 @@ export function openProject(projectName: string): string | null {
 }
 
 /**
- * Get the project name for a session ID
+ * Get the workspace name for a session ID
  * @param workspaceToken The session ID
  * @returns Project name or null if session doesn't exist
  */

@@ -48,7 +48,7 @@ export async function addProject(
   // Check if directory exists and is a directory
   validateDirectory(projectPath);
 
-  // Extract project name from the path if not provided
+  // Extract workspace name from the path if not provided
   const projectName = name || path.basename(projectPath);
 
   // Verify container exists if specified

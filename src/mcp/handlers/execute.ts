@@ -35,7 +35,7 @@ export function registerExecuteHandlers(server: McpServer): void {
         };
       }
 
-      // Get the project name and working directory from the session
+      // Get the workspace name and working directory from the session
       const projectName = getProjectNameForSession(workspaceToken);
       const workingDir = getWorkingDirForSession(workspaceToken);
 

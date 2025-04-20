@@ -55,7 +55,7 @@ describe("Session Store", function () {
       // Verify session is registered
       expect(sessionExists(workspaceToken as string)).to.equal(true);
 
-      // Verify project name is correct
+      // Verify workspace name is correct
       expect(getProjectNameForSession(workspaceToken as string)).to.equal(
         "test-workspace"
       );
@@ -86,7 +86,7 @@ describe("Session Store", function () {
       // Verify session is registered
       expect(sessionExists(workspaceToken as string)).to.equal(true);
 
-      // Verify project name is correct
+      // Verify workspace name is correct
       expect(getProjectNameForSession(workspaceToken as string)).to.equal(
         "test-workspace"
       );
