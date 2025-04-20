@@ -4,11 +4,12 @@ import { logMcpCall } from "../logging/logger.js";
 import { ZodRawShape } from "zod";
 import { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
 import { isDebugEnabled } from "../config/workspaceConfig.js";
+import { ServerNotification, ServerRequest } from "@modelcontextprotocol/sdk/types.js";
 
 // Define the expected tool handler signature
 type ToolCallback = (
   args: Record<string, unknown>,
-  extra: RequestHandlerExtra
+  extra: RequestHandlerExtra<ServerRequest, ServerNotification>
 ) => Promise<{
   content: (
     | { type: "text"; text: string }
