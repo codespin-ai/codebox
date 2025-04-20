@@ -1,4 +1,4 @@
-// src/sessions/sessionStore.ts
+// src/workspaceTokens/workspaceTokenStore.ts
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { getWorkspaceByName } from "../config/workspaceConfig.js";
@@ -11,7 +11,7 @@ import {
 // Workspace token information including working directory
 interface WorkspaceTokenInfo {
   workspaceName: string;
-  workingDir: string; // Either original hostPath or temp directory
+  workingDir: string; // Either original path or temp directory
   isTempDir: boolean; // Flag to determine if cleanup is needed when closing
 }
 
@@ -32,14 +32,14 @@ export function openWorkspace(workspaceName: string): string | null {
   // Generate a new workspace token
   const workspaceToken = uuidv4();
 
-  let workingDir = workspace.hostPath;
+  let workingDir = workspace.path;
   let isTempDir = false;
 
   // If copy is enabled, create a temporary directory and copy files
   if (workspace.copy) {
     try {
       const tempDir = createTempDirectory(`codebox-${workspaceName}-workspace-token-`);
-      copyDirectory(workspace.hostPath, tempDir);
+      copyDirectory(workspace.path, tempDir);
       workingDir = tempDir;
       isTempDir = true;
     } catch (error) {

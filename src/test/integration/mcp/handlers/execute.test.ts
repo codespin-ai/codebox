@@ -113,7 +113,7 @@ describe("Execute Handlers with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             containerName: containerName,
           },
         ],
@@ -190,7 +190,7 @@ describe("Execute Handlers with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage,
           },
         ],
@@ -229,7 +229,7 @@ describe("Execute Handlers with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage,
             copy: true,
           },

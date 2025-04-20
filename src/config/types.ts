@@ -1,7 +1,7 @@
 // src/config/types.ts
 export interface WorkspaceConfig {
   name: string;
-  hostPath: string;
+  path: string;
   containerPath?: string;
   dockerImage?: string;
   containerName?: string;

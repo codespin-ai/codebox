@@ -1,4 +1,4 @@
-// src/test/integration/sessions/sessionStore.test.ts
+// src/test/integration/workspaceTokens/workspaceTokenStore.test.ts
 import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
@@ -32,14 +32,14 @@ describe("Workspace token Store", function () {
     cleanup();
   });
 
-  describe("openWorkspace", function () {
+  describe("Open workspace", function () {
     it("should open a workspace token without copying files when copy=false", function () {
       // Register a workspace without copy mode
       createTestConfig(configDir, {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: "dummy-image",
             copy: false,
           },
@@ -70,7 +70,7 @@ describe("Workspace token Store", function () {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: "dummy-image",
             copy: true,
           },
@@ -110,7 +110,7 @@ describe("Workspace token Store", function () {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: "dummy-image",
           },
         ],
@@ -122,14 +122,14 @@ describe("Workspace token Store", function () {
     });
   });
 
-  describe("closeSession", function () {
+  describe("Close workspace", function () {
     it("should close a workspace token and return true", function () {
       // Register a workspace
       createTestConfig(configDir, {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: "dummy-image",
           },
         ],
@@ -158,7 +158,7 @@ describe("Workspace token Store", function () {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: "dummy-image",
             copy: true,
           },
@@ -187,7 +187,7 @@ describe("Workspace token Store", function () {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: "dummy-image",
             copy: true,
           },

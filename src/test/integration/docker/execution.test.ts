@@ -116,7 +116,7 @@ describe("Docker Execution with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             containerName: containerName,
           },
         ],
@@ -176,7 +176,7 @@ describe("Docker Execution with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: dockerImage,
           },
         ],
@@ -211,7 +211,7 @@ describe("Docker Execution with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: dockerImage,
             containerPath: "/custom-path",
           },
@@ -242,7 +242,7 @@ describe("Docker Execution with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: dockerImage,
             network: networkName,
           },
@@ -285,7 +285,7 @@ describe("Docker Execution with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: dockerImage,
             copy: true,
           },

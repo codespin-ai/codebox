@@ -69,12 +69,12 @@ describe("Workspace Handlers", function () {
         workspaces: [
           {
             name: "workspace1",
-            hostPath: `${workspaceDir}/workspace1`,
+            path: `${workspaceDir}/workspace1`,
             dockerImage: "image1",
           },
           {
             name: "workspace2",
-            hostPath: `${workspaceDir}/workspace2`,
+            path: `${workspaceDir}/workspace2`,
             containerName: "container2",
           },
         ],
