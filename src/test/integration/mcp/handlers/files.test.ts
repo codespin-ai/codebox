@@ -175,7 +175,7 @@ describe("File Handlers with Sessions", function () {
       });
     });
 
-    it("should return error for invalid session IDs", async function () {
+    it("should return error for invalid workspace tokens", async function () {
       const response = await writeFileHandler({
         workspaceToken: "invalid-session-id",
         filePath: "test.txt",
@@ -186,7 +186,7 @@ describe("File Handlers with Sessions", function () {
       // Verify the error response
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include(
-        "Invalid or expired session ID"
+        "Invalid or expired workspace token"
       );
     });
 

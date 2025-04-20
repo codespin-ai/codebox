@@ -21,7 +21,7 @@ export function registerBatchHandlers(server: McpServer): void {
         .describe("Array of commands to execute in sequence"),
       workspaceToken: zod
         .string()
-        .describe("The session ID from open_project_session"),
+        .describe("The workspace token from open_project_session"),
       stopOnError: zod
         .boolean()
         .optional()
@@ -36,7 +36,7 @@ export function registerBatchHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${workspaceToken}`,
+              text: `Error: Invalid or expired workspace token: ${workspaceToken}`,
             },
           ],
         };

@@ -113,7 +113,7 @@ export function registerProjectHandlers(server: McpServer): void {
     "close_project_session",
     "Close a project session and clean up resources",
     {
-      workspaceToken: zod.string().describe("The session ID to close"),
+      workspaceToken: zod.string().describe("The workspace token to close"),
     },
     async ({ workspaceToken }) => {
       const closed = closeSession(workspaceToken);
@@ -133,7 +133,7 @@ export function registerProjectHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Invalid session ID: ${workspaceToken}`,
+              text: `Error: Invalid workspace token: ${workspaceToken}`,
             },
           ],
         };

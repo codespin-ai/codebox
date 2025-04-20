@@ -229,7 +229,7 @@ describe("Batch File Handlers with Sessions", function () {
       // Verify the error response
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include(
-        "Invalid or expired session ID"
+        "Invalid or expired workspace token"
       );
     });
   });

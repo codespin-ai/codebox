@@ -18,7 +18,7 @@ export function registerFileHandlers(server: McpServer): void {
     {
       workspaceToken: zod
         .string()
-        .describe("The session ID from open_project_session"),
+        .describe("The workspace token from open_project_session"),
       filePath: zod
         .string()
         .describe("Relative path to the file from project root"),
@@ -36,7 +36,7 @@ export function registerFileHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${workspaceToken}`,
+              text: `Error: Invalid or expired workspace token: ${workspaceToken}`,
             },
           ],
         };

@@ -19,7 +19,7 @@ export function registerExecuteHandlers(server: McpServer): void {
       command: zod.string().describe("The command to execute in the container"),
       workspaceToken: zod
         .string()
-        .describe("The session ID from open_project_session"),
+        .describe("The workspace token from open_project_session"),
     },
     async ({ command, workspaceToken }) => {
       // Validate the session
@@ -29,7 +29,7 @@ export function registerExecuteHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${workspaceToken}`,
+              text: `Error: Invalid or expired workspace token: ${workspaceToken}`,
             },
           ],
         };

@@ -123,14 +123,14 @@ describe("Session-Based Tools", function () {
       expect(closeResponse.content[0].text).to.include("Session closed");
     });
 
-    it("should return an error for invalid session IDs", async function () {
+    it("should return an error for invalid workspace tokens", async function () {
       const response = await closeWorkspaceHandler({
         workspaceToken: "non-existent-session",
       });
 
       // Verify the error response
       expect(response.isError).to.equal(true);
-      expect(response.content[0].text).to.include("Invalid session ID");
+      expect(response.content[0].text).to.include("Invalid workspace token");
     });
   });
 

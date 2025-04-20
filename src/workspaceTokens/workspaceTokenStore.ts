@@ -19,7 +19,7 @@ interface WorkspaceTokenInfo {
 const activeWorkspaceTokens: Record<string, WorkspaceTokenInfo> = {};
 
 /**
- * Open a project and return a session ID
+ * Open a project and return a workspace token
  * @param projectName The name of the project to open
  * @returns Session ID or null if project doesn't exist
  */
@@ -29,7 +29,7 @@ export function openProject(projectName: string): string | null {
     return null;
   }
 
-  // Generate a new session ID
+  // Generate a new workspace token
   const workspaceToken = uuidv4();
 
   let workingDir = project.hostPath;
@@ -62,8 +62,8 @@ export function openProject(projectName: string): string | null {
 }
 
 /**
- * Get the workspace name for a session ID
- * @param workspaceToken The session ID
+ * Get the workspace name for a workspace token
+ * @param workspaceToken The workspace token
  * @returns Project name or null if session doesn't exist
  */
 export function getProjectNameForSession(workspaceToken: string): string | null {
@@ -72,7 +72,7 @@ export function getProjectNameForSession(workspaceToken: string): string | null 
 
 /**
  * Get the working directory for a session
- * @param workspaceToken The session ID
+ * @param workspaceToken The workspace token
  * @returns Working directory path or null if session doesn't exist
  */
 export function getWorkingDirForSession(workspaceToken: string): string | null {
@@ -81,7 +81,7 @@ export function getWorkingDirForSession(workspaceToken: string): string | null {
 
 /**
  * Check if a session exists
- * @param workspaceToken The session ID to check
+ * @param workspaceToken The workspace token to check
  * @returns True if the session exists
  */
 export function sessionExists(workspaceToken: string): boolean {
@@ -90,7 +90,7 @@ export function sessionExists(workspaceToken: string): boolean {
 
 /**
  * Get full session information
- * @param workspaceToken The session ID
+ * @param workspaceToken The workspace token
  * @returns Session information or null if not found
  */
 export function getSessionInfo(workspaceToken: string): WorkspaceTokenInfo | null {
@@ -99,7 +99,7 @@ export function getSessionInfo(workspaceToken: string): WorkspaceTokenInfo | nul
 
 /**
  * Close a session and clean up resources
- * @param workspaceToken The session ID to close
+ * @param workspaceToken The workspace token to close
  * @returns True if session was closed, false if it didn't exist
  */
 export function closeSession(workspaceToken: string): boolean {

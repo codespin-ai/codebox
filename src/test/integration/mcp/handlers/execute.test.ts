@@ -169,7 +169,7 @@ describe("Execute Handlers with Sessions", function () {
     });
 
     it("should return error for invalid sessions", async function () {
-      // Execute command with invalid session ID
+      // Execute command with invalid workspace token
       const response = await executeCommandHandler({
         workspaceToken: "invalid-session-id",
         command: "echo 'This should fail'",
@@ -178,7 +178,7 @@ describe("Execute Handlers with Sessions", function () {
       // Verify the error response
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include(
-        "Invalid or expired session ID"
+        "Invalid or expired workspace token"
       );
     });
   });

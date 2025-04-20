@@ -228,7 +228,7 @@ describe("Batch Command Handlers with Sessions", function () {
     });
 
     it("should return error for invalid sessions", async function () {
-      // Execute batch commands with invalid session ID
+      // Execute batch commands with invalid workspace token
       const response = await executeBatchCommandsHandler({
         workspaceToken: "invalid-session-id",
         commands: ["echo 'This should fail'"],
@@ -237,7 +237,7 @@ describe("Batch Command Handlers with Sessions", function () {
       // Verify the error response
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include(
-        "Invalid or expired session ID"
+        "Invalid or expired workspace token"
       );
     });
   });

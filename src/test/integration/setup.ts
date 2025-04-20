@@ -30,7 +30,7 @@ export function createTestSession(projectName: string): string | null {
 
 /**
  * Closes a test session
- * @param workspaceToken The session ID to close
+ * @param workspaceToken The workspace token to close
  */
 export function closeTestSession(workspaceToken: string): void {
   closeSession(workspaceToken);
