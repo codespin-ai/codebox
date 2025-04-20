@@ -61,9 +61,9 @@ describe("File Handlers with Sessions", function () {
       ) => {
         if (name === "write_file") {
           writeFileHandler = handler as RequestHandler;
-        } else if (name === "open_project_session") {
+        } else if (name === "open_workspace") {
           openWorkspaceHandler = handler as RequestHandler;
-        } else if (name === "close_project_session") {
+        } else if (name === "close_workspace") {
           closeWorkspaceHandler = handler as RequestHandler;
         }
       },

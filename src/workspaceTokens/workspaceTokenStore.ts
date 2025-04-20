@@ -23,7 +23,7 @@ const activeWorkspaceTokens: Record<string, WorkspaceTokenInfo> = {};
  * @param projectName The name of the project to open
  * @returns Session ID or null if project doesn't exist
  */
-export function openProject(projectName: string): string | null {
+export function openWorkspace(projectName: string): string | null {
   const project = getWorkspaceByName(projectName);
   if (!project) {
     return null;
@@ -66,7 +66,7 @@ export function openProject(projectName: string): string | null {
  * @param workspaceToken The workspace token
  * @returns Project name or null if session doesn't exist
  */
-export function getProjectNameForSession(workspaceToken: string): string | null {
+export function getWorkspaceNameForWorkspaceToken(workspaceToken: string): string | null {
   return activeWorkspaceTokens[workspaceToken]?.projectName || null;
 }
 
@@ -75,7 +75,7 @@ export function getProjectNameForSession(workspaceToken: string): string | null 
  * @param workspaceToken The workspace token
  * @returns Working directory path or null if session doesn't exist
  */
-export function getWorkingDirForSession(workspaceToken: string): string | null {
+export function getWorkingDirForWorkspaceToken(workspaceToken: string): string | null {
   return activeWorkspaceTokens[workspaceToken]?.workingDir || null;
 }
 
@@ -84,7 +84,7 @@ export function getWorkingDirForSession(workspaceToken: string): string | null {
  * @param workspaceToken The workspace token to check
  * @returns True if the session exists
  */
-export function sessionExists(workspaceToken: string): boolean {
+export function workspaceTokenExists(workspaceToken: string): boolean {
   return workspaceToken in activeWorkspaceTokens;
 }
 
@@ -93,7 +93,7 @@ export function sessionExists(workspaceToken: string): boolean {
  * @param workspaceToken The workspace token
  * @returns Session information or null if not found
  */
-export function getSessionInfo(workspaceToken: string): WorkspaceTokenInfo | null {
+export function getWorkspaceTokenInfo(workspaceToken: string): WorkspaceTokenInfo | null {
   return activeWorkspaceTokens[workspaceToken] || null;
 }
 
@@ -102,7 +102,7 @@ export function getSessionInfo(workspaceToken: string): WorkspaceTokenInfo | nul
  * @param workspaceToken The workspace token to close
  * @returns True if session was closed, false if it didn't exist
  */
-export function closeSession(workspaceToken: string): boolean {
+export function closeWorkspace(workspaceToken: string): boolean {
   if (workspaceToken in activeWorkspaceTokens) {
     const workspaceTokenInfo = activeWorkspaceTokens[workspaceToken];
 

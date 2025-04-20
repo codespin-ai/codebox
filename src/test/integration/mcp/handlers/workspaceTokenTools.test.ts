@@ -1,12 +1,12 @@
 // src/test/integration/mcp/handlers/sessionTools.test.ts
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
-import { setupTestEnvironment, createTestConfig } from "../../setup.js";
+import { createTestConfig, setupTestEnvironment } from "../../setup.js";
 import { createTestFile } from "../../testUtils.js";
-import { getWorkingDirForSession } from "../../../../workspaceTokens/workspaceTokenStore.js";
+import { getWorkingDirForWorkspaceToken } from "../../../../workspaceTokens/workspaceTokenStore.js";
 
 // Response type for MCP tools
 interface McpResponse {
@@ -63,9 +63,9 @@ describe("Session-Based Tools", function () {
         schema: object,
         handler: unknown
       ) => {
-        if (name === "open_project_session") {
+        if (name === "open_workspace") {
           openWorkspaceHandler = handler as RequestHandler;
-        } else if (name === "close_project_session") {
+        } else if (name === "close_workspace") {
           closeWorkspaceHandler = handler as RequestHandler;
         }
       },
@@ -79,7 +79,7 @@ describe("Session-Based Tools", function () {
     cleanup();
   });
 
-  describe("open_project_session", function () {
+  describe("open_workspace", function () {
     it("should open a session for a valid workspace", async function () {
       const response = await openWorkspaceHandler({
         projectName: "test-workspace",
@@ -105,7 +105,7 @@ describe("Session-Based Tools", function () {
     });
   });
 
-  describe("close_project_session", function () {
+  describe("close_workspace", function () {
     it("should close a valid session", async function () {
       // First open a session
       const openResponse = await openWorkspaceHandler({
@@ -144,7 +144,7 @@ describe("Session-Based Tools", function () {
       const workspaceToken = response.content[0].text;
 
       // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(workspaceToken);
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 
       // Verify the working directory exists and is not the original project directory
       expect(workingDir).to.not.equal(workspaceDir);

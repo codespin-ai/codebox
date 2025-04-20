@@ -3,11 +3,11 @@ import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
 import {
-  closeSession,
-  getProjectNameForSession,
-  getWorkingDirForSession,
-  openProject,
-  sessionExists,
+  closeWorkspace,
+  getWorkspaceNameForWorkspaceToken,
+  getWorkingDirForWorkspaceToken,
+  openWorkspace,
+  workspaceTokenExists,
 } from "../../../workspaceTokens/workspaceTokenStore.js";
 import { createTestConfig, setupTestEnvironment } from "../setup.js";
 import { createTestFile } from "../testUtils.js";
@@ -47,21 +47,21 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const workspaceToken = openProject("test-workspace");
+      const workspaceToken = openWorkspace("test-workspace");
       expect(workspaceToken).to.be.a("string");
       expect(workspaceToken).to.not.equal(undefined);
       expect(workspaceToken).to.not.equal(null);
 
       // Verify session is registered
-      expect(sessionExists(workspaceToken as string)).to.equal(true);
+      expect(workspaceTokenExists(workspaceToken as string)).to.equal(true);
 
       // Verify workspace name is correct
-      expect(getProjectNameForSession(workspaceToken as string)).to.equal(
+      expect(getWorkspaceNameForWorkspaceToken(workspaceToken as string)).to.equal(
         "test-workspace"
       );
 
       // Verify working directory is the original project directory
-      expect(getWorkingDirForSession(workspaceToken as string)).to.equal(workspaceDir);
+      expect(getWorkingDirForWorkspaceToken(workspaceToken as string)).to.equal(workspaceDir);
     });
 
     it("should open a session with copying files when copy=true", function () {
@@ -78,21 +78,21 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const workspaceToken = openProject("test-workspace");
+      const workspaceToken = openWorkspace("test-workspace");
       expect(workspaceToken).to.be.a("string");
       expect(workspaceToken).to.not.equal(undefined);
       expect(workspaceToken).to.not.equal(null);
 
       // Verify session is registered
-      expect(sessionExists(workspaceToken as string)).to.equal(true);
+      expect(workspaceTokenExists(workspaceToken as string)).to.equal(true);
 
       // Verify workspace name is correct
-      expect(getProjectNameForSession(workspaceToken as string)).to.equal(
+      expect(getWorkspaceNameForWorkspaceToken(workspaceToken as string)).to.equal(
         "test-workspace"
       );
 
       // Verify working directory is not the original project directory
-      const workingDir = getWorkingDirForSession(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
       expect(workingDir).to.not.equal(workspaceDir);
 
       // Verify the test file was copied to the temp directory
@@ -117,7 +117,7 @@ describe("Session Store", function () {
       });
 
       // Try to open non-existent project
-      const workspaceToken = openProject("non-existent-workspace");
+      const workspaceToken = openWorkspace("non-existent-workspace");
       expect(workspaceToken).to.equal(null);
     });
   });
@@ -136,19 +136,19 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const workspaceToken = openProject("test-workspace");
+      const workspaceToken = openWorkspace("test-workspace");
       expect(workspaceToken).to.be.a("string");
 
       // Close the session
-      const result = closeSession(workspaceToken as string);
+      const result = closeWorkspace(workspaceToken as string);
       expect(result).to.equal(true);
 
       // Verify session no longer exists
-      expect(sessionExists(workspaceToken as string)).to.equal(false);
+      expect(workspaceTokenExists(workspaceToken as string)).to.equal(false);
     });
 
     it("should return false for non-existent sessions", function () {
-      const result = closeSession("non-existent-session");
+      const result = closeWorkspace("non-existent-session");
       expect(result).to.equal(false);
     });
 
@@ -166,14 +166,14 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const workspaceToken = openProject("test-workspace");
-      const workingDir = getWorkingDirForSession(workspaceToken as string);
+      const workspaceToken = openWorkspace("test-workspace");
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
 
       // Verify temp directory exists
       expect(fs.existsSync(workingDir as string)).to.equal(true);
 
       // Close the session
-      closeSession(workspaceToken as string);
+      closeWorkspace(workspaceToken as string);
 
       // Verify temp directory was removed
       expect(fs.existsSync(workingDir as string)).to.equal(false);
@@ -195,11 +195,11 @@ describe("Session Store", function () {
       });
 
       // Open two sessions for the same project
-      const sessionId1 = openProject("test-workspace");
-      const sessionId2 = openProject("test-workspace");
+      const sessionId1 = openWorkspace("test-workspace");
+      const sessionId2 = openWorkspace("test-workspace");
 
-      const workingDir1 = getWorkingDirForSession(sessionId1 as string);
-      const workingDir2 = getWorkingDirForSession(sessionId2 as string);
+      const workingDir1 = getWorkingDirForWorkspaceToken(sessionId1 as string);
+      const workingDir2 = getWorkingDirForWorkspaceToken(sessionId2 as string);
 
       // Verify working directories are different
       expect(workingDir1).to.not.equal(workingDir2);
@@ -230,8 +230,8 @@ describe("Session Store", function () {
       ).to.equal("Original content");
 
       // Clean up
-      closeSession(sessionId1 as string);
-      closeSession(sessionId2 as string);
+      closeWorkspace(sessionId1 as string);
+      closeWorkspace(sessionId2 as string);
     });
   });
 });

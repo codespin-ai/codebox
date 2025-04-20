@@ -1,10 +1,10 @@
 // src/test/integration/setup.ts
-import { install } from "source-map-support";
-import * as path from "path";
-import * as os from "os";
 import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
+import { install } from "source-map-support";
 import { setConfigBasePath } from "../../config/workspaceConfig.js";
-import { openProject, closeSession } from "../../workspaceTokens/workspaceTokenStore.js";
+import { closeWorkspace, openWorkspace } from "../../workspaceTokens/workspaceTokenStore.js";
 
 // Install source map support for better error stack traces
 install();
@@ -24,16 +24,16 @@ export function createTestEnvironment(): string {
  * @param projectName The name of the project
  * @returns Session ID or null
  */
-export function createTestSession(projectName: string): string | null {
-  return openProject(projectName);
+export function createTestWorkspaceToken(projectName: string): string | null {
+  return openWorkspace(projectName);
 }
 
 /**
  * Closes a test session
  * @param workspaceToken The workspace token to close
  */
-export function closeTestSession(workspaceToken: string): void {
-  closeSession(workspaceToken);
+export function closeTestWorkspaceToken(workspaceToken: string): void {
+  closeWorkspace(workspaceToken);
 }
 
 /**

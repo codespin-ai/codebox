@@ -4,8 +4,8 @@ import * as zod from "zod";
 import { writeProjectFile } from "../../fs/fileIO.js";
 import { validateFilePath } from "../../fs/pathValidation.js";
 import {
-  getWorkingDirForSession,
-  sessionExists,
+  getWorkingDirForWorkspaceToken,
+  workspaceTokenExists,
 } from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
@@ -40,7 +40,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
     {
       workspaceToken: zod
         .string()
-        .describe("The workspace token from open_project_session"),
+        .describe("The workspace token from open_workspace"),
       files: zod
         .array(
           zod.object({
@@ -63,7 +63,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
     },
     async ({ workspaceToken, files, stopOnError }) => {
       // Validate the session
-      if (!sessionExists(workspaceToken)) {
+      if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
           content: [
@@ -76,7 +76,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
       }
 
       // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(workspaceToken);
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
       if (!workingDir) {
         return {
           isError: true,

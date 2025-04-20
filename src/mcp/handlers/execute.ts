@@ -3,9 +3,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import { executeDockerCommand } from "../../docker/execution.js";
 import {
-  getProjectNameForSession,
-  getWorkingDirForSession,
-  sessionExists,
+  getWorkspaceNameForWorkspaceToken,
+  getWorkingDirForWorkspaceToken,
+  workspaceTokenExists,
 } from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
@@ -14,16 +14,16 @@ import {
 export function registerExecuteHandlers(server: McpServer): void {
   server.tool(
     "execute_command",
-    "Execute a command in a Docker container using a project session",
+    "Execute a command in a Docker container using a workspace token",
     {
       command: zod.string().describe("The command to execute in the container"),
       workspaceToken: zod
         .string()
-        .describe("The workspace token from open_project_session"),
+        .describe("The workspace token from open_workspace"),
     },
     async ({ command, workspaceToken }) => {
       // Validate the session
-      if (!sessionExists(workspaceToken)) {
+      if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
           content: [
@@ -36,8 +36,8 @@ export function registerExecuteHandlers(server: McpServer): void {
       }
 
       // Get the workspace name and working directory from the session
-      const projectName = getProjectNameForSession(workspaceToken);
-      const workingDir = getWorkingDirForSession(workspaceToken);
+      const projectName = getWorkspaceNameForWorkspaceToken(workspaceToken);
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 
       if (!projectName || !workingDir) {
         return {

@@ -3,9 +3,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import { executeDockerCommand } from "../../docker/execution.js";
 import {
-  getProjectNameForSession,
-  getWorkingDirForSession,
-  sessionExists,
+  getWorkspaceNameForWorkspaceToken,
+  getWorkingDirForWorkspaceToken,
+  workspaceTokenExists,
 } from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
@@ -14,14 +14,14 @@ import {
 export function registerBatchHandlers(server: McpServer): void {
   server.tool(
     "execute_batch_commands",
-    "Execute multiple commands in sequence using a project session",
+    "Execute multiple commands in sequence using a workspace token",
     {
       commands: zod
         .array(zod.string())
         .describe("Array of commands to execute in sequence"),
       workspaceToken: zod
         .string()
-        .describe("The workspace token from open_project_session"),
+        .describe("The workspace token from open_workspace"),
       stopOnError: zod
         .boolean()
         .optional()
@@ -30,7 +30,7 @@ export function registerBatchHandlers(server: McpServer): void {
     },
     async ({ commands, workspaceToken, stopOnError }) => {
       // Validate the session
-      if (!sessionExists(workspaceToken)) {
+      if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
           content: [
@@ -43,8 +43,8 @@ export function registerBatchHandlers(server: McpServer): void {
       }
 
       // Get the workspace name and working directory from the session
-      const projectName = getProjectNameForSession(workspaceToken);
-      const workingDir = getWorkingDirForSession(workspaceToken);
+      const projectName = getWorkspaceNameForWorkspaceToken(workspaceToken);
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 
       if (!projectName || !workingDir) {
         return {

@@ -5,7 +5,7 @@ import {
   getWorkspaces,
   validateWorkspaceName,
 } from "../../config/workspaceConfig.js";
-import { openProject, closeSession } from "../../workspaceTokens/workspaceTokenStore.js";
+import { closeWorkspace, openWorkspace } from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
  * Register project-related handlers with the MCP server
@@ -53,7 +53,7 @@ export function registerProjectHandlers(server: McpServer): void {
   });
 
   server.tool(
-    "open_project_session",
+    "open_workspace",
     "Open a workspace, optionally creating a copy of the project files if the project has copy=true",
     {
       projectName: zod.string().describe("The name of the project to open"),
@@ -72,7 +72,7 @@ export function registerProjectHandlers(server: McpServer): void {
           };
         }
 
-        const workspaceToken = openProject(projectName);
+        const workspaceToken = openWorkspace(projectName);
         if (!workspaceToken) {
           return {
             isError: true,
@@ -110,13 +110,13 @@ export function registerProjectHandlers(server: McpServer): void {
   );
 
   server.tool(
-    "close_project_session",
-    "Close a project session and clean up resources",
+    "close_workspace",
+    "Close a workspace and clean up resources",
     {
       workspaceToken: zod.string().describe("The workspace token to close"),
     },
     async ({ workspaceToken }) => {
-      const closed = closeSession(workspaceToken);
+      const closed = closeWorkspace(workspaceToken);
 
       if (closed) {
         return {
