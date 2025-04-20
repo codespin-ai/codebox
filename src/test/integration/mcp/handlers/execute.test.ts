@@ -4,7 +4,7 @@ import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
 import { registerExecuteHandlers } from "../../../../mcp/handlers/execute.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/projects.js";
+import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { createTestConfig, setupTestEnvironment } from "../../setup.js";
 import {
   createTestContainer,

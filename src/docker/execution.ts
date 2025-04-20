@@ -1,7 +1,7 @@
 // src/docker/execution.ts
 import { exec } from "child_process";
 import { promisify } from "util";
-import { getProjectByName } from "../config/projectConfig.js";
+import { getProjectByName } from "../config/workspaceConfig.js";
 
 const execAsync = promisify(exec);
 

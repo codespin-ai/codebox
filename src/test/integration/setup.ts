@@ -3,8 +3,8 @@ import { install } from "source-map-support";
 import * as path from "path";
 import * as os from "os";
 import * as fs from "fs";
-import { setConfigBasePath } from "../../config/projectConfig.js";
-import { openProject, closeSession } from "../../sessions/sessionStore.js";
+import { setConfigBasePath } from "../../config/workspaceConfig.js";
+import { openProject, closeSession } from "../../workspaceTokens/workspaceTokenStore.js";
 
 // Install source map support for better error stack traces
 install();

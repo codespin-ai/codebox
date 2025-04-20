@@ -1,7 +1,7 @@
 // src/test/integration/mcp/handlers/projects.test.ts
 import { expect } from "chai";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/projects.js";
+import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 
 // Response type for MCP tools

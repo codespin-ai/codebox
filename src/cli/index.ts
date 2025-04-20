@@ -2,7 +2,7 @@
 
 import yargs from "yargs";
 import { start } from "./commands/start.js";
-import { addProject, listProjects, removeProject } from "./commands/project.js";
+import { addProject, listProjects, removeProject } from "./commands/workspace.js";
 import process from "node:process";
 import fs from "node:fs";
 import path from "node:path";

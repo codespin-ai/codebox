@@ -11,7 +11,7 @@ import {
   closeSession,
   getWorkingDirForSession,
   openProject,
-} from "../../../sessions/sessionStore.js";
+} from "../../../workspaceTokens/workspaceTokenStore.js";
 import { createTestConfig, setupTestEnvironment } from "../setup.js";
 import {
   createNetwork,

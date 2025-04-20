@@ -8,7 +8,7 @@ import {
   getWorkingDirForSession,
   openProject,
   sessionExists,
-} from "../../../sessions/sessionStore.js";
+} from "../../../workspaceTokens/workspaceTokenStore.js";
 import { createTestConfig, setupTestEnvironment } from "../setup.js";
 import { createTestFile } from "../testUtils.js";
 

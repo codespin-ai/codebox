@@ -6,7 +6,7 @@ import { validateFilePath } from "../../fs/pathValidation.js";
 import {
   getWorkingDirForSession,
   sessionExists,
-} from "../../sessions/sessionStore.js";
+} from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
  * Format batch operation results for output

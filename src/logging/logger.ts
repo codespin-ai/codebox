@@ -2,7 +2,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { getConfigBasePath, isDebugEnabled } from "../config/projectConfig.js";
+import { getConfigBasePath, isDebugEnabled } from "../config/workspaceConfig.js";
 
 type InvokeMode = "cli" | "api" | "test";
 

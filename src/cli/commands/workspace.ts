@@ -2,7 +2,7 @@ import { exec } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import { promisify } from "util";
-import { getConfig, saveConfig } from "../../config/projectConfig.js";
+import { getConfig, saveConfig } from "../../config/workspaceConfig.js";
 import { validateDirectory } from "../../fs/pathValidation.js";
 
 const execAsync = promisify(exec);

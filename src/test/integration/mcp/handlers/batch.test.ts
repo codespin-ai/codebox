@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerBatchHandlers } from "../../../../mcp/handlers/batch.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/projects.js";
+import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 import {
   isDockerAvailable,

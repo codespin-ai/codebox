@@ -5,7 +5,7 @@ import { createLoggingEnabledServer } from "./logging.js";
 
 // Import handlers
 import { registerFileHandlers } from "./handlers/files.js";
-import { registerProjectHandlers } from "./handlers/projects.js";
+import { registerProjectHandlers } from "./handlers/workspaces.js";
 import { registerExecuteHandlers } from "./handlers/execute.js";
 import { registerBatchHandlers } from "./handlers/batch.js";
 import { registerBatchFileHandlers } from "./handlers/batchFiles.js";

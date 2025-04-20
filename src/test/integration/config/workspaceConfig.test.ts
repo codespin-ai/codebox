@@ -10,7 +10,7 @@ import {
   saveConfig,
   validateProject,
   validateProjectName,
-} from "../../../config/projectConfig.js";
+} from "../../../config/workspaceConfig.js";
 import { setupTestEnvironment } from "../setup.js";
 
 describe("Project Configuration", function () {

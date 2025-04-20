@@ -1,7 +1,7 @@
 // src/sessions/sessionStore.ts
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { getProjectByName } from "../config/projectConfig.js";
+import { getProjectByName } from "../config/workspaceConfig.js";
 import {
   copyDirectory,
   createTempDirectory,

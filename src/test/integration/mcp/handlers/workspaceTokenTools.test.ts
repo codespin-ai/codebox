@@ -3,10 +3,10 @@ import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/projects.js";
+import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 import { createTestFile } from "../../testUtils.js";
-import { getWorkingDirForSession } from "../../../../sessions/sessionStore.js";
+import { getWorkingDirForSession } from "../../../../workspaceTokens/workspaceTokenStore.js";
 
 // Response type for MCP tools
 interface McpResponse {

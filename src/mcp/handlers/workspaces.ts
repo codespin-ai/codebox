@@ -4,8 +4,8 @@ import * as zod from "zod";
 import {
   getProjects,
   validateProjectName,
-} from "../../config/projectConfig.js";
-import { openProject, closeSession } from "../../sessions/sessionStore.js";
+} from "../../config/workspaceConfig.js";
+import { openProject, closeSession } from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
  * Register project-related handlers with the MCP server

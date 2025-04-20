@@ -6,7 +6,7 @@ import {
   getProjectNameForSession,
   getWorkingDirForSession,
   sessionExists,
-} from "../../sessions/sessionStore.js";
+} from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
  * Register batch command execution handlers with the MCP server

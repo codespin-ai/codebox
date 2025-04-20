@@ -6,7 +6,7 @@ import { validateFilePath } from "../../fs/pathValidation.js";
 import {
   getWorkingDirForSession,
   sessionExists,
-} from "../../sessions/sessionStore.js";
+} from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
  * Register file operation handlers with the MCP server
