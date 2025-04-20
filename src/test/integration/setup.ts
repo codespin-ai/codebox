@@ -20,7 +20,7 @@ export function createTestEnvironment(): string {
 }
 
 /**
- * Creates a test session for a workspace
+ * Creates a test workspace token for a workspace
  * @param workspaceName The name of the workspace
  * @returns Workspace token ID or null
  */

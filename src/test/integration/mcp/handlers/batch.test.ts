@@ -37,7 +37,7 @@ describe("Batch Command Handlers with Sessions", function () {
   let closeWorkspaceHandler: RequestHandler;
   let dockerAvailable = false;
   let containerName: string;
-  const projectName = "test-workspace";
+  const workspaceName = "test-workspace";
   const dockerImage = "alpine:latest";
 
   before(async function () {
@@ -109,7 +109,7 @@ describe("Batch Command Handlers with Sessions", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: projectName,
+            name: workspaceName,
             hostPath: workspaceDir,
             containerName: containerName,
           },
@@ -120,7 +120,7 @@ describe("Batch Command Handlers with Sessions", function () {
     it("should execute a batch of commands in sequence using a session", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName,
+        workspaceName,
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -156,7 +156,7 @@ describe("Batch Command Handlers with Sessions", function () {
     it("should stop execution on error if stopOnError is true", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName,
+        workspaceName,
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -193,7 +193,7 @@ describe("Batch Command Handlers with Sessions", function () {
     it("should continue execution on error if stopOnError is false", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName,
+        workspaceName,
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -264,7 +264,7 @@ describe("Batch Command Handlers with Sessions", function () {
     it("should execute batch commands with copy mode without modifying original files", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "copy-workspace",
+        workspaceName: "copy-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -300,7 +300,7 @@ describe("Batch Command Handlers with Sessions", function () {
     it("should maintain changes across multiple batch command calls in the same session", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "copy-workspace",
+        workspaceName: "copy-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;

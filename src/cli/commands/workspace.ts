@@ -49,7 +49,7 @@ export async function addProject(
   validateDirectory(projectPath);
 
   // Extract workspace name from the path if not provided
-  const projectName = name || path.basename(projectPath);
+  const workspaceName = name || path.basename(projectPath);
 
   // Verify container exists if specified
   if (containerName) {
@@ -92,7 +92,7 @@ export async function addProject(
 
   // Check if project already exists by name
   const existingIndex = config.workspaces.findIndex(
-    (p) => p.name === projectName
+    (p) => p.name === workspaceName
   );
 
   if (existingIndex !== -1) {
@@ -113,11 +113,11 @@ export async function addProject(
     config.workspaces[existingIndex].copy = copy;
     config.workspaces[existingIndex].hostPath = projectPath;
     saveConfig(config);
-    console.log(`Updated project: ${projectName}`);
+    console.log(`Updated project: ${workspaceName}`);
   } else {
     // Add new project
     config.workspaces.push({
-      name: projectName,
+      name: workspaceName,
       hostPath: projectPath,
       ...(containerPath && { containerPath }),
       ...(image && { dockerImage: image }),
@@ -126,7 +126,7 @@ export async function addProject(
       ...(copy && { copy: true }),
     });
     saveConfig(config);
-    console.log(`Added project: ${projectName}`);
+    console.log(`Added project: ${workspaceName}`);
   }
 }
 

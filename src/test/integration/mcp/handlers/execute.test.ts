@@ -37,7 +37,7 @@ describe("Execute Handlers with Sessions", function () {
   let closeWorkspaceHandler: RequestHandler;
   let dockerAvailable = false;
   let containerName: string;
-  const projectName = "test-workspace";
+  const workspaceName = "test-workspace";
   const dockerImage = "alpine:latest";
 
   before(async function () {
@@ -112,7 +112,7 @@ describe("Execute Handlers with Sessions", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: projectName,
+            name: workspaceName,
             hostPath: workspaceDir,
             containerName: containerName,
           },
@@ -123,7 +123,7 @@ describe("Execute Handlers with Sessions", function () {
     it("should execute a command in the container using a session", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName,
+        workspaceName,
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -147,7 +147,7 @@ describe("Execute Handlers with Sessions", function () {
     it("should handle command errors", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName,
+        workspaceName,
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -189,7 +189,7 @@ describe("Execute Handlers with Sessions", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: projectName,
+            name: workspaceName,
             hostPath: workspaceDir,
             dockerImage,
           },
@@ -200,7 +200,7 @@ describe("Execute Handlers with Sessions", function () {
     it("should execute a command with the image using a session", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName,
+        workspaceName,
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -228,7 +228,7 @@ describe("Execute Handlers with Sessions", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: projectName,
+            name: workspaceName,
             hostPath: workspaceDir,
             dockerImage,
             copy: true,
@@ -244,7 +244,7 @@ describe("Execute Handlers with Sessions", function () {
     it("should execute commands with file copying without modifying originals", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName,
+        workspaceName,
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -275,7 +275,7 @@ describe("Execute Handlers with Sessions", function () {
     it("should maintain changes across multiple commands in the same session", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName,
+        workspaceName,
       });
 
       const workspaceToken = openResponse.content[0].text;

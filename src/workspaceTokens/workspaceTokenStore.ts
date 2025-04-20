@@ -51,7 +51,7 @@ export function openWorkspace(workspaceName: string): string | null {
     }
   }
 
-  // Store the session information
+  // Store the workspace token information
   activeWorkspaceTokens[workspaceToken] = {
     workspaceName: workspaceName,
     workingDir,
@@ -64,7 +64,7 @@ export function openWorkspace(workspaceName: string): string | null {
 /**
  * Get the workspace name for a workspace token
  * @param workspaceToken The workspace token
- * @returns Project name or null if session doesn't exist
+ * @returns Project name or null if workspace token doesn't exist
  */
 export function getWorkspaceNameForWorkspaceToken(workspaceToken: string): string | null {
   return activeWorkspaceTokens[workspaceToken]?.workspaceName || null;
@@ -73,23 +73,23 @@ export function getWorkspaceNameForWorkspaceToken(workspaceToken: string): strin
 /**
  * Get the working directory for a session
  * @param workspaceToken The workspace token
- * @returns Working directory path or null if session doesn't exist
+ * @returns Working directory path or null if workspace token doesn't exist
  */
 export function getWorkingDirForWorkspaceToken(workspaceToken: string): string | null {
   return activeWorkspaceTokens[workspaceToken]?.workingDir || null;
 }
 
 /**
- * Check if a session exists
+ * Check if a workspace token exists
  * @param workspaceToken The workspace token to check
- * @returns True if the session exists
+ * @returns True if the workspace token exists
  */
 export function workspaceTokenExists(workspaceToken: string): boolean {
   return workspaceToken in activeWorkspaceTokens;
 }
 
 /**
- * Get full session information
+ * Get full workspace token information
  * @param workspaceToken The workspace token
  * @returns Workspace token information or null if not found
  */
@@ -98,9 +98,9 @@ export function getWorkspaceTokenInfo(workspaceToken: string): WorkspaceTokenInf
 }
 
 /**
- * Close a session and clean up resources
+ * Close a workspace token and clean up resources
  * @param workspaceToken The workspace token to close
- * @returns True if session was closed, false if it didn't exist
+ * @returns True if workspace token was closed, false if it didn't exist
  */
 export function closeWorkspace(workspaceToken: string): boolean {
   if (workspaceToken in activeWorkspaceTokens) {

@@ -80,9 +80,9 @@ describe("Session-Based Tools", function () {
   });
 
   describe("open_workspace", function () {
-    it("should open a session for a valid workspace", async function () {
+    it("should open a workspace token for a valid workspace", async function () {
       const response = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
 
       // Verify the response
@@ -94,7 +94,7 @@ describe("Session-Based Tools", function () {
 
     it("should return an error for invalid projects", async function () {
       const response = await openWorkspaceHandler({
-        projectName: "non-existent-workspace",
+        workspaceName: "non-existent-workspace",
       });
 
       // Verify the error response
@@ -109,7 +109,7 @@ describe("Session-Based Tools", function () {
     it("should close a valid session", async function () {
       // First open a session
       const openResponse = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
       const workspaceToken = openResponse.content[0].text;
 
@@ -135,10 +135,10 @@ describe("Session-Based Tools", function () {
   });
 
   describe("Copy Mode Behavior", function () {
-    it("should create temporary files when opening a session with copy=true", async function () {
-      // Open a session for a project with copy=true
+    it("should create temporary files when opening a workspace token with copy=true", async function () {
+      // Open a workspace token for a project with copy=true
       const response = await openWorkspaceHandler({
-        projectName: "copy-workspace",
+        workspaceName: "copy-workspace",
       });
 
       const workspaceToken = response.content[0].text;

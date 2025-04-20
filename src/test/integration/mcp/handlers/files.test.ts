@@ -82,7 +82,7 @@ describe("File Handlers with Sessions", function () {
     it("should write content to a file using a session", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -117,7 +117,7 @@ describe("File Handlers with Sessions", function () {
 
       // Open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -148,7 +148,7 @@ describe("File Handlers with Sessions", function () {
     it("should create directories as needed", async function () {
       // Open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -193,7 +193,7 @@ describe("File Handlers with Sessions", function () {
     it("should return error for invalid file paths", async function () {
       // Open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -221,7 +221,7 @@ describe("File Handlers with Sessions", function () {
     it("should write to a copy of the project and not modify original files", async function () {
       // Open a workspace with copy=true
       const openResponse = await openWorkspaceHandler({
-        projectName: "copy-workspace",
+        workspaceName: "copy-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -251,7 +251,7 @@ describe("File Handlers with Sessions", function () {
     it("should allow multiple write operations in the same session", async function () {
       // Open a workspace with copy=true
       const openResponse = await openWorkspaceHandler({
-        projectName: "copy-workspace",
+        workspaceName: "copy-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;

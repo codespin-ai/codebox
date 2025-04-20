@@ -33,7 +33,7 @@ describe("Workspace Token Store", function () {
   });
 
   describe("openProject", function () {
-    it("should open a session without copying files when copy=false", function () {
+    it("should open a workspace token without copying files when copy=false", function () {
       // Register a project without copy mode
       createTestConfig(configDir, {
         workspaces: [
@@ -52,7 +52,7 @@ describe("Workspace Token Store", function () {
       expect(workspaceToken).to.not.equal(undefined);
       expect(workspaceToken).to.not.equal(null);
 
-      // Verify session is registered
+      // Verify workspace token is registered
       expect(workspaceTokenExists(workspaceToken as string)).to.equal(true);
 
       // Verify workspace name is correct
@@ -64,7 +64,7 @@ describe("Workspace Token Store", function () {
       expect(getWorkingDirForWorkspaceToken(workspaceToken as string)).to.equal(workspaceDir);
     });
 
-    it("should open a session with copying files when copy=true", function () {
+    it("should open a workspace token with copying files when copy=true", function () {
       // Register a project with copy mode
       createTestConfig(configDir, {
         projects: [
@@ -83,7 +83,7 @@ describe("Workspace Token Store", function () {
       expect(workspaceToken).to.not.equal(undefined);
       expect(workspaceToken).to.not.equal(null);
 
-      // Verify session is registered
+      // Verify workspace token is registered
       expect(workspaceTokenExists(workspaceToken as string)).to.equal(true);
 
       // Verify workspace name is correct
@@ -123,7 +123,7 @@ describe("Workspace Token Store", function () {
   });
 
   describe("closeSession", function () {
-    it("should close a session and return true", function () {
+    it("should close a workspace token and return true", function () {
       // Register a project
       createTestConfig(configDir, {
         projects: [
@@ -143,7 +143,7 @@ describe("Workspace Token Store", function () {
       const result = closeWorkspace(workspaceToken as string);
       expect(result).to.equal(true);
 
-      // Verify session no longer exists
+      // Verify workspace token no longer exists
       expect(workspaceTokenExists(workspaceToken as string)).to.equal(false);
     });
 
@@ -207,22 +207,22 @@ describe("Workspace Token Store", function () {
       // Make changes in first session
       fs.writeFileSync(
         path.join(workingDir1 as string, "test.txt"),
-        "Modified in session 1"
+        "Modified in workspace token 1"
       );
 
       // Make changes in second session
       fs.writeFileSync(
         path.join(workingDir2 as string, "test.txt"),
-        "Modified in session 2"
+        "Modified in workspace token 2"
       );
 
       // Verify changes are isolated
       expect(
         fs.readFileSync(path.join(workingDir1 as string, "test.txt"), "utf8")
-      ).to.equal("Modified in session 1");
+      ).to.equal("Modified in workspace token 1");
       expect(
         fs.readFileSync(path.join(workingDir2 as string, "test.txt"), "utf8")
-      ).to.equal("Modified in session 2");
+      ).to.equal("Modified in workspace token 2");
 
       // Verify original file is unchanged
       expect(

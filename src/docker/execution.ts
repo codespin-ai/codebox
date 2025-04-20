@@ -23,7 +23,7 @@ export const gid = process.getgid?.();
  * Execute a command in a Docker container based on workspace configuration
  * @param workspaceName Name of the workspace
  * @param command Command to execute
- * @param hostDir Working directory to mount (session working dir)
+ * @param hostDir Working directory associated with the token
  */
 export async function executeDockerCommand(
   workspaceName: string,

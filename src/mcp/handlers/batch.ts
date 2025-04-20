@@ -43,16 +43,16 @@ export function registerBatchHandlers(server: McpServer): void {
       }
 
       // Get the workspace name and working directory from the session
-      const projectName = getWorkspaceNameForWorkspaceToken(workspaceToken);
+      const workspaceName = getWorkspaceNameForWorkspaceToken(workspaceToken);
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 
-      if (!projectName || !workingDir) {
+      if (!workspaceName || !workingDir) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${workspaceToken}`,
+              text: `Error: Workspace token mapping not found: ${workspaceToken}`,
             },
           ],
         };
@@ -63,7 +63,7 @@ export function registerBatchHandlers(server: McpServer): void {
       for (const command of commands) {
         try {
           const { stdout, stderr } = await executeDockerCommand(
-            projectName,
+            workspaceName,
             command,
             workingDir
           );

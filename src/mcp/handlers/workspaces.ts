@@ -56,30 +56,30 @@ export function registerProjectHandlers(server: McpServer): void {
     "open_workspace",
     "Open a workspace, optionally creating a copy of the project files if the project has copy=true",
     {
-      projectName: zod.string().describe("The name of the project to open"),
+      workspaceName: zod.string().describe("The name of the project to open"),
     },
-    async ({ projectName }) => {
+    async ({ workspaceName }) => {
       try {
-        if (!validateWorkspaceName(projectName)) {
+        if (!validateWorkspaceName(workspaceName)) {
           return {
             isError: true,
             content: [
               {
                 type: "text",
-                text: `Error: Invalid or unregistered project: ${projectName}`,
+                text: `Error: Invalid or unregistered project: ${workspaceName}`,
               },
             ],
           };
         }
 
-        const workspaceToken = openWorkspace(projectName);
+        const workspaceToken = openWorkspace(workspaceName);
         if (!workspaceToken) {
           return {
             isError: true,
             content: [
               {
                 type: "text",
-                text: `Error: Could not open project: ${projectName}`,
+                text: `Error: Could not open project: ${workspaceName}`,
               },
             ],
           };
@@ -123,7 +123,7 @@ export function registerProjectHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Session closed: ${workspaceToken}`,
+              text: `Workspace token closed: ${workspaceToken}`,
             },
           ],
         };

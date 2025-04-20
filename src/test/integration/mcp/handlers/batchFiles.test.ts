@@ -82,7 +82,7 @@ describe("Batch File Handlers with Sessions", function () {
     it("should write multiple files in a single operation using a session", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -131,7 +131,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       // Open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -176,7 +176,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       // Open a workspace
       const openResponse = await openWorkspaceHandler({
-        projectName: "test-workspace",
+        workspaceName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -238,7 +238,7 @@ describe("Batch File Handlers with Sessions", function () {
     it("should write multiple files to a copy without modifying original files", async function () {
       // Open a workspace with copy=true
       const openResponse = await openWorkspaceHandler({
-        projectName: "copy-workspace",
+        workspaceName: "copy-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
