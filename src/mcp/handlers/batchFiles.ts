@@ -83,7 +83,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Workspace Token mapping not found: ${workspaceToken}`,
+              text: `Error: Workspace token mapping not found: ${workspaceToken}`,
             },
           ],
         };

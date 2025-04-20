@@ -19,7 +19,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("File Handlers with Workspace Tokens", function () {
+describe("File Handlers with Workspace tokens", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;

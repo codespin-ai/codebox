@@ -20,7 +20,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Workspace Token based Tools", function () {
+describe("Workspace token based Tools", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;
@@ -120,7 +120,7 @@ describe("Workspace Token based Tools", function () {
 
       // Verify the response
       expect(closeResponse.isError).to.equal(undefined);
-      expect(closeResponse.content[0].text).to.include("Workspace Token closed");
+      expect(closeResponse.content[0].text).to.include("Workspace token closed");
     });
 
     it("should return an error for invalid workspace tokens", async function () {

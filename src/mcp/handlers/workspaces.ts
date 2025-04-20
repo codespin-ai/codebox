@@ -123,7 +123,7 @@ export function registerWorkspaceHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Workspace Token closed: ${workspaceToken}`,
+              text: `Workspace token closed: ${workspaceToken}`,
             },
           ],
         };

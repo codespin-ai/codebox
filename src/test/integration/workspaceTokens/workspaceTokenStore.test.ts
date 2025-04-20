@@ -12,7 +12,7 @@ import {
 import { createTestConfig, setupTestEnvironment } from "../setup.js";
 import { createTestFile } from "../testUtils.js";
 
-describe("Workspace Token Store", function () {
+describe("Workspace token Store", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;
@@ -180,7 +180,7 @@ describe("Workspace Token Store", function () {
     });
   });
 
-  describe("Workspace Token Isolation", function () {
+  describe("Workspace token Isolation", function () {
     it("should maintain isolated file changes betweenworkspace tokens with copy=true", function () {
       // Register a workspace with copy mode
       createTestConfig(configDir, {

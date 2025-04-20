@@ -26,7 +26,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Batch Command Handlers with Workspace Tokens", function () {
+describe("Batch Command Handlers with Workspace tokens", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;

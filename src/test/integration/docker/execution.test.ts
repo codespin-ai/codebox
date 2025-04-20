@@ -23,7 +23,7 @@ import {
   uniqueName
 } from "../testUtils.js";
 
-describe("Docker Execution with Workspace Tokens", function () {
+describe("Docker Execution with Workspace tokens", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;
