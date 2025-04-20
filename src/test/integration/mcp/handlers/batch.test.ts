@@ -30,7 +30,7 @@ describe("Batch Command Handlers with Sessions", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let executeBatchCommandsHandler: RequestHandler;
   let openProjectSessionHandler: RequestHandler;
@@ -58,14 +58,14 @@ describe("Batch Command Handlers with Sessions", function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create unique name for container
     containerName = uniqueName("codebox-test-container");
 
     // Create a test file in the project directory
-    createTestFile(path.join(projectDir, "test.txt"), "Hello from batch test!");
+    createTestFile(path.join(workspaceDir, "test.txt"), "Hello from batch test!");
 
     // Create a simple server to register handlers
     const server = {
@@ -103,14 +103,14 @@ describe("Batch Command Handlers with Sessions", function () {
   describe("execute_batch_commands with sessions", function () {
     beforeEach(async function () {
       // Create a test container
-      await createTestContainer(containerName, dockerImage, projectDir);
+      await createTestContainer(containerName, dockerImage, workspaceDir);
 
       // Register the container in the config
       createTestConfig(configDir, {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             containerName: containerName,
           },
         ],
@@ -141,7 +141,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Second command");
 
       // Verify the file was created
-      const outputPath = path.join(projectDir, "output.txt");
+      const outputPath = path.join(workspaceDir, "output.txt");
       expect(fs.existsSync(outputPath)).to.equal(true);
       const content = fs.readFileSync(outputPath, "utf8");
       expect(content).to.include("First command");
@@ -178,7 +178,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).not.to.include("Third command");
 
       // Verify file contents
-      const outputPath = path.join(projectDir, "output2.txt");
+      const outputPath = path.join(workspaceDir, "output2.txt");
       expect(fs.existsSync(outputPath)).to.equal(true);
       const content = fs.readFileSync(outputPath, "utf8");
       expect(content).to.include("First command");
@@ -215,7 +215,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Third command");
 
       // Verify file contents - should include both first and third command
-      const outputPath = path.join(projectDir, "output3.txt");
+      const outputPath = path.join(workspaceDir, "output3.txt");
       expect(fs.existsSync(outputPath)).to.equal(true);
       const content = fs.readFileSync(outputPath, "utf8");
       expect(content).to.include("First command");
@@ -249,7 +249,7 @@ describe("Batch Command Handlers with Sessions", function () {
         projects: [
           {
             name: "copy-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: dockerImage,
             copy: true,
           },
@@ -257,7 +257,7 @@ describe("Batch Command Handlers with Sessions", function () {
       });
 
       // Create a file we'll try to modify
-      const outputFile = path.join(projectDir, "copy-output.txt");
+      const outputFile = path.join(workspaceDir, "copy-output.txt");
       fs.writeFileSync(outputFile, "Original content");
     });
 
@@ -286,7 +286,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
       // But the original file should remain unchanged
       const originalContent = fs.readFileSync(
-        path.join(projectDir, "copy-output.txt"),
+        path.join(workspaceDir, "copy-output.txt"),
         "utf8"
       );
       expect(originalContent).to.equal("Original content");
@@ -329,7 +329,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Second batch");
 
       // The file should not exist in the original project directory
-      expect(fs.existsSync(path.join(projectDir, "multi-batch.txt"))).to.equal(
+      expect(fs.existsSync(path.join(workspaceDir, "multi-batch.txt"))).to.equal(
         false
       );
 

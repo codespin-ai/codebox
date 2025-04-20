@@ -30,7 +30,7 @@ describe("Execute Handlers with Sessions", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let executeCommandHandler: RequestHandler;
   let openProjectSessionHandler: RequestHandler;
@@ -58,7 +58,7 @@ describe("Execute Handlers with Sessions", function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create unique name for container
@@ -66,7 +66,7 @@ describe("Execute Handlers with Sessions", function () {
 
     // Create a test file in the project directory
     createTestFile(
-      path.join(projectDir, "test.txt"),
+      path.join(workspaceDir, "test.txt"),
       "Hello from execute test!"
     );
 
@@ -106,14 +106,14 @@ describe("Execute Handlers with Sessions", function () {
   describe("execute_command with Container Mode", function () {
     beforeEach(async function () {
       // Create a test container
-      await createTestContainer(containerName, dockerImage, projectDir);
+      await createTestContainer(containerName, dockerImage, workspaceDir);
 
       // Register the container in the config
       createTestConfig(configDir, {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             containerName: containerName,
           },
         ],
@@ -190,7 +190,7 @@ describe("Execute Handlers with Sessions", function () {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage,
           },
         ],
@@ -229,7 +229,7 @@ describe("Execute Handlers with Sessions", function () {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage,
             copy: true,
           },
@@ -237,7 +237,7 @@ describe("Execute Handlers with Sessions", function () {
       });
 
       // Create a file we'll try to modify
-      const filePath = path.join(projectDir, "for-copy-test.txt");
+      const filePath = path.join(workspaceDir, "for-copy-test.txt");
       fs.writeFileSync(filePath, "This file should not change");
     });
 
@@ -261,7 +261,7 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Modified content");
 
       // But the original file should remain unchanged
-      const filePath = path.join(projectDir, "for-copy-test.txt");
+      const filePath = path.join(workspaceDir, "for-copy-test.txt");
       expect(fs.readFileSync(filePath, "utf8")).to.equal(
         "This file should not change"
       );
@@ -297,7 +297,7 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("First command");
 
       // The file should not exist in the original project directory
-      expect(fs.existsSync(path.join(projectDir, "session-test.txt"))).to.equal(
+      expect(fs.existsSync(path.join(workspaceDir, "session-test.txt"))).to.equal(
         false
       );
 

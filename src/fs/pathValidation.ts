@@ -21,11 +21,11 @@ export function validateDirectory(dirPath: string): void {
  * Validate that a file path is within a project directory
  */
 export function validateFilePath(
-  projectDir: string,
+  workspaceDir: string,
   filePath: string
 ): boolean {
   // Get absolute path of project directory
-  const resolvedProjectDir = path.resolve(projectDir);
+  const resolvedWorkspaceDir = path.resolve(workspaceDir);
 
   try {
     // Immediately reject absolute paths
@@ -35,12 +35,12 @@ export function validateFilePath(
 
     // Resolve the normalized absolute path of the combined path
     // This properly handles ../ paths
-    const fullPath = path.resolve(resolvedProjectDir, filePath);
+    const fullPath = path.resolve(resolvedWorkspaceDir, filePath);
 
     // Check if the normalized path starts with the project directory
     return (
-      fullPath === resolvedProjectDir ||
-      fullPath.startsWith(resolvedProjectDir + path.sep)
+      fullPath === resolvedWorkspaceDir ||
+      fullPath.startsWith(resolvedWorkspaceDir + path.sep)
     );
   } catch {
     // Any path resolution errors are treated as security issues

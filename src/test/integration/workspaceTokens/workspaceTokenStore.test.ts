@@ -14,18 +14,18 @@ import { createTestFile } from "../testUtils.js";
 
 describe("Session Store", function () {
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
 
   beforeEach(function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create a test file in the project directory
-    createTestFile(path.join(projectDir, "test.txt"), "Original content");
+    createTestFile(path.join(workspaceDir, "test.txt"), "Original content");
   });
 
   afterEach(function () {
@@ -39,7 +39,7 @@ describe("Session Store", function () {
         projects: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "dummy-image",
             copy: false,
           },
@@ -61,7 +61,7 @@ describe("Session Store", function () {
       );
 
       // Verify working directory is the original project directory
-      expect(getWorkingDirForSession(workspaceToken as string)).to.equal(projectDir);
+      expect(getWorkingDirForSession(workspaceToken as string)).to.equal(workspaceDir);
     });
 
     it("should open a session with copying files when copy=true", function () {
@@ -70,7 +70,7 @@ describe("Session Store", function () {
         projects: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "dummy-image",
             copy: true,
           },
@@ -93,7 +93,7 @@ describe("Session Store", function () {
 
       // Verify working directory is not the original project directory
       const workingDir = getWorkingDirForSession(workspaceToken as string);
-      expect(workingDir).to.not.equal(projectDir);
+      expect(workingDir).to.not.equal(workspaceDir);
 
       // Verify the test file was copied to the temp directory
       expect(
@@ -110,7 +110,7 @@ describe("Session Store", function () {
         projects: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "dummy-image",
           },
         ],
@@ -129,7 +129,7 @@ describe("Session Store", function () {
         projects: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "dummy-image",
           },
         ],
@@ -158,7 +158,7 @@ describe("Session Store", function () {
         projects: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "dummy-image",
             copy: true,
           },
@@ -187,7 +187,7 @@ describe("Session Store", function () {
         projects: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "dummy-image",
             copy: true,
           },
@@ -226,7 +226,7 @@ describe("Session Store", function () {
 
       // Verify original file is unchanged
       expect(
-        fs.readFileSync(path.join(projectDir, "test.txt"), "utf8")
+        fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")
       ).to.equal("Original content");
 
       // Clean up

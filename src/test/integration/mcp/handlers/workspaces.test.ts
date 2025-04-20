@@ -19,7 +19,7 @@ type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 describe("Workspace Handlers", function () {
   let _testDir: string;
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let listProjectsHandler: RequestHandler;
 
@@ -28,7 +28,7 @@ describe("Workspace Handlers", function () {
     const env = setupTestEnvironment();
     _testDir = env.testDir;
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create a simple server to register handlers
@@ -69,12 +69,12 @@ describe("Workspace Handlers", function () {
         projects: [
           {
             name: "project1",
-            hostPath: `${projectDir}/project1`,
+            hostPath: `${workspaceDir}/project1`,
             dockerImage: "image1",
           },
           {
             name: "project2",
-            hostPath: `${projectDir}/project2`,
+            hostPath: `${workspaceDir}/project2`,
             containerName: "container2",
           },
         ],

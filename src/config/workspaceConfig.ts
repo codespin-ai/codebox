@@ -95,9 +95,9 @@ export function validateWorkspaceName(workspaceName: string): boolean {
  * Find a workspace that contains the given directory
  */
 export function getWorkspaceForDirectory(
-  projectDir: string
+  workspaceDir: string
 ): WorkspaceConfig | null {
-  const resolvedPath = path.resolve(projectDir);
+  const resolvedPath = path.resolve(workspaceDir);
   const workspaces = getWorkspaces();
 
   // Find the workspace configuration
@@ -117,8 +117,8 @@ export function getWorkspaceForDirectory(
 /**
  * Check if the directory is a registered workspace
  */
-export function validateProject(projectDir: string): boolean {
-  const resolvedPath = path.resolve(projectDir);
+export function validateProject(workspaceDir: string): boolean {
+  const resolvedPath = path.resolve(workspaceDir);
 
   // Ensure path exists and is a directory
   if (

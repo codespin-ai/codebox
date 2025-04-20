@@ -22,7 +22,7 @@ type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
 describe("Session-Based Tools", function () {
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let openProjectSessionHandler: RequestHandler;
   let closeProjectSessionHandler: RequestHandler;
@@ -31,24 +31,24 @@ describe("Session-Based Tools", function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create a test file in the project directory
-    createTestFile(path.join(projectDir, "test.txt"), "Test content");
+    createTestFile(path.join(workspaceDir, "test.txt"), "Test content");
 
     // Register a project
     createTestConfig(configDir, {
       projects: [
         {
           name: "test-workspace",
-          hostPath: projectDir,
+          hostPath: workspaceDir,
           dockerImage: "dummy-image",
           copy: false,
         },
         {
           name: "copy-workspace",
-          hostPath: projectDir,
+          hostPath: workspaceDir,
           dockerImage: "dummy-image",
           copy: true,
         },
@@ -147,7 +147,7 @@ describe("Session-Based Tools", function () {
       const workingDir = getWorkingDirForSession(workspaceToken);
 
       // Verify the working directory exists and is not the original project directory
-      expect(workingDir).to.not.equal(projectDir);
+      expect(workingDir).to.not.equal(workspaceDir);
       expect(fs.existsSync(workingDir as string)).to.equal(true);
 
       // Verify the test file was copied to the working directory

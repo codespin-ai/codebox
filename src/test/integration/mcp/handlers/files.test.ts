@@ -21,7 +21,7 @@ type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
 describe("File Handlers with Sessions", function () {
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let writeFileHandler: RequestHandler;
   let openProjectSessionHandler: RequestHandler;
@@ -31,7 +31,7 @@ describe("File Handlers with Sessions", function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Register the project in the config
@@ -39,12 +39,12 @@ describe("File Handlers with Sessions", function () {
       projects: [
         {
           name: "test-workspace",
-          hostPath: projectDir,
+          hostPath: workspaceDir,
           dockerImage: "dummy-image",
         },
         {
           name: "copy-workspace",
-          hostPath: projectDir,
+          hostPath: workspaceDir,
           dockerImage: "dummy-image",
           copy: true,
         },
@@ -100,7 +100,7 @@ describe("File Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Successfully wrote file");
 
       // Verify the file was created
-      const filePath = path.join(projectDir, "test.txt");
+      const filePath = path.join(workspaceDir, "test.txt");
       expect(fs.existsSync(filePath)).to.equal(true);
       expect(fs.readFileSync(filePath, "utf8")).to.equal("Hello, world!");
 
@@ -112,7 +112,7 @@ describe("File Handlers with Sessions", function () {
 
     it("should append content to a file using a session", async function () {
       // First create a file to append to
-      const filePath = path.join(projectDir, "append.txt");
+      const filePath = path.join(workspaceDir, "append.txt");
       fs.writeFileSync(filePath, "Initial content\n");
 
       // Open a project session
@@ -165,7 +165,7 @@ describe("File Handlers with Sessions", function () {
       expect(response.isError).to.equal(undefined);
 
       // Verify the file was created
-      const filePath = path.join(projectDir, "nested/dir/test.txt");
+      const filePath = path.join(workspaceDir, "nested/dir/test.txt");
       expect(fs.existsSync(filePath)).to.equal(true);
       expect(fs.readFileSync(filePath, "utf8")).to.equal("Nested content");
 
@@ -239,7 +239,7 @@ describe("File Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Successfully wrote file");
 
       // Verify the file was NOT created in the original project directory
-      const filePath = path.join(projectDir, "copied-file.txt");
+      const filePath = path.join(workspaceDir, "copied-file.txt");
       expect(fs.existsSync(filePath)).to.equal(false);
 
       // Clean up the session
@@ -281,10 +281,10 @@ describe("File Handlers with Sessions", function () {
       });
 
       // Neither file should exist in the original project directory
-      expect(fs.existsSync(path.join(projectDir, "multi-file1.txt"))).to.equal(
+      expect(fs.existsSync(path.join(workspaceDir, "multi-file1.txt"))).to.equal(
         false
       );
-      expect(fs.existsSync(path.join(projectDir, "multi-file2.txt"))).to.equal(
+      expect(fs.existsSync(path.join(workspaceDir, "multi-file2.txt"))).to.equal(
         false
       );
 

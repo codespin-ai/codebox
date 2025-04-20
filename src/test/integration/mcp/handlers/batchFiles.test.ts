@@ -21,7 +21,7 @@ type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
 describe("Batch File Handlers with Sessions", function () {
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let writeBatchFilesHandler: RequestHandler;
   let openProjectSessionHandler: RequestHandler;
@@ -31,7 +31,7 @@ describe("Batch File Handlers with Sessions", function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Register the project in the config
@@ -39,12 +39,12 @@ describe("Batch File Handlers with Sessions", function () {
       projects: [
         {
           name: "test-workspace",
-          hostPath: projectDir,
+          hostPath: workspaceDir,
           dockerImage: "dummy-image",
         },
         {
           name: "copy-workspace",
-          hostPath: projectDir,
+          hostPath: workspaceDir,
           dockerImage: "dummy-image",
           copy: true,
         },
@@ -109,8 +109,8 @@ describe("Batch File Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Success");
 
       // Verify files were created
-      const file1Path = path.join(projectDir, "file1.txt");
-      const file2Path = path.join(projectDir, "nested/file2.txt");
+      const file1Path = path.join(workspaceDir, "file1.txt");
+      const file2Path = path.join(workspaceDir, "nested/file2.txt");
 
       expect(fs.existsSync(file1Path)).to.equal(true);
       expect(fs.existsSync(file2Path)).to.equal(true);
@@ -126,7 +126,7 @@ describe("Batch File Handlers with Sessions", function () {
 
     it("should stop on first error if stopOnError is true", async function () {
       // First create a file we can append to
-      const validFilePath = path.join(projectDir, "valid.txt");
+      const validFilePath = path.join(workspaceDir, "valid.txt");
       fs.writeFileSync(validFilePath, "Initial content\n");
 
       // Open a project session
@@ -171,7 +171,7 @@ describe("Batch File Handlers with Sessions", function () {
 
     it("should continue after errors if stopOnError is false", async function () {
       // First create a file we can append to
-      const validFilePath = path.join(projectDir, "valid2.txt");
+      const validFilePath = path.join(workspaceDir, "valid2.txt");
       fs.writeFileSync(validFilePath, "Initial content\n");
 
       // Open a project session
@@ -265,8 +265,8 @@ describe("Batch File Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Success");
 
       // Verify files were NOT created in the original project directory
-      const file1Path = path.join(projectDir, "batch-copy1.txt");
-      const file2Path = path.join(projectDir, "batch-copy2.txt");
+      const file1Path = path.join(workspaceDir, "batch-copy1.txt");
+      const file2Path = path.join(workspaceDir, "batch-copy2.txt");
 
       expect(fs.existsSync(file1Path)).to.equal(false);
       expect(fs.existsSync(file2Path)).to.equal(false);

@@ -27,7 +27,7 @@ describe("Docker Execution with Sessions", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let dockerAvailable = false;
   let containerName: string;
@@ -53,7 +53,7 @@ describe("Docker Execution with Sessions", function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create unique names for container and network
@@ -62,7 +62,7 @@ describe("Docker Execution with Sessions", function () {
 
     // Create a test file in the project directory
     createTestFile(
-      path.join(projectDir, "test.txt"),
+      path.join(workspaceDir, "test.txt"),
       "Hello from Docker test!"
     );
 
@@ -88,7 +88,7 @@ describe("Docker Execution with Sessions", function () {
       expect(initialCheck).to.equal(false);
 
       // Start a container
-      await createTestContainer(containerName, dockerImage, projectDir);
+      await createTestContainer(containerName, dockerImage, workspaceDir);
 
       // Now the container should be detected as running
       const runningCheck = await checkContainerRunning(containerName);
@@ -109,14 +109,14 @@ describe("Docker Execution with Sessions", function () {
   describe("Command Execution (Container Mode)", function () {
     beforeEach(async function () {
       // Create a test container
-      await createTestContainer(containerName, dockerImage, projectDir);
+      await createTestContainer(containerName, dockerImage, workspaceDir);
 
       // Register the container in the config
       createTestConfig(configDir, {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             containerName: containerName,
           },
         ],
@@ -130,7 +130,7 @@ describe("Docker Execution with Sessions", function () {
 
       // Get the working directory from the session
       const workingDir = getWorkingDirForSession(workspaceToken as string);
-      expect(workingDir).to.equal(projectDir);
+      expect(workingDir).to.equal(workspaceDir);
 
       // Execute command using project name and session working directory
       const { stdout } = await executeDockerCommand(
@@ -176,7 +176,7 @@ describe("Docker Execution with Sessions", function () {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: dockerImage,
           },
         ],
@@ -190,7 +190,7 @@ describe("Docker Execution with Sessions", function () {
 
       // Get the working directory from the session
       const workingDir = getWorkingDirForSession(workspaceToken as string);
-      expect(workingDir).to.equal(projectDir);
+      expect(workingDir).to.equal(workspaceDir);
 
       // Execute command using project name and session working directory
       const { stdout } = await executeDockerCommand(
@@ -211,7 +211,7 @@ describe("Docker Execution with Sessions", function () {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: dockerImage,
             containerPath: "/custom-path",
           },
@@ -242,7 +242,7 @@ describe("Docker Execution with Sessions", function () {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: dockerImage,
             network: networkName,
           },
@@ -285,7 +285,7 @@ describe("Docker Execution with Sessions", function () {
         projects: [
           {
             name: projectName,
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: dockerImage,
             copy: true,
           },
@@ -300,7 +300,7 @@ describe("Docker Execution with Sessions", function () {
 
       // Get the working directory from the session - should be a temp directory
       const workingDir = getWorkingDirForSession(workspaceToken as string);
-      expect(workingDir).to.not.equal(projectDir); // Should be a different directory
+      expect(workingDir).to.not.equal(workspaceDir); // Should be a different directory
 
       // Verify the temp directory contains the test file
       expect(
@@ -321,7 +321,7 @@ describe("Docker Execution with Sessions", function () {
 
       // Verify the original file was not modified
       expect(
-        fs.readFileSync(path.join(projectDir, "test.txt"), "utf8")
+        fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")
       ).to.equal("Hello from Docker test!");
 
       // Create a new file in the temp directory
@@ -337,7 +337,7 @@ describe("Docker Execution with Sessions", function () {
       ).to.equal(true);
 
       // Verify the new file doesn't exist in the original directory
-      expect(fs.existsSync(path.join(projectDir, "new-file.txt"))).to.equal(
+      expect(fs.existsSync(path.join(workspaceDir, "new-file.txt"))).to.equal(
         false
       );
 
@@ -383,7 +383,7 @@ describe("Docker Execution with Sessions", function () {
 
       // Original file should be unchanged
       expect(
-        fs.readFileSync(path.join(projectDir, "test.txt"), "utf8")
+        fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")
       ).to.equal("Hello from Docker test!");
 
       // Clean up

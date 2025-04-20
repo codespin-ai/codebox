@@ -15,14 +15,14 @@ import { setupTestEnvironment } from "../setup.js";
 
 describe("Workspace Configuration", function () {
   let testDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
 
   beforeEach(function () {
     // Setup test environment
     const env = setupTestEnvironment();
     testDir = env.testDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
   });
 
@@ -42,7 +42,7 @@ describe("Workspace Configuration", function () {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "node:18",
           },
         ],
@@ -68,7 +68,7 @@ describe("Workspace Configuration", function () {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "node:18",
           },
         ],
@@ -91,7 +91,7 @@ describe("Workspace Configuration", function () {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "node:18",
           },
         ],
@@ -109,7 +109,7 @@ describe("Workspace Configuration", function () {
         workspaces: [
           {
             name: "test-workspace",
-            hostPath: projectDir,
+            hostPath: workspaceDir,
             dockerImage: "node:18",
           },
         ],
@@ -117,11 +117,11 @@ describe("Workspace Configuration", function () {
       saveConfig(testConfig);
 
       // Create a file in the project directory
-      const nestedPath = path.join(projectDir, "nested");
+      const nestedPath = path.join(workspaceDir, "nested");
       fs.mkdirSync(nestedPath, { recursive: true });
 
       // Test validateProject with various paths
-      expect(validateProject(projectDir)).to.equal(true);
+      expect(validateProject(workspaceDir)).to.equal(true);
       expect(validateProject(nestedPath)).to.equal(true);
       expect(validateProject(testDir)).to.equal(false);
     });
