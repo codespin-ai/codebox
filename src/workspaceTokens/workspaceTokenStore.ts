@@ -8,9 +8,9 @@ import {
   removeDirectory,
 } from "../fs/dirUtils.js";
 
-// Session information including working directory
+// Workspace token information including working directory
 interface WorkspaceTokenInfo {
-  projectName: string;
+  workspaceName: string;
   workingDir: string; // Either original hostPath or temp directory
   isTempDir: boolean; // Flag to determine if cleanup is needed when closing
 }
@@ -19,32 +19,32 @@ interface WorkspaceTokenInfo {
 const activeWorkspaceTokens: Record<string, WorkspaceTokenInfo> = {};
 
 /**
- * Open a project and return a workspace token
- * @param projectName The name of the project to open
- * @returns Session ID or null if project doesn't exist
+ * Open a workspace and return a workspace token
+ * @param workspaceName The name of the workspace to open
+ * @returns Workspace token ID or null if workspace doesn't exist
  */
-export function openWorkspace(projectName: string): string | null {
-  const project = getWorkspaceByName(projectName);
-  if (!project) {
+export function openWorkspace(workspaceName: string): string | null {
+  const workspace = getWorkspaceByName(workspaceName);
+  if (!workspace) {
     return null;
   }
 
   // Generate a new workspace token
   const workspaceToken = uuidv4();
 
-  let workingDir = project.hostPath;
+  let workingDir = workspace.hostPath;
   let isTempDir = false;
 
   // If copy is enabled, create a temporary directory and copy files
-  if (project.copy) {
+  if (workspace.copy) {
     try {
-      const tempDir = createTempDirectory(`codebox-${projectName}-session-`);
-      copyDirectory(project.hostPath, tempDir);
+      const tempDir = createTempDirectory(`codebox-${workspaceName}-session-`);
+      copyDirectory(workspace.hostPath, tempDir);
       workingDir = tempDir;
       isTempDir = true;
     } catch (error) {
       console.error(
-        `Failed to create temporary directory for project ${projectName}:`,
+        `Failed to create temporary directory for project ${workspaceName}:`,
         error
       );
       return null;
@@ -53,7 +53,7 @@ export function openWorkspace(projectName: string): string | null {
 
   // Store the session information
   activeWorkspaceTokens[workspaceToken] = {
-    projectName,
+    workspaceName: workspaceName,
     workingDir,
     isTempDir,
   };
@@ -67,7 +67,7 @@ export function openWorkspace(projectName: string): string | null {
  * @returns Project name or null if session doesn't exist
  */
 export function getWorkspaceNameForWorkspaceToken(workspaceToken: string): string | null {
-  return activeWorkspaceTokens[workspaceToken]?.projectName || null;
+  return activeWorkspaceTokens[workspaceToken]?.workspaceName || null;
 }
 
 /**
@@ -91,7 +91,7 @@ export function workspaceTokenExists(workspaceToken: string): boolean {
 /**
  * Get full session information
  * @param workspaceToken The workspace token
- * @returns Session information or null if not found
+ * @returns Workspace token information or null if not found
  */
 export function getWorkspaceTokenInfo(workspaceToken: string): WorkspaceTokenInfo | null {
   return activeWorkspaceTokens[workspaceToken] || null;

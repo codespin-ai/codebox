@@ -12,7 +12,7 @@ import {
 import { createTestConfig, setupTestEnvironment } from "../setup.js";
 import { createTestFile } from "../testUtils.js";
 
-describe("Session Store", function () {
+describe("Workspace Token Store", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;
@@ -24,7 +24,7 @@ describe("Session Store", function () {
     workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
-    // Create a test file in the project directory
+    // Create a test file in the workspace directory
     createTestFile(path.join(workspaceDir, "test.txt"), "Original content");
   });
 
@@ -36,7 +36,7 @@ describe("Session Store", function () {
     it("should open a session without copying files when copy=false", function () {
       // Register a project without copy mode
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: "test-workspace",
             hostPath: workspaceDir,
@@ -180,7 +180,7 @@ describe("Session Store", function () {
     });
   });
 
-  describe("Session Isolation", function () {
+  describe("Workspace Token Isolation", function () {
     it("should maintain isolated file changes between sessions with copy=true", function () {
       // Register a project with copy mode
       createTestConfig(configDir, {

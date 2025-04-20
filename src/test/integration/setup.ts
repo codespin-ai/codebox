@@ -20,12 +20,12 @@ export function createTestEnvironment(): string {
 }
 
 /**
- * Creates a test session for a project
- * @param projectName The name of the project
- * @returns Session ID or null
+ * Creates a test session for a workspace
+ * @param workspaceName The name of the workspace
+ * @returns Workspace token ID or null
  */
-export function createTestWorkspaceToken(projectName: string): string | null {
-  return openWorkspace(projectName);
+export function createTestWorkspaceToken(workspaceName: string): string | null {
+  return openWorkspace(workspaceName);
 }
 
 /**
@@ -50,7 +50,7 @@ export function setupTestEnvironment() {
   const configDir = path.join(testDir, ".codespin");
   fs.mkdirSync(configDir, { recursive: true });
 
-  // Create a project directory for testing
+  // Create a workspace directory for testing
   const workspaceDir = path.join(testDir, "test-workspace");
   fs.mkdirSync(workspaceDir, { recursive: true });
 

@@ -120,7 +120,7 @@ describe("Session-Based Tools", function () {
 
       // Verify the response
       expect(closeResponse.isError).to.equal(undefined);
-      expect(closeResponse.content[0].text).to.include("Session closed");
+      expect(closeResponse.content[0].text).to.include("Workspace closed");
     });
 
     it("should return an error for invalid workspace tokens", async function () {
