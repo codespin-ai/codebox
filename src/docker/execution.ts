@@ -20,41 +20,41 @@ export const uid = process.getuid?.();
 export const gid = process.getgid?.();
 
 /**
- * Execute a command in a Docker container based on project configuration
- * @param projectName Name of the project
+ * Execute a command in a Docker container based on workspace configuration
+ * @param workspaceName Name of the workspace
  * @param command Command to execute
  * @param hostDir Working directory to mount (session working dir)
  */
 export async function executeDockerCommand(
-  projectName: string,
+  workspaceName: string,
   command: string,
   hostDir: string
 ): Promise<ExecuteResult> {
-  const project = getWorkspaceByName(projectName);
-  if (!project) {
-    throw new Error(`Project not registered: ${projectName}`);
+  const workspace = getWorkspaceByName(workspaceName);
+  if (!workspace) {
+    throw new Error(`Workspace not registered: ${workspaceName}`);
   }
 
   try {
-    if (project.containerName) {
+    if (workspace.containerName) {
       // Execute in existing container
       return await executeInExistingContainer(
-        project.containerName,
+        workspace.containerName,
         command,
-        project.containerPath
+        workspace.containerPath
       );
-    } else if (project.dockerImage) {
+    } else if (workspace.dockerImage) {
       // Execute in new container from image
       return await executeWithDockerImage(
-        project.dockerImage,
+        workspace.dockerImage,
         hostDir,
         command,
-        project.containerPath,
-        project.network
+        workspace.containerPath,
+        workspace.network
       );
     } else {
       throw new Error(
-        "No Docker image or container configured for this project"
+        "No Docker image or container configured for this workspace"
       );
     }
   } catch (error) {

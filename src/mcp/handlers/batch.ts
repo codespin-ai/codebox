@@ -19,7 +19,7 @@ export function registerBatchHandlers(server: McpServer): void {
       commands: zod
         .array(zod.string())
         .describe("Array of commands to execute in sequence"),
-      projectSessionId: zod
+      workspaceToken: zod
         .string()
         .describe("The session ID from open_project_session"),
       stopOnError: zod
@@ -28,23 +28,23 @@ export function registerBatchHandlers(server: McpServer): void {
         .default(true)
         .describe("Whether to stop execution if a command fails"),
     },
-    async ({ commands, projectSessionId, stopOnError }) => {
+    async ({ commands, workspaceToken, stopOnError }) => {
       // Validate the session
-      if (!sessionExists(projectSessionId)) {
+      if (!sessionExists(workspaceToken)) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${projectSessionId}`,
+              text: `Error: Invalid or expired session ID: ${workspaceToken}`,
             },
           ],
         };
       }
 
       // Get the project name and working directory from the session
-      const projectName = getProjectNameForSession(projectSessionId);
-      const workingDir = getWorkingDirForSession(projectSessionId);
+      const projectName = getProjectNameForSession(workspaceToken);
+      const workingDir = getWorkingDirForSession(workspaceToken);
 
       if (!projectName || !workingDir) {
         return {
@@ -52,7 +52,7 @@ export function registerBatchHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${projectSessionId}`,
+              text: `Error: Session mapping not found: ${workspaceToken}`,
             },
           ],
         };

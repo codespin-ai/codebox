@@ -30,7 +30,7 @@ export function openProject(projectName: string): string | null {
   }
 
   // Generate a new session ID
-  const sessionId = uuidv4();
+  const workspaceToken = uuidv4();
 
   let workingDir = project.hostPath;
   let isTempDir = false;
@@ -52,49 +52,49 @@ export function openProject(projectName: string): string | null {
   }
 
   // Store the session information
-  activeWorkspaceTokens[sessionId] = {
+  activeWorkspaceTokens[workspaceToken] = {
     projectName,
     workingDir,
     isTempDir,
   };
 
-  return sessionId;
+  return workspaceToken;
 }
 
 /**
  * Get the project name for a session ID
- * @param sessionId The session ID
+ * @param workspaceToken The session ID
  * @returns Project name or null if session doesn't exist
  */
-export function getProjectNameForSession(sessionId: string): string | null {
-  return activeWorkspaceTokens[sessionId]?.projectName || null;
+export function getProjectNameForSession(workspaceToken: string): string | null {
+  return activeWorkspaceTokens[workspaceToken]?.projectName || null;
 }
 
 /**
  * Get the working directory for a session
- * @param sessionId The session ID
+ * @param workspaceToken The session ID
  * @returns Working directory path or null if session doesn't exist
  */
-export function getWorkingDirForSession(sessionId: string): string | null {
-  return activeWorkspaceTokens[sessionId]?.workingDir || null;
+export function getWorkingDirForSession(workspaceToken: string): string | null {
+  return activeWorkspaceTokens[workspaceToken]?.workingDir || null;
 }
 
 /**
  * Check if a session exists
- * @param sessionId The session ID to check
+ * @param workspaceToken The session ID to check
  * @returns True if the session exists
  */
-export function sessionExists(sessionId: string): boolean {
-  return sessionId in activeWorkspaceTokens;
+export function sessionExists(workspaceToken: string): boolean {
+  return workspaceToken in activeWorkspaceTokens;
 }
 
 /**
  * Get full session information
- * @param sessionId The session ID
+ * @param workspaceToken The session ID
  * @returns Session information or null if not found
  */
-export function getSessionInfo(sessionId: string): WorkspaceTokenInfo | null {
-  return activeWorkspaceTokens[sessionId] || null;
+export function getSessionInfo(workspaceToken: string): WorkspaceTokenInfo | null {
+  return activeWorkspaceTokens[workspaceToken] || null;
 }
 
 /**

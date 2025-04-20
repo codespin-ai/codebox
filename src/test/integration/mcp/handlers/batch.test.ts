@@ -123,11 +123,11 @@ describe("Batch Command Handlers with Sessions", function () {
         projectName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute batch commands using the session
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: [
           "echo 'First command' > /workspace/output.txt",
           "echo 'Second command' >> /workspace/output.txt",
@@ -149,7 +149,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -159,11 +159,11 @@ describe("Batch Command Handlers with Sessions", function () {
         projectName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute batch commands with an error in the middle
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: [
           "echo 'First command' > /workspace/output2.txt",
           "cat /nonexistent/file.txt",
@@ -186,7 +186,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -196,11 +196,11 @@ describe("Batch Command Handlers with Sessions", function () {
         projectName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute batch commands with an error in the middle but continue
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: [
           "echo 'First command' > /workspace/output3.txt",
           "cat /nonexistent/file.txt",
@@ -223,14 +223,14 @@ describe("Batch Command Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
     it("should return error for invalid sessions", async function () {
       // Execute batch commands with invalid session ID
       const response = await executeBatchCommandsHandler({
-        projectSessionId: "invalid-session-id",
+        workspaceToken: "invalid-session-id",
         commands: ["echo 'This should fail'"],
       });
 
@@ -267,11 +267,11 @@ describe("Batch Command Handlers with Sessions", function () {
         projectName: "copy-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute batch commands to modify the file
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: [
           "echo 'Modified in batch' > /workspace/copy-output.txt",
           "echo 'Added new line' >> /workspace/copy-output.txt",
@@ -293,7 +293,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -303,23 +303,23 @@ describe("Batch Command Handlers with Sessions", function () {
         projectName: "copy-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // First batch - create a file
       await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: ["echo 'First batch' > /workspace/multi-batch.txt"],
       });
 
       // Second batch - append to the file
       await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: ["echo 'Second batch' >> /workspace/multi-batch.txt"],
       });
 
       // Third batch - read the file
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: ["cat /workspace/multi-batch.txt"],
       });
 
@@ -335,7 +335,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
   });

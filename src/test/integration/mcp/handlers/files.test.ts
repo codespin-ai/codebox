@@ -85,11 +85,11 @@ describe("File Handlers with Sessions", function () {
         projectName: "test-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Write a file using the session
       const response = await writeFileHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         filePath: "test.txt",
         content: "Hello, world!",
         mode: "overwrite",
@@ -106,7 +106,7 @@ describe("File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -120,11 +120,11 @@ describe("File Handlers with Sessions", function () {
         projectName: "test-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Append to the file using the session
       const response = await writeFileHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         filePath: "append.txt",
         content: "Appended content",
         mode: "append",
@@ -141,7 +141,7 @@ describe("File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -151,11 +151,11 @@ describe("File Handlers with Sessions", function () {
         projectName: "test-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Write a file in a nested directory
       const response = await writeFileHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         filePath: "nested/dir/test.txt",
         content: "Nested content",
         mode: "overwrite",
@@ -171,13 +171,13 @@ describe("File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
     it("should return error for invalid session IDs", async function () {
       const response = await writeFileHandler({
-        projectSessionId: "invalid-session-id",
+        workspaceToken: "invalid-session-id",
         filePath: "test.txt",
         content: "This should fail",
         mode: "overwrite",
@@ -196,11 +196,11 @@ describe("File Handlers with Sessions", function () {
         projectName: "test-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Try to write to an invalid path
       const response = await writeFileHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         filePath: "../outside.txt",
         content: "This should fail",
         mode: "overwrite",
@@ -212,7 +212,7 @@ describe("File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
   });
@@ -224,11 +224,11 @@ describe("File Handlers with Sessions", function () {
         projectName: "copy-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Write a file using the session
       const response = await writeFileHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         filePath: "copied-file.txt",
         content: "This file should only exist in the copy",
         mode: "overwrite",
@@ -244,7 +244,7 @@ describe("File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -254,11 +254,11 @@ describe("File Handlers with Sessions", function () {
         projectName: "copy-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Write first file
       await writeFileHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         filePath: "multi-file1.txt",
         content: "First file content",
         mode: "overwrite",
@@ -266,7 +266,7 @@ describe("File Handlers with Sessions", function () {
 
       // Write second file
       await writeFileHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         filePath: "multi-file2.txt",
         content: "Second file content",
         mode: "overwrite",
@@ -274,7 +274,7 @@ describe("File Handlers with Sessions", function () {
 
       // Modify first file
       await writeFileHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         filePath: "multi-file1.txt",
         content: " - Appended content",
         mode: "append",
@@ -290,7 +290,7 @@ describe("File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
   });

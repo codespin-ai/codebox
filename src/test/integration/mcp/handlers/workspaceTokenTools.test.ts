@@ -111,11 +111,11 @@ describe("Session-Based Tools", function () {
       const openResponse = await openProjectSessionHandler({
         projectName: "test-project",
       });
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Then close it
       const closeResponse = await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
 
       // Verify the response
@@ -125,7 +125,7 @@ describe("Session-Based Tools", function () {
 
     it("should return an error for invalid session IDs", async function () {
       const response = await closeProjectSessionHandler({
-        projectSessionId: "non-existent-session",
+        workspaceToken: "non-existent-session",
       });
 
       // Verify the error response
@@ -141,10 +141,10 @@ describe("Session-Based Tools", function () {
         projectName: "copy-project",
       });
 
-      const sessionId = response.content[0].text;
+      const workspaceToken = response.content[0].text;
 
       // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(sessionId);
+      const workingDir = getWorkingDirForSession(workspaceToken);
 
       // Verify the working directory exists and is not the original project directory
       expect(workingDir).to.not.equal(projectDir);
@@ -160,7 +160,7 @@ describe("Session-Based Tools", function () {
 
       // Close the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
 
       // Verify the working directory was cleaned up

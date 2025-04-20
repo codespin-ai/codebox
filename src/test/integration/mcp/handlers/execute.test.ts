@@ -126,11 +126,11 @@ describe("Execute Handlers with Sessions", function () {
         projectName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Now execute command using the session
       const response = await executeCommandHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         command: "cat /workspace/test.txt",
       });
 
@@ -140,7 +140,7 @@ describe("Execute Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -150,11 +150,11 @@ describe("Execute Handlers with Sessions", function () {
         projectName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute a command that will fail
       const response = await executeCommandHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         command: "cat /nonexistent/file.txt",
       });
 
@@ -164,14 +164,14 @@ describe("Execute Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
     it("should return error for invalid sessions", async function () {
       // Execute command with invalid session ID
       const response = await executeCommandHandler({
-        projectSessionId: "invalid-session-id",
+        workspaceToken: "invalid-session-id",
         command: "echo 'This should fail'",
       });
 
@@ -203,11 +203,11 @@ describe("Execute Handlers with Sessions", function () {
         projectName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Now execute command using the session
       const response = await executeCommandHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         command: "cat /workspace/test.txt",
       });
 
@@ -217,7 +217,7 @@ describe("Execute Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
   });
@@ -247,11 +247,11 @@ describe("Execute Handlers with Sessions", function () {
         projectName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute a command that modifies a file
       const response = await executeCommandHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         command:
           "echo 'Modified content' > /workspace/for-copy-test.txt && cat /workspace/for-copy-test.txt",
       });
@@ -268,7 +268,7 @@ describe("Execute Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -278,17 +278,17 @@ describe("Execute Handlers with Sessions", function () {
         projectName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute a command that creates a file
       await executeCommandHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         command: "echo 'First command' > /workspace/session-test.txt",
       });
 
       // Execute a second command that reads the file created by the first command
       const response = await executeCommandHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         command: "cat /workspace/session-test.txt",
       });
 
@@ -303,7 +303,7 @@ describe("Execute Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
   });

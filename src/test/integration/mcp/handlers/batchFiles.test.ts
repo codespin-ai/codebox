@@ -85,11 +85,11 @@ describe("Batch File Handlers with Sessions", function () {
         projectName: "test-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Write multiple files using the session
       const response = await writeBatchFilesHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         files: [
           {
             filePath: "file1.txt",
@@ -120,7 +120,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -134,11 +134,11 @@ describe("Batch File Handlers with Sessions", function () {
         projectName: "test-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Try to write files with one invalid path
       const response = await writeBatchFilesHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         files: [
           {
             filePath: "../outside.txt", // Invalid path
@@ -165,7 +165,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
@@ -179,11 +179,11 @@ describe("Batch File Handlers with Sessions", function () {
         projectName: "test-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Try to write files with one invalid path but continue
       const response = await writeBatchFilesHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         files: [
           {
             filePath: "../outside.txt", // Invalid path
@@ -210,13 +210,13 @@ describe("Batch File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
 
     it("should return error for invalid sessions", async function () {
       const response = await writeBatchFilesHandler({
-        projectSessionId: "invalid-session-id",
+        workspaceToken: "invalid-session-id",
         files: [
           {
             filePath: "file.txt",
@@ -241,11 +241,11 @@ describe("Batch File Handlers with Sessions", function () {
         projectName: "copy-project",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Write multiple files using the session
       const response = await writeBatchFilesHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         files: [
           {
             filePath: "batch-copy1.txt",
@@ -273,7 +273,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       // Clean up the session
       await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
       });
     });
   });

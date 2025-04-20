@@ -38,7 +38,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
     "write_batch_files",
     "Write content to multiple files in a project directory using a session",
     {
-      projectSessionId: zod
+      workspaceToken: zod
         .string()
         .describe("The session ID from open_project_session"),
       files: zod
@@ -61,29 +61,29 @@ export function registerBatchFileHandlers(server: McpServer): void {
         .default(true)
         .describe("Whether to stop execution if a file write fails"),
     },
-    async ({ projectSessionId, files, stopOnError }) => {
+    async ({ workspaceToken, files, stopOnError }) => {
       // Validate the session
-      if (!sessionExists(projectSessionId)) {
+      if (!sessionExists(workspaceToken)) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${projectSessionId}`,
+              text: `Error: Invalid or expired session ID: ${workspaceToken}`,
             },
           ],
         };
       }
 
       // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(projectSessionId);
+      const workingDir = getWorkingDirForSession(workspaceToken);
       if (!workingDir) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${projectSessionId}`,
+              text: `Error: Session mapping not found: ${workspaceToken}`,
             },
           ],
         };

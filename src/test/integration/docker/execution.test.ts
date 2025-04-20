@@ -125,11 +125,11 @@ describe("Docker Execution with Sessions", function () {
 
     it("should execute commands in an existing container using session working directory", async function () {
       // Open a session for testing
-      const sessionId = openProject(projectName);
-      expect(sessionId).to.not.equal(null);
+      const workspaceToken = openProject(projectName);
+      expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(sessionId as string);
+      const workingDir = getWorkingDirForSession(workspaceToken as string);
       expect(workingDir).to.equal(projectDir);
 
       // Execute command using project name and session working directory
@@ -142,13 +142,13 @@ describe("Docker Execution with Sessions", function () {
       expect(stdout).to.include("Hello from Docker test!");
 
       // Close the session
-      closeSession(sessionId as string);
+      closeSession(workspaceToken as string);
     });
 
     it("should handle command errors", async function () {
       // Open a session for testing
-      const sessionId = openProject(projectName);
-      const workingDir = getWorkingDirForSession(sessionId as string);
+      const workspaceToken = openProject(projectName);
+      const workingDir = getWorkingDirForSession(workspaceToken as string);
 
       try {
         await executeDockerCommand(
@@ -164,7 +164,7 @@ describe("Docker Execution with Sessions", function () {
         );
       } finally {
         // Close the session
-        closeSession(sessionId as string);
+        closeSession(workspaceToken as string);
       }
     });
   });
@@ -185,11 +185,11 @@ describe("Docker Execution with Sessions", function () {
 
     it("should execute commands with a Docker image using session working directory", async function () {
       // Open a session for testing
-      const sessionId = openProject(projectName);
-      expect(sessionId).to.not.equal(null);
+      const workspaceToken = openProject(projectName);
+      expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(sessionId as string);
+      const workingDir = getWorkingDirForSession(workspaceToken as string);
       expect(workingDir).to.equal(projectDir);
 
       // Execute command using project name and session working directory
@@ -202,7 +202,7 @@ describe("Docker Execution with Sessions", function () {
       expect(stdout).to.include("Hello from Docker test!");
 
       // Close the session
-      closeSession(sessionId as string);
+      closeSession(workspaceToken as string);
     });
 
     it("should respect custom container path", async function () {
@@ -219,8 +219,8 @@ describe("Docker Execution with Sessions", function () {
       });
 
       // Open a session for testing
-      const sessionId = openProject(projectName);
-      const workingDir = getWorkingDirForSession(sessionId as string);
+      const workspaceToken = openProject(projectName);
+      const workingDir = getWorkingDirForSession(workspaceToken as string);
 
       const { stdout } = await executeDockerCommand(
         projectName,
@@ -231,7 +231,7 @@ describe("Docker Execution with Sessions", function () {
       expect(stdout).to.include("Hello from Docker test!");
 
       // Close the session
-      closeSession(sessionId as string);
+      closeSession(workspaceToken as string);
     });
   });
 
@@ -252,8 +252,8 @@ describe("Docker Execution with Sessions", function () {
 
     it("should use the specified network", async function () {
       // Open a session for testing
-      const sessionId = openProject(projectName);
-      const workingDir = getWorkingDirForSession(sessionId as string);
+      const workspaceToken = openProject(projectName);
+      const workingDir = getWorkingDirForSession(workspaceToken as string);
 
       try {
         // Just verify the Docker command includes the network parameter
@@ -273,7 +273,7 @@ describe("Docker Execution with Sessions", function () {
         );
       } finally {
         // Close the session
-        closeSession(sessionId as string);
+        closeSession(workspaceToken as string);
       }
     });
   });
@@ -295,11 +295,11 @@ describe("Docker Execution with Sessions", function () {
 
     it("should use a temporary directory when copy mode is enabled", async function () {
       // Open a session for testing with copy mode
-      const sessionId = openProject(projectName);
-      expect(sessionId).to.not.equal(null);
+      const workspaceToken = openProject(projectName);
+      expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the session - should be a temp directory
-      const workingDir = getWorkingDirForSession(sessionId as string);
+      const workingDir = getWorkingDirForSession(workspaceToken as string);
       expect(workingDir).to.not.equal(projectDir); // Should be a different directory
 
       // Verify the temp directory contains the test file
@@ -342,7 +342,7 @@ describe("Docker Execution with Sessions", function () {
       );
 
       // Close the session - should clean up the temp directory
-      closeSession(sessionId as string);
+      closeSession(workspaceToken as string);
 
       // Verify the temp directory has been cleaned up
       expect(fs.existsSync(workingDir as string)).to.equal(false);

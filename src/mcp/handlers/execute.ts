@@ -17,27 +17,27 @@ export function registerExecuteHandlers(server: McpServer): void {
     "Execute a command in a Docker container using a project session",
     {
       command: zod.string().describe("The command to execute in the container"),
-      projectSessionId: zod
+      workspaceToken: zod
         .string()
         .describe("The session ID from open_project_session"),
     },
-    async ({ command, projectSessionId }) => {
+    async ({ command, workspaceToken }) => {
       // Validate the session
-      if (!sessionExists(projectSessionId)) {
+      if (!sessionExists(workspaceToken)) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${projectSessionId}`,
+              text: `Error: Invalid or expired session ID: ${workspaceToken}`,
             },
           ],
         };
       }
 
       // Get the project name and working directory from the session
-      const projectName = getProjectNameForSession(projectSessionId);
-      const workingDir = getWorkingDirForSession(projectSessionId);
+      const projectName = getProjectNameForSession(workspaceToken);
+      const workingDir = getWorkingDirForSession(workspaceToken);
 
       if (!projectName || !workingDir) {
         return {
@@ -45,7 +45,7 @@ export function registerExecuteHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${projectSessionId}`,
+              text: `Error: Session mapping not found: ${workspaceToken}`,
             },
           ],
         };

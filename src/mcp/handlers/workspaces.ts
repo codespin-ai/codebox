@@ -72,8 +72,8 @@ export function registerProjectHandlers(server: McpServer): void {
           };
         }
 
-        const sessionId = openProject(projectName);
-        if (!sessionId) {
+        const workspaceToken = openProject(projectName);
+        if (!workspaceToken) {
           return {
             isError: true,
             content: [
@@ -89,7 +89,7 @@ export function registerProjectHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: sessionId,
+              text: workspaceToken,
             },
           ],
         };
@@ -113,17 +113,17 @@ export function registerProjectHandlers(server: McpServer): void {
     "close_project_session",
     "Close a project session and clean up resources",
     {
-      projectSessionId: zod.string().describe("The session ID to close"),
+      workspaceToken: zod.string().describe("The session ID to close"),
     },
-    async ({ projectSessionId }) => {
-      const closed = closeSession(projectSessionId);
+    async ({ workspaceToken }) => {
+      const closed = closeSession(workspaceToken);
 
       if (closed) {
         return {
           content: [
             {
               type: "text",
-              text: `Session closed: ${projectSessionId}`,
+              text: `Session closed: ${workspaceToken}`,
             },
           ],
         };
@@ -133,7 +133,7 @@ export function registerProjectHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Invalid session ID: ${projectSessionId}`,
+              text: `Error: Invalid session ID: ${workspaceToken}`,
             },
           ],
         };

@@ -47,21 +47,21 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const sessionId = openProject("test-project");
-      expect(sessionId).to.be.a("string");
-      expect(sessionId).to.not.equal(undefined);
-      expect(sessionId).to.not.equal(null);
+      const workspaceToken = openProject("test-project");
+      expect(workspaceToken).to.be.a("string");
+      expect(workspaceToken).to.not.equal(undefined);
+      expect(workspaceToken).to.not.equal(null);
 
       // Verify session is registered
-      expect(sessionExists(sessionId as string)).to.equal(true);
+      expect(sessionExists(workspaceToken as string)).to.equal(true);
 
       // Verify project name is correct
-      expect(getProjectNameForSession(sessionId as string)).to.equal(
+      expect(getProjectNameForSession(workspaceToken as string)).to.equal(
         "test-project"
       );
 
       // Verify working directory is the original project directory
-      expect(getWorkingDirForSession(sessionId as string)).to.equal(projectDir);
+      expect(getWorkingDirForSession(workspaceToken as string)).to.equal(projectDir);
     });
 
     it("should open a session with copying files when copy=true", function () {
@@ -78,21 +78,21 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const sessionId = openProject("test-project");
-      expect(sessionId).to.be.a("string");
-      expect(sessionId).to.not.equal(undefined);
-      expect(sessionId).to.not.equal(null);
+      const workspaceToken = openProject("test-project");
+      expect(workspaceToken).to.be.a("string");
+      expect(workspaceToken).to.not.equal(undefined);
+      expect(workspaceToken).to.not.equal(null);
 
       // Verify session is registered
-      expect(sessionExists(sessionId as string)).to.equal(true);
+      expect(sessionExists(workspaceToken as string)).to.equal(true);
 
       // Verify project name is correct
-      expect(getProjectNameForSession(sessionId as string)).to.equal(
+      expect(getProjectNameForSession(workspaceToken as string)).to.equal(
         "test-project"
       );
 
       // Verify working directory is not the original project directory
-      const workingDir = getWorkingDirForSession(sessionId as string);
+      const workingDir = getWorkingDirForSession(workspaceToken as string);
       expect(workingDir).to.not.equal(projectDir);
 
       // Verify the test file was copied to the temp directory
@@ -117,8 +117,8 @@ describe("Session Store", function () {
       });
 
       // Try to open non-existent project
-      const sessionId = openProject("non-existent-project");
-      expect(sessionId).to.equal(null);
+      const workspaceToken = openProject("non-existent-project");
+      expect(workspaceToken).to.equal(null);
     });
   });
 
@@ -136,15 +136,15 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const sessionId = openProject("test-project");
-      expect(sessionId).to.be.a("string");
+      const workspaceToken = openProject("test-project");
+      expect(workspaceToken).to.be.a("string");
 
       // Close the session
-      const result = closeSession(sessionId as string);
+      const result = closeSession(workspaceToken as string);
       expect(result).to.equal(true);
 
       // Verify session no longer exists
-      expect(sessionExists(sessionId as string)).to.equal(false);
+      expect(sessionExists(workspaceToken as string)).to.equal(false);
     });
 
     it("should return false for non-existent sessions", function () {
@@ -166,14 +166,14 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const sessionId = openProject("test-project");
-      const workingDir = getWorkingDirForSession(sessionId as string);
+      const workspaceToken = openProject("test-project");
+      const workingDir = getWorkingDirForSession(workspaceToken as string);
 
       // Verify temp directory exists
       expect(fs.existsSync(workingDir as string)).to.equal(true);
 
       // Close the session
-      closeSession(sessionId as string);
+      closeSession(workspaceToken as string);
 
       // Verify temp directory was removed
       expect(fs.existsSync(workingDir as string)).to.equal(false);

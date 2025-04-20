@@ -16,7 +16,7 @@ export function registerFileHandlers(server: McpServer): void {
     "write_file",
     "Write content to a file in a project directory using a session",
     {
-      projectSessionId: zod
+      workspaceToken: zod
         .string()
         .describe("The session ID from open_project_session"),
       filePath: zod
@@ -28,29 +28,29 @@ export function registerFileHandlers(server: McpServer): void {
         .default("overwrite")
         .describe("Write mode - whether to overwrite or append"),
     },
-    async ({ projectSessionId, filePath, content, mode }) => {
+    async ({ workspaceToken, filePath, content, mode }) => {
       // Validate the session
-      if (!sessionExists(projectSessionId)) {
+      if (!sessionExists(workspaceToken)) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${projectSessionId}`,
+              text: `Error: Invalid or expired session ID: ${workspaceToken}`,
             },
           ],
         };
       }
 
       // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(projectSessionId);
+      const workingDir = getWorkingDirForSession(workspaceToken);
       if (!workingDir) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${projectSessionId}`,
+              text: `Error: Session mapping not found: ${workspaceToken}`,
             },
           ],
         };
