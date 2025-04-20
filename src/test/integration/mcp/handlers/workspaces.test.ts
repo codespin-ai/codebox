@@ -1,7 +1,7 @@
-// src/test/integration/mcp/handlers/projects.test.ts
+// src/test/integration/mcp/handlers/workspaces.test.ts
 import { expect } from "chai";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/projects.js";
+import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 
 // Response type for MCP tools
@@ -16,19 +16,19 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Project Handlers", function () {
+describe("Workspace Handlers", function () {
   let _testDir: string;
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
-  let listProjectsHandler: RequestHandler;
+  let listWorkspacesHandler: RequestHandler;
 
   beforeEach(function () {
     // Setup test environment
     const env = setupTestEnvironment();
     _testDir = env.testDir;
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create a simple server to register handlers
@@ -39,14 +39,14 @@ describe("Project Handlers", function () {
         schema: object,
         handler: unknown
       ) => {
-        if (name === "list_projects") {
-          listProjectsHandler = handler as RequestHandler;
+        if (name === "list_workspaces") {
+          listWorkspacesHandler = handler as RequestHandler;
         }
       },
     } as unknown as McpServer;
 
     // Register the handlers
-    registerProjectHandlers(server);
+    registerWorkspaceHandlers(server);
   });
 
   afterEach(function () {
@@ -54,38 +54,38 @@ describe("Project Handlers", function () {
     cleanup();
   });
 
-  describe("list_projects", function () {
-    it("should return an empty list when no projects are registered", async function () {
-      const response = await listProjectsHandler({});
+  describe("list_workspaces", function () {
+    it("should return an empty list when no workspaces are registered", async function () {
+      const response = await listWorkspacesHandler({});
 
       // Verify the response
       expect(response.isError).to.equal(undefined);
-      expect(response.content[0].text).to.include("No projects are registered");
+      expect(response.content[0].text).to.include("No workspaces are registered");
     });
 
-    it("should list all registered projects", async function () {
-      // Register some projects in the config
+    it("should list all registered workspaces", async function () {
+      // Register some workspaces in the config
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
-            name: "project1",
-            hostPath: `${projectDir}/project1`,
+            name: "workspace1",
+            hostPath: `${workspaceDir}/workspace1`,
             dockerImage: "image1",
           },
           {
-            name: "project2",
-            hostPath: `${projectDir}/project2`,
+            name: "workspace2",
+            hostPath: `${workspaceDir}/workspace2`,
             containerName: "container2",
           },
         ],
       });
 
-      const response = await listProjectsHandler({});
+      const response = await listWorkspacesHandler({});
 
       // Verify the response
       expect(response.isError).to.equal(undefined);
-      expect(response.content[0].text).to.include("project1");
-      expect(response.content[0].text).to.include("project2");
+      expect(response.content[0].text).to.include("workspace1");
+      expect(response.content[0].text).to.include("workspace2");
     });
   });
 });

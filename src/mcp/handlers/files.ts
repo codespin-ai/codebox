@@ -1,12 +1,12 @@
 // src/mcp/handlers/files.ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
-import { writeProjectFile } from "../../fs/fileIO.js";
+import { writeWorkspaceFile } from "../../fs/fileIO.js";
 import { validateFilePath } from "../../fs/pathValidation.js";
 import {
-  getWorkingDirForSession,
-  sessionExists,
-} from "../../sessions/sessionStore.js";
+  getWorkingDirForWorkspaceToken,
+  workspaceTokenExists,
+} from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
  * Register file operation handlers with the MCP server
@@ -14,43 +14,43 @@ import {
 export function registerFileHandlers(server: McpServer): void {
   server.tool(
     "write_file",
-    "Write content to a file in a project directory using a session",
+    "Write content to a file in a workspace directory using a workspace token",
     {
-      projectSessionId: zod
+      workspaceToken: zod
         .string()
-        .describe("The session ID from open_project_session"),
+        .describe("The workspace token from open_workspace"),
       filePath: zod
         .string()
-        .describe("Relative path to the file from project root"),
+        .describe("Relative path to the file from workspace root"),
       content: zod.string().describe("Content to write to the file"),
       mode: zod
         .enum(["overwrite", "append"])
         .default("overwrite")
         .describe("Write mode - whether to overwrite or append"),
     },
-    async ({ projectSessionId, filePath, content, mode }) => {
-      // Validate the session
-      if (!sessionExists(projectSessionId)) {
+    async ({ workspaceToken, filePath, content, mode }) => {
+      // Validate the workspace token
+      if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${projectSessionId}`,
+              text: `Error: Invalid or expired workspace token: ${workspaceToken}`,
             },
           ],
         };
       }
 
-      // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(projectSessionId);
+      // Get the working directory from the workspace token
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
       if (!workingDir) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${projectSessionId}`,
+              text: `Error: Workspace token mapping not found: ${workspaceToken}`,
             },
           ],
         };
@@ -70,8 +70,8 @@ export function registerFileHandlers(server: McpServer): void {
       }
 
       try {
-        // Write file to the session's working directory
-        writeProjectFile(workingDir, filePath, content, mode);
+        // Write file to the workspace token's working directory
+        writeWorkspaceFile(workingDir, filePath, content, mode);
 
         return {
           content: [

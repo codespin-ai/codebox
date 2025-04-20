@@ -6,7 +6,7 @@ import { setupTestEnvironment } from "../setup.js";
 describe("MCP Server", function () {
   let _testDir: string;
   let _configDir: string;
-  let _projectDir: string;
+  let _workspaceDir: string;
   let cleanup: () => void;
 
   beforeEach(function () {
@@ -14,7 +14,7 @@ describe("MCP Server", function () {
     const env = setupTestEnvironment();
     _testDir = env.testDir;
     _configDir = env.configDir;
-    _projectDir = env.projectDir;
+    _workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
   });
 

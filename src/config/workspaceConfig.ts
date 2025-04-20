@@ -1,8 +1,8 @@
-// src/config/projectConfig.ts
+// src/config/workspaceConfig.ts
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { ProjectConfig, SystemConfig } from "./types.js";
+import { WorkspaceConfig, SystemConfig } from "./types.js";
 
 // Configurable base path for testing
 let configBasePath = os.homedir();
@@ -40,18 +40,18 @@ export function getConfig(): SystemConfig {
   const configFile = getConfigFilePath();
 
   if (!fs.existsSync(configFile)) {
-    return { projects: [] };
+    return { workspaces: [] };
   }
 
   try {
     const data = JSON.parse(fs.readFileSync(configFile, "utf8"));
     return {
-      projects: Array.isArray(data.projects) ? data.projects : [],
+      workspaces: Array.isArray(data.workspaces) ? data.workspaces : [],
       debug: data.debug,
     };
   } catch {
     console.error("Failed to parse config file, creating new one");
-    return { projects: [] };
+    return { workspaces: [] };
   }
 }
 
@@ -64,61 +64,61 @@ export function saveConfig(config: SystemConfig): void {
 }
 
 /**
- * Get all registered projects
+ * Get all registered workspaces
  */
-export function getProjects(): ProjectConfig[] {
+export function getWorkspaces(): WorkspaceConfig[] {
   const config = getConfig();
-  return config.projects;
+  return config.workspaces;
 }
 
 /**
- * Find a project by name
+ * Find a workspace by name
  */
-export function getProjectByName(projectName: string): ProjectConfig | null {
-  const projects = getProjects();
-  return projects.find((p) => p.name === projectName) || null;
+export function getWorkspaceByName(workspaceName: string): WorkspaceConfig | null {
+  const workspaces = getWorkspaces();
+  return workspaces.find((p) => p.name === workspaceName) || null;
 }
 
 /**
- * Validate that a project exists with the given name
+ * Validate that a workspace exists with the given name
  */
-export function validateProjectName(projectName: string): boolean {
-  const project = getProjectByName(projectName);
+export function validateWorkspaceName(workspaceName: string): boolean {
+  const workspace = getWorkspaceByName(workspaceName);
   return (
-    project !== null &&
-    fs.existsSync(project.hostPath) &&
-    fs.statSync(project.hostPath).isDirectory()
+    workspace !== null &&
+    fs.existsSync(workspace.hostPath) &&
+    fs.statSync(workspace.hostPath).isDirectory()
   );
 }
 
 /**
- * Find a project that contains the given directory
+ * Find a workspace that contains the given directory
  */
-export function getProjectForDirectory(
-  projectDir: string
-): ProjectConfig | null {
-  const resolvedPath = path.resolve(projectDir);
-  const projects = getProjects();
+export function getWorkspaceForDirectory(
+  workspaceDir: string
+): WorkspaceConfig | null {
+  const resolvedPath = path.resolve(workspaceDir);
+  const workspaces = getWorkspaces();
 
-  // Find the project configuration
-  const project = projects.find((p) => {
-    const normalizedProjectPath = p.hostPath.replace(/\/+$/, "");
+  // Find the workspace configuration
+  const workspace = workspaces.find((p) => {
+    const normalizedWorkspacePath = p.hostPath.replace(/\/+$/, "");
     const normalizedInputPath = resolvedPath.replace(/\/+$/, "");
 
     return (
-      normalizedInputPath === normalizedProjectPath ||
-      normalizedInputPath.startsWith(normalizedProjectPath + path.sep)
+      normalizedInputPath === normalizedWorkspacePath ||
+      normalizedInputPath.startsWith(normalizedWorkspacePath + path.sep)
     );
   });
 
-  return project || null;
+  return workspace || null;
 }
 
 /**
- * Check if the directory is a registered project
+ * Check if the directory is a registered workspace
  */
-export function validateProject(projectDir: string): boolean {
-  const resolvedPath = path.resolve(projectDir);
+export function validateWorkspace(workspaceDir: string): boolean {
+  const resolvedPath = path.resolve(workspaceDir);
 
   // Ensure path exists and is a directory
   if (
@@ -130,17 +130,17 @@ export function validateProject(projectDir: string): boolean {
 
   // Normalize paths by removing trailing slashes for consistent comparison
   const normalizedInputPath = resolvedPath.replace(/\/+$/, "");
-  const registeredProjects = getProjects();
+  const registeredWorkspaces = getWorkspaces();
 
-  // Check if the normalized input path is a registered project
-  for (const project of registeredProjects) {
-    const normalizedProjectPath = project.hostPath.replace(/\/+$/, "");
+  // Check if the normalized input path is a registered workspace
+  for (const workspace of registeredWorkspaces) {
+    const normalizedWorkspacePath = workspace.hostPath.replace(/\/+$/, "");
 
     // Check if the input path starts with a registered path followed by either
     // end of string or a path separator
     if (
-      normalizedInputPath === normalizedProjectPath ||
-      normalizedInputPath.startsWith(normalizedProjectPath + path.sep)
+      normalizedInputPath === normalizedWorkspacePath ||
+      normalizedInputPath.startsWith(normalizedWorkspacePath + path.sep)
     ) {
       return true;
     }

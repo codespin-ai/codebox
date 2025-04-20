@@ -2,7 +2,7 @@
 
 import yargs from "yargs";
 import { start } from "./commands/start.js";
-import { addProject, listProjects, removeProject } from "./commands/project.js";
+import { addWorkspace, listWorkspaces, removeWorkspace } from "./commands/workspace.js";
 import process from "node:process";
 import fs from "node:fs";
 import path from "node:path";
@@ -32,24 +32,24 @@ export async function main() {
       }
     )
     .command(
-      "project",
-      "Project management commands",
+      "workspace",
+      "Workspace management commands",
       (yargs) => {
         return yargs
           .command(
             "add [dirname]",
-            "Add a project directory to the registry",
+            "Add a workspace directory to the registry",
             (yargs) => {
               return yargs
                 .positional("dirname", {
                   describe:
-                    "Path to the project directory (defaults to current directory)",
+                    "Path to the workspace directory (defaults to current directory)",
                   type: "string",
                   default: ".",
                 })
                 .option("image", {
                   type: "string",
-                  describe: "Docker image to use for this project",
+                  describe: "Docker image to use for this workspace",
                 })
                 .option("container", {
                   type: "string",
@@ -59,12 +59,12 @@ export async function main() {
                 .option("name", {
                   type: "string",
                   describe:
-                    "Custom name for the project (defaults to directory name)",
+                    "Custom name for the workspace (defaults to directory name)",
                 })
                 .option("containerPath", {
                   type: "string",
                   describe:
-                    "Path inside the container to mount the project (defaults to /workspace)",
+                    "Path inside the container to mount the workspace (defaults to /workspace)",
                 })
                 .option("network", {
                   type: "string",
@@ -74,7 +74,7 @@ export async function main() {
                 .option("copy", {
                   type: "boolean",
                   describe:
-                    "Copy project files to a temporary directory before mounting",
+                    "Copy workspace files to a temporary directory before mounting",
                   default: false,
                 })
                 .check((argv) => {
@@ -87,7 +87,7 @@ export async function main() {
                 });
             },
             async (argv) => {
-              await addProject(
+              await addWorkspace(
                 {
                   dirname: argv.dirname,
                   image: argv.image,
@@ -103,23 +103,23 @@ export async function main() {
           )
           .command(
             "remove [target]",
-            "Remove a project from the registry by name or path",
+            "Remove a workspace from the registry by name or path",
             (yargs) => {
               return yargs
                 .positional("target", {
                   describe:
-                    "Name or path of the project to remove (defaults to current directory)",
+                    "Name or path of the workspace to remove (defaults to current directory)",
                   type: "string",
                   default: ".",
                 })
                 .option("name", {
                   type: "string",
                   describe:
-                    "Name of the project to remove (alternative to specifying in target)",
+                    "Name of the workspace to remove (alternative to specifying in target)",
                 });
             },
             async (argv) => {
-              await removeProject(
+              await removeWorkspace(
                 {
                   target: argv.target,
                   name: argv.name,
@@ -128,13 +128,13 @@ export async function main() {
               );
             }
           )
-          .demandCommand(1, "You must specify a project command (add/remove)")
-          .command("list", "List all registered projects", {}, async () => {
-            await listProjects();
+          .demandCommand(1, "You must specify a workspace command (add/remove)")
+          .command("list", "List all registered workspaces", {}, async () => {
+            await listWorkspaces();
           })
           .demandCommand(
             1,
-            "You must specify a project command (add/remove/list)"
+            "You must specify a workspace command (add/remove/list)"
           );
       },
       () => {

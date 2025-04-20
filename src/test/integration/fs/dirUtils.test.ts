@@ -11,22 +11,22 @@ import { setupTestEnvironment } from "../setup.js";
 
 describe("Directory Utilities", function () {
   let testDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
 
   beforeEach(function () {
     // Setup test environment
     const env = setupTestEnvironment();
     testDir = env.testDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create a few test files
-    const file1 = path.join(projectDir, "file1.txt");
+    const file1 = path.join(workspaceDir, "file1.txt");
     fs.writeFileSync(file1, "File 1 content");
 
     // Create a nested directory with a file
-    const nestedDir = path.join(projectDir, "nested");
+    const nestedDir = path.join(workspaceDir, "nested");
     fs.mkdirSync(nestedDir, { recursive: true });
     fs.writeFileSync(path.join(nestedDir, "file2.txt"), "File 2 content");
   });
@@ -79,8 +79,8 @@ describe("Directory Utilities", function () {
     it("should copy a directory and its contents", function () {
       const targetDir = path.join(testDir, "copy-target");
 
-      // Copy the project directory to the target
-      copyDirectory(projectDir, targetDir);
+      // Copy the workspace directory to the target
+      copyDirectory(workspaceDir, targetDir);
 
       // Verify the target directory exists
       expect(fs.existsSync(targetDir)).to.equal(true);
@@ -108,8 +108,8 @@ describe("Directory Utilities", function () {
       // Create a file in the target dir that shouldn't be deleted
       fs.writeFileSync(path.join(targetDir, "existing.txt"), "Existing file");
 
-      // Copy the project directory to the target
-      copyDirectory(projectDir, targetDir);
+      // Copy the workspace directory to the target
+      copyDirectory(workspaceDir, targetDir);
 
       // Verify the existing file is still there
       expect(fs.existsSync(path.join(targetDir, "existing.txt"))).to.equal(

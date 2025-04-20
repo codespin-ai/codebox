@@ -3,10 +3,10 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import { executeDockerCommand } from "../../docker/execution.js";
 import {
-  getProjectNameForSession,
-  getWorkingDirForSession,
-  sessionExists,
-} from "../../sessions/sessionStore.js";
+  getWorkspaceNameForWorkspaceToken,
+  getWorkingDirForWorkspaceToken,
+  workspaceTokenExists,
+} from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
  * Register command execution handlers with the MCP server
@@ -14,38 +14,38 @@ import {
 export function registerExecuteHandlers(server: McpServer): void {
   server.tool(
     "execute_command",
-    "Execute a command in a Docker container using a project session",
+    "Execute a command in a Docker container using a workspace token",
     {
       command: zod.string().describe("The command to execute in the container"),
-      projectSessionId: zod
+      workspaceToken: zod
         .string()
-        .describe("The session ID from open_project_session"),
+        .describe("The workspace token from open_workspace"),
     },
-    async ({ command, projectSessionId }) => {
-      // Validate the session
-      if (!sessionExists(projectSessionId)) {
+    async ({ command, workspaceToken }) => {
+      // Validate the workspace token
+      if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${projectSessionId}`,
+              text: `Error: Invalid or expired workspace token: ${workspaceToken}`,
             },
           ],
         };
       }
 
-      // Get the project name and working directory from the session
-      const projectName = getProjectNameForSession(projectSessionId);
-      const workingDir = getWorkingDirForSession(projectSessionId);
+      // Get the workspace name and working directory from the workspace token
+      const workspaceName = getWorkspaceNameForWorkspaceToken(workspaceToken);
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 
-      if (!projectName || !workingDir) {
+      if (!workspaceName || !workingDir) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${projectSessionId}`,
+              text: `Error: Workspace token mapping not found: ${workspaceToken}`,
             },
           ],
         };
@@ -53,7 +53,7 @@ export function registerExecuteHandlers(server: McpServer): void {
 
       try {
         const { stdout, stderr } = await executeDockerCommand(
-          projectName,
+          workspaceName,
           command,
           workingDir
         );

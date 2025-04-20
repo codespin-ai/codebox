@@ -1,12 +1,12 @@
 // src/mcp/handlers/batchFiles.ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
-import { writeProjectFile } from "../../fs/fileIO.js";
+import { writeWorkspaceFile } from "../../fs/fileIO.js";
 import { validateFilePath } from "../../fs/pathValidation.js";
 import {
-  getWorkingDirForSession,
-  sessionExists,
-} from "../../sessions/sessionStore.js";
+  getWorkingDirForWorkspaceToken,
+  workspaceTokenExists,
+} from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
  * Format batch operation results for output
@@ -36,17 +36,17 @@ function formatResults(
 export function registerBatchFileHandlers(server: McpServer): void {
   server.tool(
     "write_batch_files",
-    "Write content to multiple files in a project directory using a session",
+    "Write content to multiple files in a workspace directory using a workspace token",
     {
-      projectSessionId: zod
+      workspaceToken: zod
         .string()
-        .describe("The session ID from open_project_session"),
+        .describe("The workspace token from open_workspace"),
       files: zod
         .array(
           zod.object({
             filePath: zod
               .string()
-              .describe("Relative path to the file from project root"),
+              .describe("Relative path to the file from workspace root"),
             content: zod.string().describe("Content to write to the file"),
             mode: zod
               .enum(["overwrite", "append"])
@@ -61,29 +61,29 @@ export function registerBatchFileHandlers(server: McpServer): void {
         .default(true)
         .describe("Whether to stop execution if a file write fails"),
     },
-    async ({ projectSessionId, files, stopOnError }) => {
-      // Validate the session
-      if (!sessionExists(projectSessionId)) {
+    async ({ workspaceToken, files, stopOnError }) => {
+      // Validate the workspace token
+      if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Invalid or expired session ID: ${projectSessionId}`,
+              text: `Error: Invalid or expired workspace token: ${workspaceToken}`,
             },
           ],
         };
       }
 
-      // Get the working directory from the session
-      const workingDir = getWorkingDirForSession(projectSessionId);
+      // Get the working directory from the workspace token
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
       if (!workingDir) {
         return {
           isError: true,
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${projectSessionId}`,
+              text: `Error: Workspace token mapping not found: ${workspaceToken}`,
             },
           ],
         };
@@ -128,8 +128,8 @@ export function registerBatchFileHandlers(server: McpServer): void {
         const { filePath, content, mode = "overwrite" } = fileOp;
 
         try {
-          // Write the file to the session's working directory
-          writeProjectFile(workingDir, filePath, content, mode);
+          // Write the file to the workspace token's working directory
+          writeWorkspaceFile(workingDir, filePath, content, mode);
 
           results.push({
             filePath,

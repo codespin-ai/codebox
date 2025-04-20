@@ -3,7 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { logMcpCall } from "../logging/logger.js";
 import { ZodRawShape } from "zod";
 import { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
-import { isDebugEnabled } from "../config/projectConfig.js";
+import { isDebugEnabled } from "../config/workspaceConfig.js";
 
 // Define the expected tool handler signature
 type ToolCallback = (

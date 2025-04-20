@@ -2,12 +2,12 @@ import { exec } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import { promisify } from "util";
-import { getConfig, saveConfig } from "../../config/projectConfig.js";
+import { getConfig, saveConfig } from "../../config/workspaceConfig.js";
 import { validateDirectory } from "../../fs/pathValidation.js";
 
 const execAsync = promisify(exec);
 
-interface ProjectOptions {
+interface WorkspaceOptions {
   dirname?: string;
   target?: string;
   image?: string;
@@ -22,8 +22,8 @@ interface CommandContext {
   workingDir: string;
 }
 
-export async function addProject(
-  options: ProjectOptions,
+export async function addWorkspace(
+  options: WorkspaceOptions,
   context: CommandContext
 ): Promise<void> {
   const {
@@ -43,13 +43,13 @@ export async function addProject(
   }
 
   // Resolve to absolute path
-  const projectPath = path.resolve(context.workingDir, dirname);
+  const workspacePath = path.resolve(context.workingDir, dirname);
 
   // Check if directory exists and is a directory
-  validateDirectory(projectPath);
+  validateDirectory(workspacePath);
 
-  // Extract project name from the path if not provided
-  const projectName = name || path.basename(projectPath);
+  // Extract workspace name from the path if not provided
+  const workspaceName = name || path.basename(workspacePath);
 
   // Verify container exists if specified
   if (containerName) {
@@ -90,35 +90,35 @@ export async function addProject(
   // Get existing config
   const config = getConfig();
 
-  // Check if project already exists by name
-  const existingIndex = config.projects.findIndex(
-    (p) => p.name === projectName
+  // Check if workspace already exists by name
+  const existingIndex = config.workspaces.findIndex(
+    (p) => p.name === workspaceName
   );
 
   if (existingIndex !== -1) {
-    // Update existing project's configuration
+    // Update existing workspace's configuration
     if (image) {
-      config.projects[existingIndex].dockerImage = image;
+      config.workspaces[existingIndex].dockerImage = image;
     }
     if (containerName) {
-      config.projects[existingIndex].containerName = containerName;
+      config.workspaces[existingIndex].containerName = containerName;
     }
     if (containerPath) {
-      config.projects[existingIndex].containerPath = containerPath;
+      config.workspaces[existingIndex].containerPath = containerPath;
     }
     if (network) {
-      config.projects[existingIndex].network = network;
+      config.workspaces[existingIndex].network = network;
     }
     // Update copy setting
-    config.projects[existingIndex].copy = copy;
-    config.projects[existingIndex].hostPath = projectPath;
+    config.workspaces[existingIndex].copy = copy;
+    config.workspaces[existingIndex].hostPath = workspacePath;
     saveConfig(config);
-    console.log(`Updated project: ${projectName}`);
+    console.log(`Updated workspace: ${workspaceName}`);
   } else {
-    // Add new project
-    config.projects.push({
-      name: projectName,
-      hostPath: projectPath,
+    // Add new workspace
+    config.workspaces.push({
+      name: workspaceName,
+      hostPath: workspacePath,
       ...(containerPath && { containerPath }),
       ...(image && { dockerImage: image }),
       ...(containerName && { containerName }),
@@ -126,12 +126,12 @@ export async function addProject(
       ...(copy && { copy: true }),
     });
     saveConfig(config);
-    console.log(`Added project: ${projectName}`);
+    console.log(`Added workspace: ${workspaceName}`);
   }
 }
 
-export async function removeProject(
-  options: ProjectOptions,
+export async function removeWorkspace(
+  options: WorkspaceOptions,
   context: CommandContext
 ): Promise<void> {
   const { target = ".", name } = options;
@@ -140,84 +140,84 @@ export async function removeProject(
 
   // If name is explicitly provided via --name, look for it first
   if (name) {
-    index = config.projects.findIndex((p) => p.name === name);
+    index = config.workspaces.findIndex((p) => p.name === name);
     if (index !== -1) {
-      const removedName = config.projects[index].name;
-      config.projects.splice(index, 1);
+      const removedName = config.workspaces[index].name;
+      config.workspaces.splice(index, 1);
       saveConfig(config);
-      console.log(`Removed project: ${removedName}`);
+      console.log(`Removed workspace: ${removedName}`);
       return;
     }
-    console.log(`Project with name '${name}' not found`);
+    console.log(`Workspace with name '${name}' not found`);
     return;
   }
 
   // If target has a slash, treat it as a path; otherwise, treat it as a name
   if (target.includes("/") || target.includes("\\")) {
-    // It's a path - resolve it and find the matching project
-    const projectPath = path.resolve(context.workingDir, target);
-    index = config.projects.findIndex((p) => p.hostPath === projectPath);
+    // It's a path - resolve it and find the matching workspace
+    const workspacePath = path.resolve(context.workingDir, target);
+    index = config.workspaces.findIndex((p) => p.hostPath === workspacePath);
 
     if (index !== -1) {
-      const removedName = config.projects[index].name;
-      config.projects.splice(index, 1);
+      const removedName = config.workspaces[index].name;
+      config.workspaces.splice(index, 1);
       saveConfig(config);
-      console.log(`Removed project: ${removedName}`);
+      console.log(`Removed workspace: ${removedName}`);
       return;
     }
-    console.log(`Project not found for path: ${projectPath}`);
+    console.log(`Workspace not found for path: ${workspacePath}`);
   } else {
     // It's a name - look for exact name match
-    index = config.projects.findIndex((p) => p.name === target);
+    index = config.workspaces.findIndex((p) => p.name === target);
 
     if (index !== -1) {
-      const removedName = config.projects[index].name;
-      config.projects.splice(index, 1);
+      const removedName = config.workspaces[index].name;
+      config.workspaces.splice(index, 1);
       saveConfig(config);
-      console.log(`Removed project: ${removedName}`);
+      console.log(`Removed workspace: ${removedName}`);
       return;
     }
-    console.log(`Project with name '${target}' not found`);
+    console.log(`Workspace with name '${target}' not found`);
   }
 }
 
-export async function listProjects(): Promise<void> {
+export async function listWorkspaces(): Promise<void> {
   const config = getConfig();
 
-  if (config.projects.length === 0) {
+  if (config.workspaces.length === 0) {
     console.log(
-      "No projects are registered. Use 'codebox project add <dirname> --image <image_name>' or 'codebox project add <dirname> --container <container_name>' to add projects."
+      "No workspaces are registered. Use 'codebox workspace add <dirname> --image <image_name>' or 'codebox workspace add <dirname> --container <container_name>' to add workspaces."
     );
     return;
   }
 
-  console.log("Registered projects:");
+  console.log("Registered workspaces:");
   console.log("-------------------");
 
-  config.projects.forEach((project, index) => {
-    const exists = fs.existsSync(project.hostPath);
+  config.workspaces.forEach((workspace, index) => {
+    const exists = fs.existsSync(workspace.hostPath);
 
-    console.log(`${index + 1}. ${project.name}`);
+    console.log(`${index + 1}. ${workspace.name}`);
     console.log(`   Status: ${exists ? "exists" : "missing"}`);
 
-    if (project.containerName) {
-      console.log(`   Container: ${project.containerName}`);
+    if (workspace.containerName) {
+      console.log(`   Container: ${workspace.containerName}`);
     }
 
-    if (project.dockerImage) {
-      console.log(`   Docker Image: ${project.dockerImage}`);
+    if (workspace.dockerImage) {
+      console.log(`   Docker Image: ${workspace.dockerImage}`);
     }
 
-    if (project.containerPath) {
-      console.log(`   Container Path: ${project.containerPath}`);
+    if (workspace.containerPath) {
+      console.log(`   Container Path: ${workspace.containerPath}`);
     }
 
-    if (project.network) {
-      console.log(`   Docker Network: ${project.network}`);
+    if (workspace.network) {
+      console.log(`   Docker Network: ${workspace.network}`);
     }
 
     // Show copy setting if enabled
-    if (project.copy) {
+    if (workspace.copy) {
       console.log(`   Copy Files: Yes`);
     }
 

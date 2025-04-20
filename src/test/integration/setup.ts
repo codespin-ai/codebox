@@ -1,10 +1,10 @@
 // src/test/integration/setup.ts
-import { install } from "source-map-support";
-import * as path from "path";
-import * as os from "os";
 import * as fs from "fs";
-import { setConfigBasePath } from "../../config/projectConfig.js";
-import { openProject, closeSession } from "../../sessions/sessionStore.js";
+import * as os from "os";
+import * as path from "path";
+import { install } from "source-map-support";
+import { setConfigBasePath } from "../../config/workspaceConfig.js";
+import { closeWorkspace, openWorkspace } from "../../workspaceTokens/workspaceTokenStore.js";
 
 // Install source map support for better error stack traces
 install();
@@ -20,20 +20,20 @@ export function createTestEnvironment(): string {
 }
 
 /**
- * Creates a test session for a project
- * @param projectName The name of the project
- * @returns Session ID or null
+ * Creates a test workspace token for a workspace
+ * @param workspaceName The name of the workspace
+ * @returns Workspace token or null
  */
-export function createTestSession(projectName: string): string | null {
-  return openProject(projectName);
+export function openTestWorkspace(workspaceName: string): string | null {
+  return openWorkspace(workspaceName);
 }
 
 /**
- * Closes a test session
- * @param sessionId The session ID to close
+ * Closes a workspace
+ * @param workspaceToken The workspace token to close
  */
-export function closeTestSession(sessionId: string): void {
-  closeSession(sessionId);
+export function closeTestWorkspace(workspaceToken: string): void {
+  closeWorkspace(workspaceToken);
 }
 
 /**
@@ -50,9 +50,9 @@ export function setupTestEnvironment() {
   const configDir = path.join(testDir, ".codespin");
   fs.mkdirSync(configDir, { recursive: true });
 
-  // Create a project directory for testing
-  const projectDir = path.join(testDir, "test-project");
-  fs.mkdirSync(projectDir, { recursive: true });
+  // Create a workspace directory for testing
+  const workspaceDir = path.join(testDir, "test-workspace");
+  fs.mkdirSync(workspaceDir, { recursive: true });
 
   // Cleanup function
   const cleanup = () => {
@@ -62,7 +62,7 @@ export function setupTestEnvironment() {
   return {
     testDir,
     configDir,
-    projectDir,
+    workspaceDir,
     cleanup,
   };
 }

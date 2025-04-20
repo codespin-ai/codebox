@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerBatchHandlers } from "../../../../mcp/handlers/batch.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/projects.js";
+import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 import {
   isDockerAvailable,
@@ -26,18 +26,18 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Batch Command Handlers with Sessions", function () {
+describe("Batch Command Handlers with Workspace tokens", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let executeBatchCommandsHandler: RequestHandler;
-  let openProjectSessionHandler: RequestHandler;
-  let closeProjectSessionHandler: RequestHandler;
+  let openWorkspaceHandler: RequestHandler;
+  let closeWorkspaceHandler: RequestHandler;
   let dockerAvailable = false;
   let containerName: string;
-  const projectName = "test-project";
+  const workspaceName = "test-workspace";
   const dockerImage = "alpine:latest";
 
   before(async function () {
@@ -58,14 +58,14 @@ describe("Batch Command Handlers with Sessions", function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
     // Create unique name for container
     containerName = uniqueName("codebox-test-container");
 
-    // Create a test file in the project directory
-    createTestFile(path.join(projectDir, "test.txt"), "Hello from batch test!");
+    // Create a test file in the workspace directory
+    createTestFile(path.join(workspaceDir, "test.txt"), "Hello from batch test!");
 
     // Create a simple server to register handlers
     const server = {
@@ -77,17 +77,17 @@ describe("Batch Command Handlers with Sessions", function () {
       ) => {
         if (name === "execute_batch_commands") {
           executeBatchCommandsHandler = handler as RequestHandler;
-        } else if (name === "open_project_session") {
-          openProjectSessionHandler = handler as RequestHandler;
-        } else if (name === "close_project_session") {
-          closeProjectSessionHandler = handler as RequestHandler;
+        } else if (name === "open_workspace") {
+          openWorkspaceHandler = handler as RequestHandler;
+        } else if (name === "close_workspace") {
+          closeWorkspaceHandler = handler as RequestHandler;
         }
       },
     } as unknown as McpServer;
 
     // Register the handlers
     registerBatchHandlers(server);
-    registerProjectHandlers(server);
+    registerWorkspaceHandlers(server);
   });
 
   afterEach(async function () {
@@ -100,34 +100,34 @@ describe("Batch Command Handlers with Sessions", function () {
     cleanup();
   });
 
-  describe("execute_batch_commands with sessions", function () {
+  describe("execute_batch_commands withworkspace tokens", function () {
     beforeEach(async function () {
       // Create a test container
-      await createTestContainer(containerName, dockerImage, projectDir);
+      await createTestContainer(containerName, dockerImage, workspaceDir);
 
       // Register the container in the config
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
-            name: projectName,
-            hostPath: projectDir,
+            name: workspaceName,
+            hostPath: workspaceDir,
             containerName: containerName,
           },
         ],
       });
     });
 
-    it("should execute a batch of commands in sequence using a session", async function () {
-      // First, open a project session
-      const openResponse = await openProjectSessionHandler({
-        projectName,
+    it("should execute a batch of commands in sequence using a workspace token", async function () {
+      // First, open a workspace
+      const openResponse = await openWorkspaceHandler({
+        workspaceName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
-      // Execute batch commands using the session
+      // Execute batch commands using the workspace token
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: [
           "echo 'First command' > /workspace/output.txt",
           "echo 'Second command' >> /workspace/output.txt",
@@ -141,29 +141,29 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Second command");
 
       // Verify the file was created
-      const outputPath = path.join(projectDir, "output.txt");
+      const outputPath = path.join(workspaceDir, "output.txt");
       expect(fs.existsSync(outputPath)).to.equal(true);
       const content = fs.readFileSync(outputPath, "utf8");
       expect(content).to.include("First command");
       expect(content).to.include("Second command");
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
 
     it("should stop execution on error if stopOnError is true", async function () {
-      // First, open a project session
-      const openResponse = await openProjectSessionHandler({
-        projectName,
+      // First, open a workspace
+      const openResponse = await openWorkspaceHandler({
+        workspaceName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute batch commands with an error in the middle
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: [
           "echo 'First command' > /workspace/output2.txt",
           "cat /nonexistent/file.txt",
@@ -178,29 +178,29 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).not.to.include("Third command");
 
       // Verify file contents
-      const outputPath = path.join(projectDir, "output2.txt");
+      const outputPath = path.join(workspaceDir, "output2.txt");
       expect(fs.existsSync(outputPath)).to.equal(true);
       const content = fs.readFileSync(outputPath, "utf8");
       expect(content).to.include("First command");
       expect(content).not.to.include("Third command");
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
 
     it("should continue execution on error if stopOnError is false", async function () {
-      // First, open a project session
-      const openResponse = await openProjectSessionHandler({
-        projectName,
+      // First, open a workspace
+      const openResponse = await openWorkspaceHandler({
+        workspaceName,
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute batch commands with an error in the middle but continue
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: [
           "echo 'First command' > /workspace/output3.txt",
           "cat /nonexistent/file.txt",
@@ -215,41 +215,41 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Third command");
 
       // Verify file contents - should include both first and third command
-      const outputPath = path.join(projectDir, "output3.txt");
+      const outputPath = path.join(workspaceDir, "output3.txt");
       expect(fs.existsSync(outputPath)).to.equal(true);
       const content = fs.readFileSync(outputPath, "utf8");
       expect(content).to.include("First command");
       expect(content).to.include("Third command");
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
 
-    it("should return error for invalid sessions", async function () {
-      // Execute batch commands with invalid session ID
+    it("should return error for invalidworkspace tokens", async function () {
+      // Execute batch commands with invalid workspace token
       const response = await executeBatchCommandsHandler({
-        projectSessionId: "invalid-session-id",
+        workspaceToken: "invalid-workspace-token-id",
         commands: ["echo 'This should fail'"],
       });
 
       // Verify the error response
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include(
-        "Invalid or expired session ID"
+        "Invalid or expired workspace token"
       );
     });
   });
 
   describe("execute_batch_commands with Copy Mode", function () {
     beforeEach(function () {
-      // Register a project with copy mode enabled
+      // Register a workspace with copy mode enabled
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
-            name: "copy-project",
-            hostPath: projectDir,
+            name: "copy-workspace",
+            hostPath: workspaceDir,
             dockerImage: dockerImage,
             copy: true,
           },
@@ -257,21 +257,21 @@ describe("Batch Command Handlers with Sessions", function () {
       });
 
       // Create a file we'll try to modify
-      const outputFile = path.join(projectDir, "copy-output.txt");
+      const outputFile = path.join(workspaceDir, "copy-output.txt");
       fs.writeFileSync(outputFile, "Original content");
     });
 
     it("should execute batch commands with copy mode without modifying original files", async function () {
-      // First, open a project session
-      const openResponse = await openProjectSessionHandler({
-        projectName: "copy-project",
+      // First, open a workspace
+      const openResponse = await openWorkspaceHandler({
+        workspaceName: "copy-workspace",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Execute batch commands to modify the file
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: [
           "echo 'Modified in batch' > /workspace/copy-output.txt",
           "echo 'Added new line' >> /workspace/copy-output.txt",
@@ -286,40 +286,40 @@ describe("Batch Command Handlers with Sessions", function () {
 
       // But the original file should remain unchanged
       const originalContent = fs.readFileSync(
-        path.join(projectDir, "copy-output.txt"),
+        path.join(workspaceDir, "copy-output.txt"),
         "utf8"
       );
       expect(originalContent).to.equal("Original content");
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
 
-    it("should maintain changes across multiple batch command calls in the same session", async function () {
-      // First, open a project session
-      const openResponse = await openProjectSessionHandler({
-        projectName: "copy-project",
+    it("should maintain changes across multiple batch command calls in the same workspace token", async function () {
+      // First, open a workspace
+      const openResponse = await openWorkspaceHandler({
+        workspaceName: "copy-workspace",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // First batch - create a file
       await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: ["echo 'First batch' > /workspace/multi-batch.txt"],
       });
 
       // Second batch - append to the file
       await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: ["echo 'Second batch' >> /workspace/multi-batch.txt"],
       });
 
       // Third batch - read the file
       const response = await executeBatchCommandsHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         commands: ["cat /workspace/multi-batch.txt"],
       });
 
@@ -328,14 +328,14 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("First batch");
       expect(response.content[0].text).to.include("Second batch");
 
-      // The file should not exist in the original project directory
-      expect(fs.existsSync(path.join(projectDir, "multi-batch.txt"))).to.equal(
+      // The file should not exist in the original workspace directory
+      expect(fs.existsSync(path.join(workspaceDir, "multi-batch.txt"))).to.equal(
         false
       );
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
   });

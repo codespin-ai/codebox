@@ -1,28 +1,28 @@
-// src/test/integration/config/projectConfig.test.ts
+// src/test/integration/config/workspaceConfig.test.ts
 import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
 import {
   getConfig,
   getConfigFilePath,
-  getProjectByName,
+  getWorkspaceByName,
   isDebugEnabled,
   saveConfig,
-  validateProject,
-  validateProjectName,
-} from "../../../config/projectConfig.js";
+  validateWorkspace,
+  validateWorkspaceName,
+} from "../../../config/workspaceConfig.js";
 import { setupTestEnvironment } from "../setup.js";
 
-describe("Project Configuration", function () {
+describe("Workspace Configuration", function () {
   let testDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
 
   beforeEach(function () {
     // Setup test environment
     const env = setupTestEnvironment();
     testDir = env.testDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
   });
 
@@ -34,15 +34,15 @@ describe("Project Configuration", function () {
   describe("getConfig and saveConfig", function () {
     it("should return an empty config when no config file exists", function () {
       const config = getConfig();
-      expect(config).to.deep.equal({ projects: [] });
+      expect(config).to.deep.equal({ workspaces: [] });
     });
 
     it("should save and read the config file correctly", function () {
       const testConfig = {
-        projects: [
+        workspaces: [
           {
-            name: "test-project",
-            hostPath: projectDir,
+            name: "test-workspace",
+            hostPath: workspaceDir,
             dockerImage: "node:18",
           },
         ],
@@ -61,69 +61,69 @@ describe("Project Configuration", function () {
     });
   });
 
-  describe("Project Management", function () {
-    it("should find a project by name", function () {
-      // Create test config with a project
+  describe("Workspace Management", function () {
+    it("should find a workspace by name", function () {
+      // Create test config with a workspace
       const testConfig = {
-        projects: [
+        workspaces: [
           {
-            name: "test-project",
-            hostPath: projectDir,
+            name: "test-workspace",
+            hostPath: workspaceDir,
             dockerImage: "node:18",
           },
         ],
       };
       saveConfig(testConfig);
 
-      // Test getProjectByName
-      const project = getProjectByName("test-project");
-      expect(project).to.not.equal(null);
-      expect(project?.name).to.equal("test-project");
+      // Test getWorkspaceByName
+      const workspace = getWorkspaceByName("test-workspace");
+      expect(workspace).to.not.equal(null);
+      expect(workspace?.name).to.equal("test-workspace");
 
-      // Test non-existent project
-      const nonExistent = getProjectByName("non-existent");
+      // Test non-existent workspace
+      const nonExistent = getWorkspaceByName("non-existent");
       expect(nonExistent).to.equal(null);
     });
 
-    it("should validate project names", function () {
-      // Create test config with a project
+    it("should validate workspace names", function () {
+      // Create test config with a workspace
       const testConfig = {
-        projects: [
+        workspaces: [
           {
-            name: "test-project",
-            hostPath: projectDir,
+            name: "test-workspace",
+            hostPath: workspaceDir,
             dockerImage: "node:18",
           },
         ],
       };
       saveConfig(testConfig);
 
-      // Test validateProjectName
-      expect(validateProjectName("test-project")).to.equal(true);
-      expect(validateProjectName("non-existent")).to.equal(false);
+      // Test validateWorkspaceName
+      expect(validateWorkspaceName("test-workspace")).to.equal(true);
+      expect(validateWorkspaceName("non-existent")).to.equal(false);
     });
 
-    it("should validate project directories", function () {
-      // Create test config with a project
+    it("should validate workspace directories", function () {
+      // Create test config with a workspace
       const testConfig = {
-        projects: [
+        workspaces: [
           {
-            name: "test-project",
-            hostPath: projectDir,
+            name: "test-workspace",
+            hostPath: workspaceDir,
             dockerImage: "node:18",
           },
         ],
       };
       saveConfig(testConfig);
 
-      // Create a file in the project directory
-      const nestedPath = path.join(projectDir, "nested");
+      // Create a file in the workspace directory
+      const nestedPath = path.join(workspaceDir, "nested");
       fs.mkdirSync(nestedPath, { recursive: true });
 
-      // Test validateProject with various paths
-      expect(validateProject(projectDir)).to.equal(true);
-      expect(validateProject(nestedPath)).to.equal(true);
-      expect(validateProject(testDir)).to.equal(false);
+      // Test validateWorkspace with various paths
+      expect(validateWorkspace(workspaceDir)).to.equal(true);
+      expect(validateWorkspace(nestedPath)).to.equal(true);
+      expect(validateWorkspace(testDir)).to.equal(false);
     });
   });
 
@@ -134,7 +134,7 @@ describe("Project Configuration", function () {
 
       // Create config with debug: true
       const testConfig = {
-        projects: [],
+        workspaces: [],
         debug: true,
       };
       saveConfig(testConfig);

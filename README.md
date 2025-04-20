@@ -1,6 +1,6 @@
 # Codebox
 
-Codebox is an MCP Server for running commands within Docker containers for specific projects. It simplifies the process of executing code and commands in isolated, reproducible environments.
+Codebox is an MCP Server for running commands within Docker containers for **specific workspaces**. It simplifies the process of executing code and commands in isolated, reproducible environments.
 
 ## Installation
 
@@ -18,7 +18,7 @@ This is how you start the tool. Configure your MCP Client accordingly.
 codebox start
 ```
 
-For LibreChat, it'll be:
+For LibreChat, it will be:
 
 ```yaml
 mcpServers:
@@ -27,81 +27,85 @@ mcpServers:
     command: codebox
     args:
       - start
-    timeout: 30000 # 30 second timeout for commands
-    initTimeout: 10000 # 10 second timeout for initialization
+    timeout: 30000 # 30‑second timeout for commands
+    initTimeout: 10000 # 10‑second timeout for initialization
 ```
 
-### Managing Projects
+### Managing Workspaces
 
-#### Adding a Project
+#### Adding a Workspace
 
-Register a project directory with Codebox:
+Register a workspace directory with Codebox:
 
 ```bash
-# Register current directory as a project with a Docker image
-codebox project add --image node:18
+# Register current directory as a workspace with a Docker image
+codebox workspace add --image node:18
 
-# Register a specific directory as a project
-codebox project add /path/to/project --image python:3.9
+# Register a specific directory as a workspace
+codebox workspace add /path/to/workspace --image python:3.9
 
 # Register with a custom name
-codebox project add /path/to/project --image node:18 --name my-node-app
+codebox workspace add /path/to/workspace --image node:18 --name my-node-app
 
 # Specify a custom path inside the container (default is /workspace)
-codebox project add --image node:18 --containerPath /my-project
+codebox workspace add --image node:18 --containerPath /my-project
 
 # Connect to a specific Docker network (for Docker Compose environments)
-codebox project add --image node:18 --network my_compose_network
+codebox workspace add --image node:18 --network my_compose_network
 
 # Use a running container instead of a new container
-codebox project add --container my-running-container
+codebox workspace add --container my-running-container
 
 # Enable copy mode to isolate file changes from your source directory
 # (Only works with --image, not with --container)
-codebox project add --image node:18 --copy
+codebox workspace add --image node:18 --copy
 ```
 
-#### Listing Projects
+#### Listing Workspaces
 
-View all registered projects:
+View all registered workspaces:
 
 ```bash
-codebox project list
+codebox workspace list
 ```
 
-#### Removing a Project
+#### Removing a Workspace
 
-Remove a project from the registry:
+Remove a workspace from the registry:
 
 ```bash
 # Remove by name
-codebox project remove my-project-name
+codebox workspace remove my-workspace-name
 
 # Remove by path
-codebox project remove /path/to/project
+codebox workspace remove /path/to/workspace
 
 # Remove current directory
-codebox project remove
+codebox workspace remove
 ```
 
 ### Using with AI Assistants
 
-Codebox implements the Model Context Protocol (MCP), allowing AI assistants to:
+Codebox implements the **Model Context Protocol (MCP)**. AI assistants can:
 
-1. Execute commands in project containers
-2. Read and write files within projects
-3. Perform batch operations
+1. **List workspaces** using the `list_workspaces` tool.
+2. **Open a workspace** via `open_workspace`. This returns a _workspace token_ that represents an isolated session (and, if `copy` was enabled for that workspace, a temporary copy of the files).
+3. **Execute commands** inside the corresponding container with `execute_command` or `execute_batch_commands`, passing the workspace token.
+4. **Read or write files** with `write_file` or `write_batch_files`, again using the workspace token.
+5. **Close the workspace** with `close_workspace` when the assistant is done. This immediately cleans up any temporary directories created by copy mode.
 
-## Project Configuration
+Workspace tokens let multiple, concurrent sessions share the same underlying workspace definition while keeping their file‑system changes isolated.
 
-Projects are stored in `~/.codespin/codebox.json` with the following structure:
+## Workspace Configuration
+
+Workspaces are stored in `~/.codespin/codebox.json` with the following structure:
 
 ```json
 {
-  "projects": [
+  "workspaces": [
     {
       "name": "my-node-app",
-      "hostPath": "/home/user/projects/my-node-app",
+      "hostPath": "/home/user/workspaces/my-node-app",
       "containerPath": "/my-project",
       "dockerImage": "node:18",
       "network": "my_compose_network",
@@ -109,7 +113,7 @@ Projects are stored in `~/.codespin/codebox.json` with the following structure:
     },
     {
       "name": "python-api",
-      "hostPath": "/home/user/projects/python-api",
+      "hostPath": "/home/user/workspaces/python-api",
       "containerName": "running-python-container"
     }
   ],
@@ -117,26 +121,26 @@ Projects are stored in `~/.codespin/codebox.json` with the following structure:
 }
 ```
 
-Each project has:
+Each workspace has:
 
-- `name`: Identifier for the project
+- `name`: Identifier for the workspace
 - `hostPath`: Path on the host machine
-- `containerPath`: (Optional) Path in the container where the project is mounted (defaults to `/workspace`)
+- `containerPath`: (Optional) Path in the container where the workspace is mounted (defaults to `/workspace`)
 - `dockerImage`: Docker image to use for new containers
 - `containerName`: Name of an existing running container
 - `network`: (Optional) Docker network to connect the container to
-- `copy`: (Optional) When true, files are copied to a temporary directory before mounting, protecting your source files
+- `copy`: (Optional) When **true**, files are copied to a temporary directory before mounting, protecting your source files
 
 ## Copy Mode
 
 When you enable copy mode with `--copy`, Codebox will:
 
-1. Create a temporary copy of your project directory
+1. Create a temporary copy of your workspace directory
 2. Mount this temporary copy in the container instead of your original files
 3. Run commands on the copy, so your original source files are never modified
-4. Clean up the temporary directory after command execution
+4. Clean up the temporary directory **when the workspace token is closed**
 
-This is useful for:
+Copy mode is useful for:
 
 - Testing destructive operations safely
 - Preventing accidental modifications to your source code

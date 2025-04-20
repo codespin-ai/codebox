@@ -11,14 +11,14 @@ import { setupTestEnvironment } from "../setup.js";
 
 describe("Path Validation", function () {
   let testDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
 
   beforeEach(function () {
     // Setup test environment
     const env = setupTestEnvironment();
     testDir = env.testDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
   });
 
@@ -29,10 +29,10 @@ describe("Path Validation", function () {
 
   describe("validateDirectory", function () {
     it("should not throw for valid directories", function () {
-      expect(() => validateDirectory(projectDir)).to.not.throw();
+      expect(() => validateDirectory(workspaceDir)).to.not.throw();
 
       // Create and test a nested directory
-      const nestedDir = path.join(projectDir, "nested");
+      const nestedDir = path.join(workspaceDir, "nested");
       fs.mkdirSync(nestedDir);
       expect(() => validateDirectory(nestedDir)).to.not.throw();
     });
@@ -46,7 +46,7 @@ describe("Path Validation", function () {
 
     it("should throw for file paths", function () {
       // Create a file that is not a directory
-      const filePath = path.join(projectDir, "file.txt");
+      const filePath = path.join(workspaceDir, "file.txt");
       fs.writeFileSync(filePath, "content");
 
       expect(() => validateDirectory(filePath)).to.throw(
@@ -56,23 +56,23 @@ describe("Path Validation", function () {
   });
 
   describe("validateFilePath", function () {
-    it("should return true for file paths within project directory", function () {
+    it("should return true for file paths within workspace directory", function () {
       // Simple file path
-      expect(validateFilePath(projectDir, "file.txt")).to.equal(true);
+      expect(validateFilePath(workspaceDir, "file.txt")).to.equal(true);
 
       // Nested file path
-      expect(validateFilePath(projectDir, "nested/file.txt")).to.equal(true);
+      expect(validateFilePath(workspaceDir, "nested/file.txt")).to.equal(true);
     });
 
-    it("should return false for file paths outside project directory", function () {
-      // Absolute path outside project
-      expect(validateFilePath(projectDir, "/etc/passwd")).to.equal(false);
+    it("should return false for file paths outside workspace directory", function () {
+      // Absolute path outside workspace
+      expect(validateFilePath(workspaceDir, "/etc/passwd")).to.equal(false);
 
-      // Relative path outside project using parent directory traversal
-      expect(validateFilePath(projectDir, "../outside.txt")).to.equal(false);
+      // Relative path outside workspace using parent directory traversal
+      expect(validateFilePath(workspaceDir, "../outside.txt")).to.equal(false);
 
       // Path with directory traversal
-      expect(validateFilePath(projectDir, "nested/../../outside.txt")).to.equal(
+      expect(validateFilePath(workspaceDir, "nested/../../outside.txt")).to.equal(
         false
       );
     });
@@ -80,7 +80,7 @@ describe("Path Validation", function () {
 
   describe("ensureDirectoryForFile", function () {
     it("should create all parent directories for a file path", function () {
-      const filePath = path.join(projectDir, "a/b/c/file.txt");
+      const filePath = path.join(workspaceDir, "a/b/c/file.txt");
 
       ensureDirectoryForFile(filePath);
 
@@ -92,7 +92,7 @@ describe("Path Validation", function () {
 
     it("should work with existing directories", function () {
       // Create a directory manually
-      const dirPath = path.join(projectDir, "existing");
+      const dirPath = path.join(workspaceDir, "existing");
       fs.mkdirSync(dirPath);
 
       const filePath = path.join(dirPath, "file.txt");

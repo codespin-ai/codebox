@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerBatchFileHandlers } from "../../../../mcp/handlers/batchFiles.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/projects.js";
+import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 
 // Response type for MCP tools
@@ -19,32 +19,32 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Batch File Handlers with Sessions", function () {
+describe("Batch File Handlers with Workspace tokens", function () {
   let configDir: string;
-  let projectDir: string;
+  let workspaceDir: string;
   let cleanup: () => void;
   let writeBatchFilesHandler: RequestHandler;
-  let openProjectSessionHandler: RequestHandler;
-  let closeProjectSessionHandler: RequestHandler;
+  let openWorkspaceHandler: RequestHandler;
+  let closeWorkspaceHandler: RequestHandler;
 
   beforeEach(function () {
     // Setup test environment
     const env = setupTestEnvironment();
     configDir = env.configDir;
-    projectDir = env.projectDir;
+    workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
-    // Register the project in the config
+    // Register the workspace in the config
     createTestConfig(configDir, {
-      projects: [
+      workspaces: [
         {
-          name: "test-project",
-          hostPath: projectDir,
+          name: "test-workspace",
+          hostPath: workspaceDir,
           dockerImage: "dummy-image",
         },
         {
-          name: "copy-project",
-          hostPath: projectDir,
+          name: "copy-workspace",
+          hostPath: workspaceDir,
           dockerImage: "dummy-image",
           copy: true,
         },
@@ -61,35 +61,35 @@ describe("Batch File Handlers with Sessions", function () {
       ) => {
         if (name === "write_batch_files") {
           writeBatchFilesHandler = handler as RequestHandler;
-        } else if (name === "open_project_session") {
-          openProjectSessionHandler = handler as RequestHandler;
-        } else if (name === "close_project_session") {
-          closeProjectSessionHandler = handler as RequestHandler;
+        } else if (name === "open_workspace") {
+          openWorkspaceHandler = handler as RequestHandler;
+        } else if (name === "close_workspace") {
+          closeWorkspaceHandler = handler as RequestHandler;
         }
       },
     } as unknown as McpServer;
 
     // Register the handlers
     registerBatchFileHandlers(server);
-    registerProjectHandlers(server);
+    registerWorkspaceHandlers(server);
   });
 
   afterEach(function () {
     cleanup();
   });
 
-  describe("write_batch_files with sessions", function () {
-    it("should write multiple files in a single operation using a session", async function () {
-      // First, open a project session
-      const openResponse = await openProjectSessionHandler({
-        projectName: "test-project",
+  describe("write_batch_files withworkspace tokens", function () {
+    it("should write multiple files in a single operation using a workspace token", async function () {
+      // First, open a workspace
+      const openResponse = await openWorkspaceHandler({
+        workspaceName: "test-workspace",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
-      // Write multiple files using the session
+      // Write multiple files using the workspace token
       const response = await writeBatchFilesHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         files: [
           {
             filePath: "file1.txt",
@@ -109,8 +109,8 @@ describe("Batch File Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Success");
 
       // Verify files were created
-      const file1Path = path.join(projectDir, "file1.txt");
-      const file2Path = path.join(projectDir, "nested/file2.txt");
+      const file1Path = path.join(workspaceDir, "file1.txt");
+      const file2Path = path.join(workspaceDir, "nested/file2.txt");
 
       expect(fs.existsSync(file1Path)).to.equal(true);
       expect(fs.existsSync(file2Path)).to.equal(true);
@@ -118,27 +118,27 @@ describe("Batch File Handlers with Sessions", function () {
       expect(fs.readFileSync(file1Path, "utf8")).to.equal("Content for file 1");
       expect(fs.readFileSync(file2Path, "utf8")).to.equal("Content for file 2");
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
 
     it("should stop on first error if stopOnError is true", async function () {
       // First create a file we can append to
-      const validFilePath = path.join(projectDir, "valid.txt");
+      const validFilePath = path.join(workspaceDir, "valid.txt");
       fs.writeFileSync(validFilePath, "Initial content\n");
 
-      // Open a project session
-      const openResponse = await openProjectSessionHandler({
-        projectName: "test-project",
+      // Open a workspace
+      const openResponse = await openWorkspaceHandler({
+        workspaceName: "test-workspace",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Try to write files with one invalid path
       const response = await writeBatchFilesHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         files: [
           {
             filePath: "../outside.txt", // Invalid path
@@ -163,27 +163,27 @@ describe("Batch File Handlers with Sessions", function () {
         "Initial content\n"
       );
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
 
     it("should continue after errors if stopOnError is false", async function () {
       // First create a file we can append to
-      const validFilePath = path.join(projectDir, "valid2.txt");
+      const validFilePath = path.join(workspaceDir, "valid2.txt");
       fs.writeFileSync(validFilePath, "Initial content\n");
 
-      // Open a project session
-      const openResponse = await openProjectSessionHandler({
-        projectName: "test-project",
+      // Open a workspace
+      const openResponse = await openWorkspaceHandler({
+        workspaceName: "test-workspace",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
       // Try to write files with one invalid path but continue
       const response = await writeBatchFilesHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         files: [
           {
             filePath: "../outside.txt", // Invalid path
@@ -208,15 +208,15 @@ describe("Batch File Handlers with Sessions", function () {
         "Initial content\nAppended content"
       );
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
 
-    it("should return error for invalid sessions", async function () {
+    it("should return error for invalidworkspace tokens", async function () {
       const response = await writeBatchFilesHandler({
-        projectSessionId: "invalid-session-id",
+        workspaceToken: "invalid-workspace-token-id",
         files: [
           {
             filePath: "file.txt",
@@ -229,23 +229,23 @@ describe("Batch File Handlers with Sessions", function () {
       // Verify the error response
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include(
-        "Invalid or expired session ID"
+        "Invalid or expired workspace token"
       );
     });
   });
 
   describe("write_batch_files with Copy Mode", function () {
     it("should write multiple files to a copy without modifying original files", async function () {
-      // Open a project session with copy=true
-      const openResponse = await openProjectSessionHandler({
-        projectName: "copy-project",
+      // Open a workspace with copy=true
+      const openResponse = await openWorkspaceHandler({
+        workspaceName: "copy-workspace",
       });
 
-      const sessionId = openResponse.content[0].text;
+      const workspaceToken = openResponse.content[0].text;
 
-      // Write multiple files using the session
+      // Write multiple files using the workspace token
       const response = await writeBatchFilesHandler({
-        projectSessionId: sessionId,
+        workspaceToken: workspaceToken,
         files: [
           {
             filePath: "batch-copy1.txt",
@@ -264,16 +264,16 @@ describe("Batch File Handlers with Sessions", function () {
       expect(response.isError || false).to.equal(false);
       expect(response.content[0].text).to.include("Success");
 
-      // Verify files were NOT created in the original project directory
-      const file1Path = path.join(projectDir, "batch-copy1.txt");
-      const file2Path = path.join(projectDir, "batch-copy2.txt");
+      // Verify files were NOT created in the original workspace directory
+      const file1Path = path.join(workspaceDir, "batch-copy1.txt");
+      const file2Path = path.join(workspaceDir, "batch-copy2.txt");
 
       expect(fs.existsSync(file1Path)).to.equal(false);
       expect(fs.existsSync(file2Path)).to.equal(false);
 
-      // Clean up the session
-      await closeProjectSessionHandler({
-        projectSessionId: sessionId,
+      // Clean up the workspace token
+      await closeWorkspaceHandler({
+        workspaceToken: workspaceToken,
       });
     });
   });
