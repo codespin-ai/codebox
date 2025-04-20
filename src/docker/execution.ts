@@ -128,7 +128,7 @@ async function executeInExistingContainer(
  */
 async function executeWithDockerImage(
   image: string,
-  hostPath: string,
+  path: string,
   command: string,
   containerPath = "/workspace",
   network?: string
@@ -138,7 +138,7 @@ async function executeWithDockerImage(
 
   const dockerCommand = `docker run -i --rm \
     ${networkParam} \
-    -v "${hostPath}:${containerPath}" \
+    -v "${path}:${containerPath}" \
     --workdir="${containerPath}" \
     --user=${uid}:${gid} \
     ${image} /bin/sh -c "${command}"`;

@@ -110,7 +110,7 @@ describe("Batch Command Handlers with Workspace tokens", function () {
         workspaces: [
           {
             name: workspaceName,
-            hostPath: workspaceDir,
+            path: workspaceDir,
             containerName: containerName,
           },
         ],
@@ -249,7 +249,7 @@ describe("Batch Command Handlers with Workspace tokens", function () {
         workspaces: [
           {
             name: "copy-workspace",
-            hostPath: workspaceDir,
+            path: workspaceDir,
             dockerImage: dockerImage,
             copy: true,
           },

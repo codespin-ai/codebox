@@ -86,8 +86,8 @@ export function validateWorkspaceName(workspaceName: string): boolean {
   const workspace = getWorkspaceByName(workspaceName);
   return (
     workspace !== null &&
-    fs.existsSync(workspace.hostPath) &&
-    fs.statSync(workspace.hostPath).isDirectory()
+    fs.existsSync(workspace.path) &&
+    fs.statSync(workspace.path).isDirectory()
   );
 }
 
@@ -102,7 +102,7 @@ export function getWorkspaceForDirectory(
 
   // Find the workspace configuration
   const workspace = workspaces.find((p) => {
-    const normalizedWorkspacePath = p.hostPath.replace(/\/+$/, "");
+    const normalizedWorkspacePath = p.path.replace(/\/+$/, "");
     const normalizedInputPath = resolvedPath.replace(/\/+$/, "");
 
     return (
@@ -134,7 +134,7 @@ export function validateWorkspace(workspaceDir: string): boolean {
 
   // Check if the normalized input path is a registered workspace
   for (const workspace of registeredWorkspaces) {
-    const normalizedWorkspacePath = workspace.hostPath.replace(/\/+$/, "");
+    const normalizedWorkspacePath = workspace.path.replace(/\/+$/, "");
 
     // Check if the input path starts with a registered path followed by either
     // end of string or a path separator

@@ -39,12 +39,12 @@ describe("File Handlers with Workspace tokens", function () {
       workspaces: [
         {
           name: "test-workspace",
-          hostPath: workspaceDir,
+          path: workspaceDir,
           dockerImage: "dummy-image",
         },
         {
           name: "copy-workspace",
-          hostPath: workspaceDir,
+          path: workspaceDir,
           dockerImage: "dummy-image",
           copy: true,
         },

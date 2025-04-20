@@ -42,13 +42,13 @@ describe("Workspace token based Tools", function () {
       workspaces: [
         {
           name: "test-workspace",
-          hostPath: workspaceDir,
+          path: workspaceDir,
           dockerImage: "dummy-image",
           copy: false,
         },
         {
           name: "copy-workspace",
-          hostPath: workspaceDir,
+          path: workspaceDir,
           dockerImage: "dummy-image",
           copy: true,
         },

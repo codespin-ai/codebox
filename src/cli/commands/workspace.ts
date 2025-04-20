@@ -111,14 +111,14 @@ export async function addWorkspace(
     }
     // Update copy setting
     config.workspaces[existingIndex].copy = copy;
-    config.workspaces[existingIndex].hostPath = workspacePath;
+    config.workspaces[existingIndex].path = workspacePath;
     saveConfig(config);
     console.log(`Updated workspace: ${workspaceName}`);
   } else {
     // Add new workspace
     config.workspaces.push({
       name: workspaceName,
-      hostPath: workspacePath,
+      path: workspacePath,
       ...(containerPath && { containerPath }),
       ...(image && { dockerImage: image }),
       ...(containerName && { containerName }),
@@ -156,7 +156,7 @@ export async function removeWorkspace(
   if (target.includes("/") || target.includes("\\")) {
     // It's a path - resolve it and find the matching workspace
     const workspacePath = path.resolve(context.workingDir, target);
-    index = config.workspaces.findIndex((p) => p.hostPath === workspacePath);
+    index = config.workspaces.findIndex((p) => p.path === workspacePath);
 
     if (index !== -1) {
       const removedName = config.workspaces[index].name;
@@ -195,7 +195,7 @@ export async function listWorkspaces(): Promise<void> {
   console.log("-------------------");
 
   config.workspaces.forEach((workspace, index) => {
-    const exists = fs.existsSync(workspace.hostPath);
+    const exists = fs.existsSync(workspace.path);
 
     console.log(`${index + 1}. ${workspace.name}`);
     console.log(`   Status: ${exists ? "exists" : "missing"}`);

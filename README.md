@@ -105,7 +105,7 @@ Workspaces are stored in `~/.codespin/codebox.json` with the following structure
   "workspaces": [
     {
       "name": "my-node-app",
-      "hostPath": "/home/user/workspaces/my-node-app",
+      "path": "/home/user/workspaces/my-node-app",
       "containerPath": "/my-project",
       "dockerImage": "node:18",
       "network": "my_compose_network",
@@ -113,7 +113,7 @@ Workspaces are stored in `~/.codespin/codebox.json` with the following structure
     },
     {
       "name": "python-api",
-      "hostPath": "/home/user/workspaces/python-api",
+      "path": "/home/user/workspaces/python-api",
       "containerName": "running-python-container"
     }
   ],
@@ -124,7 +124,7 @@ Workspaces are stored in `~/.codespin/codebox.json` with the following structure
 Each workspace has:
 
 - `name`: Identifier for the workspace
-- `hostPath`: Path on the host machine
+- `path`: Workspace path on the host machine
 - `containerPath`: (Optional) Path in the container where the workspace is mounted (defaults to `/workspace`)
 - `dockerImage`: Docker image to use for new containers
 - `containerName`: Name of an existing running container
