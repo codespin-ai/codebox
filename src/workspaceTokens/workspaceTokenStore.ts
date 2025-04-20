@@ -115,7 +115,7 @@ export function closeWorkspace(workspaceToken: string): boolean {
       }
     }
 
-    // Remove the session
+    // Remove the workspace token
     delete activeWorkspaceTokens[workspaceToken];
     return true;
   }

@@ -29,7 +29,7 @@ export function registerBatchHandlers(server: McpServer): void {
         .describe("Whether to stop execution if a command fails"),
     },
     async ({ commands, workspaceToken, stopOnError }) => {
-      // Validate the session
+      // Validate the workspace token
       if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
@@ -42,7 +42,7 @@ export function registerBatchHandlers(server: McpServer): void {
         };
       }
 
-      // Get the workspace name and working directory from the session
+      // Get the workspace name and working directory from the workspace token
       const workspaceName = getWorkspaceNameForWorkspaceToken(workspaceToken);
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 

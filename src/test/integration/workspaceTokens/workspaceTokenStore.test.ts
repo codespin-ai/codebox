@@ -139,7 +139,7 @@ describe("Workspace Token Store", function () {
       const workspaceToken = openWorkspace("test-workspace");
       expect(workspaceToken).to.be.a("string");
 
-      // Close the session
+      // Close the workspace token
       const result = closeWorkspace(workspaceToken as string);
       expect(result).to.equal(true);
 
@@ -172,7 +172,7 @@ describe("Workspace Token Store", function () {
       // Verify temp directory exists
       expect(fs.existsSync(workingDir as string)).to.equal(true);
 
-      // Close the session
+      // Close the workspace token
       closeWorkspace(workspaceToken as string);
 
       // Verify temp directory was removed

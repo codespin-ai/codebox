@@ -128,7 +128,7 @@ describe("Execute Handlers with Sessions", function () {
 
       const workspaceToken = openResponse.content[0].text;
 
-      // Now execute command using the session
+      // Now execute command using the workspace token
       const response = await executeCommandHandler({
         workspaceToken: workspaceToken,
         command: "cat /workspace/test.txt",
@@ -138,7 +138,7 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.isError).to.equal(undefined);
       expect(response.content[0].text).to.include("Hello from execute test!");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -162,7 +162,7 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include("No such file");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -205,7 +205,7 @@ describe("Execute Handlers with Sessions", function () {
 
       const workspaceToken = openResponse.content[0].text;
 
-      // Now execute command using the session
+      // Now execute command using the workspace token
       const response = await executeCommandHandler({
         workspaceToken: workspaceToken,
         command: "cat /workspace/test.txt",
@@ -215,7 +215,7 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.isError).to.equal(undefined);
       expect(response.content[0].text).to.include("Hello from execute test!");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -266,7 +266,7 @@ describe("Execute Handlers with Sessions", function () {
         "This file should not change"
       );
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -301,7 +301,7 @@ describe("Execute Handlers with Sessions", function () {
         false
       );
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });

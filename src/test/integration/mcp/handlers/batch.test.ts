@@ -125,7 +125,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
       const workspaceToken = openResponse.content[0].text;
 
-      // Execute batch commands using the session
+      // Execute batch commands using the workspace token
       const response = await executeBatchCommandsHandler({
         workspaceToken: workspaceToken,
         commands: [
@@ -147,7 +147,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(content).to.include("First command");
       expect(content).to.include("Second command");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -184,7 +184,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(content).to.include("First command");
       expect(content).not.to.include("Third command");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -221,7 +221,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(content).to.include("First command");
       expect(content).to.include("Third command");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -291,7 +291,7 @@ describe("Batch Command Handlers with Sessions", function () {
       );
       expect(originalContent).to.equal("Original content");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -333,7 +333,7 @@ describe("Batch Command Handlers with Sessions", function () {
         false
       );
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });

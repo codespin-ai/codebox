@@ -22,7 +22,7 @@ export function registerExecuteHandlers(server: McpServer): void {
         .describe("The workspace token from open_workspace"),
     },
     async ({ command, workspaceToken }) => {
-      // Validate the session
+      // Validate the workspace token
       if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
@@ -35,7 +35,7 @@ export function registerExecuteHandlers(server: McpServer): void {
         };
       }
 
-      // Get the workspace name and working directory from the session
+      // Get the workspace name and working directory from the workspace token
       const workspaceName = getWorkspaceNameForWorkspaceToken(workspaceToken);
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 

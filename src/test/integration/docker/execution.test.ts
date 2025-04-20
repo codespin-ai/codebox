@@ -128,7 +128,7 @@ describe("Docker Execution with Sessions", function () {
       const workspaceToken = openWorkspace(workspaceName);
       expect(workspaceToken).to.not.equal(null);
 
-      // Get the working directory from the session
+      // Get the working directory from the workspace token
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
       expect(workingDir).to.equal(workspaceDir);
 
@@ -141,7 +141,7 @@ describe("Docker Execution with Sessions", function () {
 
       expect(stdout).to.include("Hello from Docker test!");
 
-      // Close the session
+      // Close the workspace token
       closeWorkspace(workspaceToken as string);
     });
 
@@ -163,7 +163,7 @@ describe("Docker Execution with Sessions", function () {
           "No such file or directory"
         );
       } finally {
-        // Close the session
+        // Close the workspace token
         closeWorkspace(workspaceToken as string);
       }
     });
@@ -188,7 +188,7 @@ describe("Docker Execution with Sessions", function () {
       const workspaceToken = openWorkspace(workspaceName);
       expect(workspaceToken).to.not.equal(null);
 
-      // Get the working directory from the session
+      // Get the working directory from the workspace token
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
       expect(workingDir).to.equal(workspaceDir);
 
@@ -201,7 +201,7 @@ describe("Docker Execution with Sessions", function () {
 
       expect(stdout).to.include("Hello from Docker test!");
 
-      // Close the session
+      // Close the workspace token
       closeWorkspace(workspaceToken as string);
     });
 
@@ -230,7 +230,7 @@ describe("Docker Execution with Sessions", function () {
 
       expect(stdout).to.include("Hello from Docker test!");
 
-      // Close the session
+      // Close the workspace token
       closeWorkspace(workspaceToken as string);
     });
   });
@@ -272,7 +272,7 @@ describe("Docker Execution with Sessions", function () {
           `Network connection test failed: ${(error as Error).message}`
         );
       } finally {
-        // Close the session
+        // Close the workspace token
         closeWorkspace(workspaceToken as string);
       }
     });
@@ -349,7 +349,7 @@ describe("Docker Execution with Sessions", function () {
     });
 
     it("should create separate temp directories for different sessions of the same workspace", async function () {
-      // Open two sessions for the same project
+      // Open two sessions for the same workspace
       const sessionId1 = openWorkspace(workspaceName);
       const sessionId2 = openWorkspace(workspaceName);
 

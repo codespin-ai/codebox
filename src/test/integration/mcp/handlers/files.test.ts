@@ -87,7 +87,7 @@ describe("File Handlers with Sessions", function () {
 
       const workspaceToken = openResponse.content[0].text;
 
-      // Write a file using the session
+      // Write a file using the workspace token
       const response = await writeFileHandler({
         workspaceToken: workspaceToken,
         filePath: "test.txt",
@@ -104,7 +104,7 @@ describe("File Handlers with Sessions", function () {
       expect(fs.existsSync(filePath)).to.equal(true);
       expect(fs.readFileSync(filePath, "utf8")).to.equal("Hello, world!");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -122,7 +122,7 @@ describe("File Handlers with Sessions", function () {
 
       const workspaceToken = openResponse.content[0].text;
 
-      // Append to the file using the session
+      // Append to the file using the workspace token
       const response = await writeFileHandler({
         workspaceToken: workspaceToken,
         filePath: "append.txt",
@@ -139,7 +139,7 @@ describe("File Handlers with Sessions", function () {
         "Initial content\nAppended content"
       );
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -169,7 +169,7 @@ describe("File Handlers with Sessions", function () {
       expect(fs.existsSync(filePath)).to.equal(true);
       expect(fs.readFileSync(filePath, "utf8")).to.equal("Nested content");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -210,7 +210,7 @@ describe("File Handlers with Sessions", function () {
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include("Invalid file path");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -226,7 +226,7 @@ describe("File Handlers with Sessions", function () {
 
       const workspaceToken = openResponse.content[0].text;
 
-      // Write a file using the session
+      // Write a file using the workspace token
       const response = await writeFileHandler({
         workspaceToken: workspaceToken,
         filePath: "copied-file.txt",
@@ -242,7 +242,7 @@ describe("File Handlers with Sessions", function () {
       const filePath = path.join(workspaceDir, "copied-file.txt");
       expect(fs.existsSync(filePath)).to.equal(false);
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -288,7 +288,7 @@ describe("File Handlers with Sessions", function () {
         false
       );
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });

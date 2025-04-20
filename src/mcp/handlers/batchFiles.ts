@@ -62,7 +62,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
         .describe("Whether to stop execution if a file write fails"),
     },
     async ({ workspaceToken, files, stopOnError }) => {
-      // Validate the session
+      // Validate the workspace token
       if (!workspaceTokenExists(workspaceToken)) {
         return {
           isError: true,
@@ -75,7 +75,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
         };
       }
 
-      // Get the working directory from the session
+      // Get the working directory from the workspace token
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
       if (!workingDir) {
         return {
@@ -83,7 +83,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error: Session mapping not found: ${workspaceToken}`,
+              text: `Error: Workspace token mapping not found: ${workspaceToken}`,
             },
           ],
         };
@@ -128,7 +128,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
         const { filePath, content, mode = "overwrite" } = fileOp;
 
         try {
-          // Write the file to the session's working directory
+          // Write the file to the workspace token's working directory
           writeProjectFile(workingDir, filePath, content, mode);
 
           results.push({

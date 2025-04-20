@@ -143,7 +143,7 @@ describe("Session-Based Tools", function () {
 
       const workspaceToken = response.content[0].text;
 
-      // Get the working directory from the session
+      // Get the working directory from the workspace token
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 
       // Verify the working directory exists and is not the original project directory
@@ -158,7 +158,7 @@ describe("Session-Based Tools", function () {
         fs.readFileSync(path.join(workingDir as string, "test.txt"), "utf8")
       ).to.equal("Test content");
 
-      // Close the session
+      // Close the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });

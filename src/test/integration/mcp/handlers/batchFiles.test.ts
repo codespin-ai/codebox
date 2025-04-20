@@ -87,7 +87,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       const workspaceToken = openResponse.content[0].text;
 
-      // Write multiple files using the session
+      // Write multiple files using the workspace token
       const response = await writeBatchFilesHandler({
         workspaceToken: workspaceToken,
         files: [
@@ -118,7 +118,7 @@ describe("Batch File Handlers with Sessions", function () {
       expect(fs.readFileSync(file1Path, "utf8")).to.equal("Content for file 1");
       expect(fs.readFileSync(file2Path, "utf8")).to.equal("Content for file 2");
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -163,7 +163,7 @@ describe("Batch File Handlers with Sessions", function () {
         "Initial content\n"
       );
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -208,7 +208,7 @@ describe("Batch File Handlers with Sessions", function () {
         "Initial content\nAppended content"
       );
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
@@ -243,7 +243,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       const workspaceToken = openResponse.content[0].text;
 
-      // Write multiple files using the session
+      // Write multiple files using the workspace token
       const response = await writeBatchFilesHandler({
         workspaceToken: workspaceToken,
         files: [
@@ -271,7 +271,7 @@ describe("Batch File Handlers with Sessions", function () {
       expect(fs.existsSync(file1Path)).to.equal(false);
       expect(fs.existsSync(file2Path)).to.equal(false);
 
-      // Clean up the session
+      // Clean up the workspace token
       await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
