@@ -1,7 +1,7 @@
 // src/mcp/handlers/batchFiles.ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
-import { writeProjectFile } from "../../fs/fileIO.js";
+import { writeWorkspaceFile } from "../../fs/fileIO.js";
 import { validateFilePath } from "../../fs/pathValidation.js";
 import {
   getWorkingDirForWorkspaceToken,
@@ -36,7 +36,7 @@ function formatResults(
 export function registerBatchFileHandlers(server: McpServer): void {
   server.tool(
     "write_batch_files",
-    "Write content to multiple files in a project directory using a session",
+    "Write content to multiple files in a workspace directory using a session",
     {
       workspaceToken: zod
         .string()
@@ -46,7 +46,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
           zod.object({
             filePath: zod
               .string()
-              .describe("Relative path to the file from project root"),
+              .describe("Relative path to the file from workspace root"),
             content: zod.string().describe("Content to write to the file"),
             mode: zod
               .enum(["overwrite", "append"])
@@ -129,7 +129,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
 
         try {
           // Write the file to the workspace token's working directory
-          writeProjectFile(workingDir, filePath, content, mode);
+          writeWorkspaceFile(workingDir, filePath, content, mode);
 
           results.push({
             filePath,

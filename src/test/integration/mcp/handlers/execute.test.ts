@@ -4,7 +4,7 @@ import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
 import { registerExecuteHandlers } from "../../../../mcp/handlers/execute.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
+import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { createTestConfig, setupTestEnvironment } from "../../setup.js";
 import {
   createTestContainer,
@@ -64,7 +64,7 @@ describe("Execute Handlers with Sessions", function () {
     // Create unique name for container
     containerName = uniqueName("codebox-test-container");
 
-    // Create a test file in the project directory
+    // Create a test file in the workspace directory
     createTestFile(
       path.join(workspaceDir, "test.txt"),
       "Hello from execute test!"
@@ -90,7 +90,7 @@ describe("Execute Handlers with Sessions", function () {
 
     // Register the handlers
     registerExecuteHandlers(server);
-    registerProjectHandlers(server);
+    registerWorkspaceHandlers(server);
   });
 
   afterEach(async function () {
@@ -110,7 +110,7 @@ describe("Execute Handlers with Sessions", function () {
 
       // Register the container in the config
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,
@@ -187,7 +187,7 @@ describe("Execute Handlers with Sessions", function () {
     beforeEach(function () {
       // Register the image in the config
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,
@@ -226,7 +226,7 @@ describe("Execute Handlers with Sessions", function () {
     beforeEach(function () {
       // Register the image in the config with copy mode enabled
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,
@@ -296,7 +296,7 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.isError).to.equal(undefined);
       expect(response.content[0].text).to.include("First command");
 
-      // The file should not exist in the original project directory
+      // The file should not exist in the original workspace directory
       expect(fs.existsSync(path.join(workspaceDir, "session-test.txt"))).to.equal(
         false
       );

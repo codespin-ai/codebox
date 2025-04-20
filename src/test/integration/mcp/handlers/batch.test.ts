@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerBatchHandlers } from "../../../../mcp/handlers/batch.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
+import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 import {
   isDockerAvailable,
@@ -64,7 +64,7 @@ describe("Batch Command Handlers with Sessions", function () {
     // Create unique name for container
     containerName = uniqueName("codebox-test-container");
 
-    // Create a test file in the project directory
+    // Create a test file in the workspace directory
     createTestFile(path.join(workspaceDir, "test.txt"), "Hello from batch test!");
 
     // Create a simple server to register handlers
@@ -87,7 +87,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
     // Register the handlers
     registerBatchHandlers(server);
-    registerProjectHandlers(server);
+    registerWorkspaceHandlers(server);
   });
 
   afterEach(async function () {
@@ -107,7 +107,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
       // Register the container in the config
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,
@@ -244,9 +244,9 @@ describe("Batch Command Handlers with Sessions", function () {
 
   describe("execute_batch_commands with Copy Mode", function () {
     beforeEach(function () {
-      // Register a project with copy mode enabled
+      // Register a workspace with copy mode enabled
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: "copy-workspace",
             hostPath: workspaceDir,
@@ -328,7 +328,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("First batch");
       expect(response.content[0].text).to.include("Second batch");
 
-      // The file should not exist in the original project directory
+      // The file should not exist in the original workspace directory
       expect(fs.existsSync(path.join(workspaceDir, "multi-batch.txt"))).to.equal(
         false
       );

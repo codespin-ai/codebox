@@ -32,9 +32,9 @@ describe("Workspace Token Store", function () {
     cleanup();
   });
 
-  describe("openProject", function () {
+  describe("openWorkspace", function () {
     it("should open a workspace token without copying files when copy=false", function () {
-      // Register a project without copy mode
+      // Register a workspace without copy mode
       createTestConfig(configDir, {
         workspaces: [
           {
@@ -60,14 +60,14 @@ describe("Workspace Token Store", function () {
         "test-workspace"
       );
 
-      // Verify working directory is the original project directory
+      // Verify working directory is the original workspace directory
       expect(getWorkingDirForWorkspaceToken(workspaceToken as string)).to.equal(workspaceDir);
     });
 
     it("should open a workspace token with copying files when copy=true", function () {
-      // Register a project with copy mode
+      // Register a workspace with copy mode
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: "test-workspace",
             hostPath: workspaceDir,
@@ -91,7 +91,7 @@ describe("Workspace Token Store", function () {
         "test-workspace"
       );
 
-      // Verify working directory is not the original project directory
+      // Verify working directory is not the original workspace directory
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
       expect(workingDir).to.not.equal(workspaceDir);
 
@@ -104,10 +104,10 @@ describe("Workspace Token Store", function () {
       ).to.equal("Original content");
     });
 
-    it("should return null for non-existent projects", function () {
-      // Register a project
+    it("should return null for non-existent workspaces", function () {
+      // Register a workspace
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: "test-workspace",
             hostPath: workspaceDir,
@@ -116,7 +116,7 @@ describe("Workspace Token Store", function () {
         ],
       });
 
-      // Try to open non-existent project
+      // Try to open non-existent workspace
       const workspaceToken = openWorkspace("non-existent-workspace");
       expect(workspaceToken).to.equal(null);
     });
@@ -124,9 +124,9 @@ describe("Workspace Token Store", function () {
 
   describe("closeSession", function () {
     it("should close a workspace token and return true", function () {
-      // Register a project
+      // Register a workspace
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: "test-workspace",
             hostPath: workspaceDir,
@@ -153,9 +153,9 @@ describe("Workspace Token Store", function () {
     });
 
     it("should clean up temporary directory when copy=true", function () {
-      // Register a project with copy mode
+      // Register a workspace with copy mode
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: "test-workspace",
             hostPath: workspaceDir,
@@ -182,9 +182,9 @@ describe("Workspace Token Store", function () {
 
   describe("Workspace Token Isolation", function () {
     it("should maintain isolated file changes between sessions with copy=true", function () {
-      // Register a project with copy mode
+      // Register a workspace with copy mode
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: "test-workspace",
             hostPath: workspaceDir,
@@ -194,7 +194,7 @@ describe("Workspace Token Store", function () {
         ],
       });
 
-      // Open two sessions for the same project
+      // Open two sessions for the same workspace
       const sessionId1 = openWorkspace("test-workspace");
       const sessionId2 = openWorkspace("test-workspace");
 

@@ -3,7 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
-import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
+import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { createTestConfig, setupTestEnvironment } from "../../setup.js";
 import { createTestFile } from "../../testUtils.js";
 import { getWorkingDirForWorkspaceToken } from "../../../../workspaceTokens/workspaceTokenStore.js";
@@ -34,12 +34,12 @@ describe("Session-Based Tools", function () {
     workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
-    // Create a test file in the project directory
+    // Create a test file in the workspace directory
     createTestFile(path.join(workspaceDir, "test.txt"), "Test content");
 
-    // Register a project
+    // Register a workspace
     createTestConfig(configDir, {
-      projects: [
+      workspaces: [
         {
           name: "test-workspace",
           hostPath: workspaceDir,
@@ -72,7 +72,7 @@ describe("Session-Based Tools", function () {
     } as unknown as McpServer;
 
     // Register the handlers
-    registerProjectHandlers(server);
+    registerWorkspaceHandlers(server);
   });
 
   afterEach(function () {
@@ -92,7 +92,7 @@ describe("Session-Based Tools", function () {
       expect(response.content[0].text).to.not.equal(null);
     });
 
-    it("should return an error for invalid projects", async function () {
+    it("should return an error for invalid workspaces", async function () {
       const response = await openWorkspaceHandler({
         workspaceName: "non-existent-workspace",
       });
@@ -136,7 +136,7 @@ describe("Session-Based Tools", function () {
 
   describe("Copy Mode Behavior", function () {
     it("should create temporary files when opening a workspace token with copy=true", async function () {
-      // Open a workspace token for a project with copy=true
+      // Open a workspace token for a workspace with copy=true
       const response = await openWorkspaceHandler({
         workspaceName: "copy-workspace",
       });
@@ -146,7 +146,7 @@ describe("Session-Based Tools", function () {
       // Get the working directory from the workspace token
       const workingDir = getWorkingDirForWorkspaceToken(workspaceToken);
 
-      // Verify the working directory exists and is not the original project directory
+      // Verify the working directory exists and is not the original workspace directory
       expect(workingDir).to.not.equal(workspaceDir);
       expect(fs.existsSync(workingDir as string)).to.equal(true);
 

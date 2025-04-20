@@ -60,7 +60,7 @@ describe("Docker Execution with Sessions", function () {
     containerName = uniqueName("codebox-test-container");
     networkName = uniqueName("codebox-test-network");
 
-    // Create a test file in the project directory
+    // Create a test file in the workspace directory
     createTestFile(
       path.join(workspaceDir, "test.txt"),
       "Hello from Docker test!"
@@ -113,7 +113,7 @@ describe("Docker Execution with Sessions", function () {
 
       // Register the container in the config
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,
@@ -173,7 +173,7 @@ describe("Docker Execution with Sessions", function () {
     beforeEach(function () {
       // Register the image in the config
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,
@@ -208,7 +208,7 @@ describe("Docker Execution with Sessions", function () {
     it("should respect custom container path", async function () {
       // Update config with custom container path
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,
@@ -239,7 +239,7 @@ describe("Docker Execution with Sessions", function () {
     beforeEach(function () {
       // Register the image with network in the config
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,
@@ -282,7 +282,7 @@ describe("Docker Execution with Sessions", function () {
     beforeEach(function () {
       // Register the image in the config with copy mode enabled
       createTestConfig(configDir, {
-        projects: [
+        workspaces: [
           {
             name: workspaceName,
             hostPath: workspaceDir,

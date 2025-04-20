@@ -1,7 +1,7 @@
 // src/mcp/handlers/files.ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
-import { writeProjectFile } from "../../fs/fileIO.js";
+import { writeWorkspaceFile } from "../../fs/fileIO.js";
 import { validateFilePath } from "../../fs/pathValidation.js";
 import {
   getWorkingDirForWorkspaceToken,
@@ -14,14 +14,14 @@ import {
 export function registerFileHandlers(server: McpServer): void {
   server.tool(
     "write_file",
-    "Write content to a file in a project directory using a session",
+    "Write content to a file in a workspace directory using a session",
     {
       workspaceToken: zod
         .string()
         .describe("The workspace token from open_workspace"),
       filePath: zod
         .string()
-        .describe("Relative path to the file from project root"),
+        .describe("Relative path to the file from workspace root"),
       content: zod.string().describe("Content to write to the file"),
       mode: zod
         .enum(["overwrite", "append"])
@@ -71,7 +71,7 @@ export function registerFileHandlers(server: McpServer): void {
 
       try {
         // Write file to the workspace token's working directory
-        writeProjectFile(workingDir, filePath, content, mode);
+        writeWorkspaceFile(workingDir, filePath, content, mode);
 
         return {
           content: [

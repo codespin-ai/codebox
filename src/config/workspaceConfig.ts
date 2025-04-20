@@ -1,4 +1,4 @@
-// src/config/projectConfig.ts
+// src/config/workspaceConfig.ts
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
@@ -46,7 +46,7 @@ export function getConfig(): SystemConfig {
   try {
     const data = JSON.parse(fs.readFileSync(configFile, "utf8"));
     return {
-      workspaces: Array.isArray(data.projects) ? data.projects : [],
+      workspaces: Array.isArray(data.workspaces) ? data.workspaces : [],
       debug: data.debug,
     };
   } catch {
@@ -64,7 +64,7 @@ export function saveConfig(config: SystemConfig): void {
 }
 
 /**
- * Get all registered projects
+ * Get all registered workspaces
  */
 export function getWorkspaces(): WorkspaceConfig[] {
   const config = getConfig();
@@ -102,12 +102,12 @@ export function getWorkspaceForDirectory(
 
   // Find the workspace configuration
   const workspace = workspaces.find((p) => {
-    const normalizedProjectPath = p.hostPath.replace(/\/+$/, "");
+    const normalizedWorkspacePath = p.hostPath.replace(/\/+$/, "");
     const normalizedInputPath = resolvedPath.replace(/\/+$/, "");
 
     return (
-      normalizedInputPath === normalizedProjectPath ||
-      normalizedInputPath.startsWith(normalizedProjectPath + path.sep)
+      normalizedInputPath === normalizedWorkspacePath ||
+      normalizedInputPath.startsWith(normalizedWorkspacePath + path.sep)
     );
   });
 
@@ -117,7 +117,7 @@ export function getWorkspaceForDirectory(
 /**
  * Check if the directory is a registered workspace
  */
-export function validateProject(workspaceDir: string): boolean {
+export function validateWorkspace(workspaceDir: string): boolean {
   const resolvedPath = path.resolve(workspaceDir);
 
   // Ensure path exists and is a directory
@@ -134,13 +134,13 @@ export function validateProject(workspaceDir: string): boolean {
 
   // Check if the normalized input path is a registered workspace
   for (const workspace of registeredWorkspaces) {
-    const normalizedProjectPath = workspace.hostPath.replace(/\/+$/, "");
+    const normalizedWorkspacePath = workspace.hostPath.replace(/\/+$/, "");
 
     // Check if the input path starts with a registered path followed by either
     // end of string or a path separator
     if (
-      normalizedInputPath === normalizedProjectPath ||
-      normalizedInputPath.startsWith(normalizedProjectPath + path.sep)
+      normalizedInputPath === normalizedWorkspacePath ||
+      normalizedInputPath.startsWith(normalizedWorkspacePath + path.sep)
     ) {
       return true;
     }

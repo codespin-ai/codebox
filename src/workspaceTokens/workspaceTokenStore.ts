@@ -44,7 +44,7 @@ export function openWorkspace(workspaceName: string): string | null {
       isTempDir = true;
     } catch (error) {
       console.error(
-        `Failed to create temporary directory for project ${workspaceName}:`,
+        `Failed to create temporary directory for workspace ${workspaceName}:`,
         error
       );
       return null;
@@ -64,7 +64,7 @@ export function openWorkspace(workspaceName: string): string | null {
 /**
  * Get the workspace name for a workspace token
  * @param workspaceToken The workspace token
- * @returns Project name or null if workspace token doesn't exist
+ * @returns Workspace name or null if workspace token doesn't exist
  */
 export function getWorkspaceNameForWorkspaceToken(workspaceToken: string): string | null {
   return activeWorkspaceTokens[workspaceToken]?.workspaceName || null;

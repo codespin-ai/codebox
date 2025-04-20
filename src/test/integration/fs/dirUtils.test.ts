@@ -79,7 +79,7 @@ describe("Directory Utilities", function () {
     it("should copy a directory and its contents", function () {
       const targetDir = path.join(testDir, "copy-target");
 
-      // Copy the project directory to the target
+      // Copy the workspace directory to the target
       copyDirectory(workspaceDir, targetDir);
 
       // Verify the target directory exists
@@ -108,7 +108,7 @@ describe("Directory Utilities", function () {
       // Create a file in the target dir that shouldn't be deleted
       fs.writeFileSync(path.join(targetDir, "existing.txt"), "Existing file");
 
-      // Copy the project directory to the target
+      // Copy the workspace directory to the target
       copyDirectory(workspaceDir, targetDir);
 
       // Verify the existing file is still there

@@ -18,13 +18,13 @@ export function validateDirectory(dirPath: string): void {
 }
 
 /**
- * Validate that a file path is within a project directory
+ * Validate that a file path is within a workspace directory
  */
 export function validateFilePath(
   workspaceDir: string,
   filePath: string
 ): boolean {
-  // Get absolute path of project directory
+  // Get absolute path of workspace directory
   const resolvedWorkspaceDir = path.resolve(workspaceDir);
 
   try {
@@ -37,7 +37,7 @@ export function validateFilePath(
     // This properly handles ../ paths
     const fullPath = path.resolve(resolvedWorkspaceDir, filePath);
 
-    // Check if the normalized path starts with the project directory
+    // Check if the normalized path starts with the workspace directory
     return (
       fullPath === resolvedWorkspaceDir ||
       fullPath.startsWith(resolvedWorkspaceDir + path.sep)

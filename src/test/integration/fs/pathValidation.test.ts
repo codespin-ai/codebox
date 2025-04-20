@@ -56,7 +56,7 @@ describe("Path Validation", function () {
   });
 
   describe("validateFilePath", function () {
-    it("should return true for file paths within project directory", function () {
+    it("should return true for file paths within workspace directory", function () {
       // Simple file path
       expect(validateFilePath(workspaceDir, "file.txt")).to.equal(true);
 
@@ -64,11 +64,11 @@ describe("Path Validation", function () {
       expect(validateFilePath(workspaceDir, "nested/file.txt")).to.equal(true);
     });
 
-    it("should return false for file paths outside project directory", function () {
-      // Absolute path outside project
+    it("should return false for file paths outside workspace directory", function () {
+      // Absolute path outside workspace
       expect(validateFilePath(workspaceDir, "/etc/passwd")).to.equal(false);
 
-      // Relative path outside project using parent directory traversal
+      // Relative path outside workspace using parent directory traversal
       expect(validateFilePath(workspaceDir, "../outside.txt")).to.equal(false);
 
       // Path with directory traversal

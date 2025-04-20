@@ -5,7 +5,7 @@ import { createLoggingEnabledServer } from "./logging.js";
 
 // Import handlers
 import { registerFileHandlers } from "./handlers/files.js";
-import { registerProjectHandlers } from "./handlers/workspaces.js";
+import { registerWorkspaceHandlers } from "./handlers/workspaces.js";
 import { registerExecuteHandlers } from "./handlers/execute.js";
 import { registerBatchHandlers } from "./handlers/batch.js";
 import { registerBatchFileHandlers } from "./handlers/batchFiles.js";
@@ -34,7 +34,7 @@ export async function createServer(): Promise<McpServer> {
 
   // Register all handlers
   registerFileHandlers(server);
-  registerProjectHandlers(server);
+  registerWorkspaceHandlers(server);
   registerExecuteHandlers(server);
   registerBatchHandlers(server);
   registerBatchFileHandlers(server);

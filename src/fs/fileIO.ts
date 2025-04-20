@@ -4,10 +4,10 @@ import * as path from "path";
 import { validateFilePath, ensureDirectoryForFile } from "./pathValidation.js";
 
 /**
- * Write content to a file in a project directory
- * @throws Error if the file path is outside the project directory
+ * Write content to a file in a workspace directory
+ * @throws Error if the file path is outside the workspace directory
  */
-export function writeProjectFile(
+export function writeWorkspaceFile(
   workspaceDir: string,
   filePath: string,
   content: string,
@@ -34,10 +34,10 @@ export function writeProjectFile(
 }
 
 /**
- * Read content from a file in a project directory
- * @throws Error if the file path is outside the project directory
+ * Read content from a file in a workspace directory
+ * @throws Error if the file path is outside the workspace directory
  */
-export function readProjectFile(workspaceDir: string, filePath: string): string {
+export function readWorkspaceFile(workspaceDir: string, filePath: string): string {
   // Validate the file path - strict validation for security
   if (!validateFilePath(workspaceDir, filePath)) {
     throw new Error(
@@ -58,9 +58,9 @@ export function readProjectFile(workspaceDir: string, filePath: string): string 
 }
 
 /**
- * Check if a file exists in a project directory
+ * Check if a file exists in a workspace directory
  */
-export function projectFileExists(
+export function workspaceFileExists(
   workspaceDir: string,
   filePath: string
 ): boolean {

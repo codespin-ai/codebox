@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerFileHandlers } from "../../../../mcp/handlers/files.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
+import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 
 // Response type for MCP tools
@@ -19,7 +19,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("File Handlers with Sessions", function () {
+describe("File Handlers with Workspace Tokens", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;
@@ -34,9 +34,9 @@ describe("File Handlers with Sessions", function () {
     workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
-    // Register the project in the config
+    // Register the workspace in the config
     createTestConfig(configDir, {
-      projects: [
+      workspaces: [
         {
           name: "test-workspace",
           hostPath: workspaceDir,
@@ -71,7 +71,7 @@ describe("File Handlers with Sessions", function () {
 
     // Register the handlers
     registerFileHandlers(server);
-    registerProjectHandlers(server);
+    registerWorkspaceHandlers(server);
   });
 
   afterEach(function () {
@@ -218,7 +218,7 @@ describe("File Handlers with Sessions", function () {
   });
 
   describe("write_file with Copy Mode", function () {
-    it("should write to a copy of the project and not modify original files", async function () {
+    it("should write to a copy of the workspace and not modify original files", async function () {
       // Open a workspace with copy=true
       const openResponse = await openWorkspaceHandler({
         workspaceName: "copy-workspace",
@@ -238,7 +238,7 @@ describe("File Handlers with Sessions", function () {
       expect(response.isError).to.equal(undefined);
       expect(response.content[0].text).to.include("Successfully wrote file");
 
-      // Verify the file was NOT created in the original project directory
+      // Verify the file was NOT created in the original workspace directory
       const filePath = path.join(workspaceDir, "copied-file.txt");
       expect(fs.existsSync(filePath)).to.equal(false);
 
@@ -280,7 +280,7 @@ describe("File Handlers with Sessions", function () {
         mode: "append",
       });
 
-      // Neither file should exist in the original project directory
+      // Neither file should exist in the original workspace directory
       expect(fs.existsSync(path.join(workspaceDir, "multi-file1.txt"))).to.equal(
         false
       );

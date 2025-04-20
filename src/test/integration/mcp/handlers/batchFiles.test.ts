@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerBatchFileHandlers } from "../../../../mcp/handlers/batchFiles.js";
-import { registerProjectHandlers } from "../../../../mcp/handlers/workspaces.js";
+import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 
 // Response type for MCP tools
@@ -34,9 +34,9 @@ describe("Batch File Handlers with Sessions", function () {
     workspaceDir = env.workspaceDir;
     cleanup = env.cleanup;
 
-    // Register the project in the config
+    // Register the workspace in the config
     createTestConfig(configDir, {
-      projects: [
+      workspaces: [
         {
           name: "test-workspace",
           hostPath: workspaceDir,
@@ -71,7 +71,7 @@ describe("Batch File Handlers with Sessions", function () {
 
     // Register the handlers
     registerBatchFileHandlers(server);
-    registerProjectHandlers(server);
+    registerWorkspaceHandlers(server);
   });
 
   afterEach(function () {
@@ -264,7 +264,7 @@ describe("Batch File Handlers with Sessions", function () {
       expect(response.isError || false).to.equal(false);
       expect(response.content[0].text).to.include("Success");
 
-      // Verify files were NOT created in the original project directory
+      // Verify files were NOT created in the original workspace directory
       const file1Path = path.join(workspaceDir, "batch-copy1.txt");
       const file2Path = path.join(workspaceDir, "batch-copy2.txt");
 

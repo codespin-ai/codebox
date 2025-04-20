@@ -1,4 +1,4 @@
-// src/mcp/handlers/projects.ts
+// src/mcp/handlers/workspaces.ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import {
@@ -8,32 +8,32 @@ import {
 import { closeWorkspace, openWorkspace } from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**
- * Register project-related handlers with the MCP server
+ * Register workspace-related handlers with the MCP server
  */
-export function registerProjectHandlers(server: McpServer): void {
-  server.tool("list_projects", "List available projects", {}, async () => {
+export function registerWorkspaceHandlers(server: McpServer): void {
+  server.tool("list_workspaces", "List available workspaces", {}, async () => {
     try {
-      const projects = getWorkspaces();
+      const workspaces = getWorkspaces();
 
-      if (projects.length === 0) {
+      if (workspaces.length === 0) {
         return {
           content: [
             {
               type: "text",
-              text: "No projects are registered. Use 'codebox project add <dirname> --image <image_name>' to add projects.",
+              text: "No workspaces are registered. Use 'codebox workspace add <dirname> --image <image_name>' to add workspaces.",
             },
           ],
         };
       }
 
-      // Extract only project names for output
-      const projectNames = projects.map((project) => project.name);
+      // Extract only workspace names for output
+      const workspaceNames = workspaces.map((workspace) => workspace.name);
 
       return {
         content: [
           {
             type: "text",
-            text: projectNames.join("\n"),
+            text: workspaceNames.join("\n"),
           },
         ],
       };
@@ -43,7 +43,7 @@ export function registerProjectHandlers(server: McpServer): void {
         content: [
           {
             type: "text",
-            text: `Error listing projects: ${
+            text: `Error listing workspaces: ${
               error instanceof Error ? error.message : "Unknown error"
             }`,
           },
@@ -54,9 +54,9 @@ export function registerProjectHandlers(server: McpServer): void {
 
   server.tool(
     "open_workspace",
-    "Open a workspace, optionally creating a copy of the project files if the project has copy=true",
+    "Open a workspace, optionally creating a copy of the workspace files if the workspace has copy=true",
     {
-      workspaceName: zod.string().describe("The name of the project to open"),
+      workspaceName: zod.string().describe("The name of the workspace to open"),
     },
     async ({ workspaceName }) => {
       try {
@@ -66,7 +66,7 @@ export function registerProjectHandlers(server: McpServer): void {
             content: [
               {
                 type: "text",
-                text: `Error: Invalid or unregistered project: ${workspaceName}`,
+                text: `Error: Invalid or unregistered workspace: ${workspaceName}`,
               },
             ],
           };
@@ -79,7 +79,7 @@ export function registerProjectHandlers(server: McpServer): void {
             content: [
               {
                 type: "text",
-                text: `Error: Could not open project: ${workspaceName}`,
+                text: `Error: Could not open workspace: ${workspaceName}`,
               },
             ],
           };
@@ -99,7 +99,7 @@ export function registerProjectHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Error opening project: ${
+              text: `Error opening workspace: ${
                 error instanceof Error ? error.message : "Unknown error"
               }`,
             },
