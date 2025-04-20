@@ -5,11 +5,11 @@ import * as path from "path";
 import {
   getConfig,
   getConfigFilePath,
-  getProjectByName,
+  getWorkspaceByName,
   isDebugEnabled,
   saveConfig,
   validateProject,
-  validateProjectName,
+  validateWorkspaceName,
 } from "../../../config/workspaceConfig.js";
 import { setupTestEnvironment } from "../setup.js";
 
@@ -76,12 +76,12 @@ describe("Project Configuration", function () {
       saveConfig(testConfig);
 
       // Test getProjectByName
-      const project = getProjectByName("test-project");
+      const project = getWorkspaceByName("test-project");
       expect(project).to.not.equal(null);
       expect(project?.name).to.equal("test-project");
 
       // Test non-existent project
-      const nonExistent = getProjectByName("non-existent");
+      const nonExistent = getWorkspaceByName("non-existent");
       expect(nonExistent).to.equal(null);
     });
 
@@ -99,8 +99,8 @@ describe("Project Configuration", function () {
       saveConfig(testConfig);
 
       // Test validateProjectName
-      expect(validateProjectName("test-project")).to.equal(true);
-      expect(validateProjectName("non-existent")).to.equal(false);
+      expect(validateWorkspaceName("test-project")).to.equal(true);
+      expect(validateWorkspaceName("non-existent")).to.equal(false);
     });
 
     it("should validate project directories", function () {

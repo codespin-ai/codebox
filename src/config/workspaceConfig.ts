@@ -66,42 +66,42 @@ export function saveConfig(config: SystemConfig): void {
 /**
  * Get all registered projects
  */
-export function getProjects(): WorkspaceConfig[] {
+export function getWorkspaces(): WorkspaceConfig[] {
   const config = getConfig();
   return config.workspaces;
 }
 
 /**
- * Find a project by name
+ * Find a workspace by name
  */
-export function getProjectByName(projectName: string): WorkspaceConfig | null {
-  const projects = getProjects();
-  return projects.find((p) => p.name === projectName) || null;
+export function getWorkspaceByName(workspaceName: string): WorkspaceConfig | null {
+  const workspaces = getWorkspaces();
+  return workspaces.find((p) => p.name === workspaceName) || null;
 }
 
 /**
- * Validate that a project exists with the given name
+ * Validate that a workspace exists with the given name
  */
-export function validateProjectName(projectName: string): boolean {
-  const project = getProjectByName(projectName);
+export function validateWorkspaceName(workspaceName: string): boolean {
+  const workspace = getWorkspaceByName(workspaceName);
   return (
-    project !== null &&
-    fs.existsSync(project.hostPath) &&
-    fs.statSync(project.hostPath).isDirectory()
+    workspace !== null &&
+    fs.existsSync(workspace.hostPath) &&
+    fs.statSync(workspace.hostPath).isDirectory()
   );
 }
 
 /**
- * Find a project that contains the given directory
+ * Find a workspace that contains the given directory
  */
-export function getProjectForDirectory(
+export function getWorkspaceForDirectory(
   projectDir: string
 ): WorkspaceConfig | null {
   const resolvedPath = path.resolve(projectDir);
-  const projects = getProjects();
+  const workspaces = getWorkspaces();
 
-  // Find the project configuration
-  const project = projects.find((p) => {
+  // Find the workspace configuration
+  const workspace = workspaces.find((p) => {
     const normalizedProjectPath = p.hostPath.replace(/\/+$/, "");
     const normalizedInputPath = resolvedPath.replace(/\/+$/, "");
 
@@ -111,11 +111,11 @@ export function getProjectForDirectory(
     );
   });
 
-  return project || null;
+  return workspace || null;
 }
 
 /**
- * Check if the directory is a registered project
+ * Check if the directory is a registered workspace
  */
 export function validateProject(projectDir: string): boolean {
   const resolvedPath = path.resolve(projectDir);
@@ -130,11 +130,11 @@ export function validateProject(projectDir: string): boolean {
 
   // Normalize paths by removing trailing slashes for consistent comparison
   const normalizedInputPath = resolvedPath.replace(/\/+$/, "");
-  const registeredProjects = getProjects();
+  const registeredWorkspaces = getWorkspaces();
 
-  // Check if the normalized input path is a registered project
-  for (const project of registeredProjects) {
-    const normalizedProjectPath = project.hostPath.replace(/\/+$/, "");
+  // Check if the normalized input path is a registered workspace
+  for (const workspace of registeredWorkspaces) {
+    const normalizedProjectPath = workspace.hostPath.replace(/\/+$/, "");
 
     // Check if the input path starts with a registered path followed by either
     // end of string or a path separator

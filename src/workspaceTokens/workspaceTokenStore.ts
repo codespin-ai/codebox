@@ -1,7 +1,7 @@
 // src/sessions/sessionStore.ts
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { getProjectByName } from "../config/workspaceConfig.js";
+import { getWorkspaceByName } from "../config/workspaceConfig.js";
 import {
   copyDirectory,
   createTempDirectory,
@@ -9,14 +9,14 @@ import {
 } from "../fs/dirUtils.js";
 
 // Session information including working directory
-interface SessionInfo {
+interface WorkspaceTokenInfo {
   projectName: string;
   workingDir: string; // Either original hostPath or temp directory
   isTempDir: boolean; // Flag to determine if cleanup is needed when closing
 }
 
 // In-memory store of active sessions
-const activeSessions: Record<string, SessionInfo> = {};
+const activeWorkspaceTokens: Record<string, WorkspaceTokenInfo> = {};
 
 /**
  * Open a project and return a session ID
@@ -24,7 +24,7 @@ const activeSessions: Record<string, SessionInfo> = {};
  * @returns Session ID or null if project doesn't exist
  */
 export function openProject(projectName: string): string | null {
-  const project = getProjectByName(projectName);
+  const project = getWorkspaceByName(projectName);
   if (!project) {
     return null;
   }
@@ -52,7 +52,7 @@ export function openProject(projectName: string): string | null {
   }
 
   // Store the session information
-  activeSessions[sessionId] = {
+  activeWorkspaceTokens[sessionId] = {
     projectName,
     workingDir,
     isTempDir,
@@ -67,7 +67,7 @@ export function openProject(projectName: string): string | null {
  * @returns Project name or null if session doesn't exist
  */
 export function getProjectNameForSession(sessionId: string): string | null {
-  return activeSessions[sessionId]?.projectName || null;
+  return activeWorkspaceTokens[sessionId]?.projectName || null;
 }
 
 /**
@@ -76,7 +76,7 @@ export function getProjectNameForSession(sessionId: string): string | null {
  * @returns Working directory path or null if session doesn't exist
  */
 export function getWorkingDirForSession(sessionId: string): string | null {
-  return activeSessions[sessionId]?.workingDir || null;
+  return activeWorkspaceTokens[sessionId]?.workingDir || null;
 }
 
 /**
@@ -85,7 +85,7 @@ export function getWorkingDirForSession(sessionId: string): string | null {
  * @returns True if the session exists
  */
 export function sessionExists(sessionId: string): boolean {
-  return sessionId in activeSessions;
+  return sessionId in activeWorkspaceTokens;
 }
 
 /**
@@ -93,30 +93,30 @@ export function sessionExists(sessionId: string): boolean {
  * @param sessionId The session ID
  * @returns Session information or null if not found
  */
-export function getSessionInfo(sessionId: string): SessionInfo | null {
-  return activeSessions[sessionId] || null;
+export function getSessionInfo(sessionId: string): WorkspaceTokenInfo | null {
+  return activeWorkspaceTokens[sessionId] || null;
 }
 
 /**
  * Close a session and clean up resources
- * @param sessionId The session ID to close
+ * @param workspaceToken The session ID to close
  * @returns True if session was closed, false if it didn't exist
  */
-export function closeSession(sessionId: string): boolean {
-  if (sessionId in activeSessions) {
-    const sessionInfo = activeSessions[sessionId];
+export function closeSession(workspaceToken: string): boolean {
+  if (workspaceToken in activeWorkspaceTokens) {
+    const workspaceTokenInfo = activeWorkspaceTokens[workspaceToken];
 
     // Clean up temporary directory if one was created
-    if (sessionInfo.isTempDir && fs.existsSync(sessionInfo.workingDir)) {
+    if (workspaceTokenInfo.isTempDir && fs.existsSync(workspaceTokenInfo.workingDir)) {
       try {
-        removeDirectory(sessionInfo.workingDir);
+        removeDirectory(workspaceTokenInfo.workingDir);
       } catch (error) {
         console.error(`Error cleaning up temporary directory: ${error}`);
       }
     }
 
     // Remove the session
-    delete activeSessions[sessionId];
+    delete activeWorkspaceTokens[workspaceToken];
     return true;
   }
   return false;

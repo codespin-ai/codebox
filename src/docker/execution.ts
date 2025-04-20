@@ -1,7 +1,7 @@
 // src/docker/execution.ts
 import { exec } from "child_process";
 import { promisify } from "util";
-import { getProjectByName } from "../config/workspaceConfig.js";
+import { getWorkspaceByName } from "../config/workspaceConfig.js";
 
 const execAsync = promisify(exec);
 
@@ -30,7 +30,7 @@ export async function executeDockerCommand(
   command: string,
   hostDir: string
 ): Promise<ExecuteResult> {
-  const project = getProjectByName(projectName);
+  const project = getWorkspaceByName(projectName);
   if (!project) {
     throw new Error(`Project not registered: ${projectName}`);
   }

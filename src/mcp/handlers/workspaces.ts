@@ -2,8 +2,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import {
-  getProjects,
-  validateProjectName,
+  getWorkspaces,
+  validateWorkspaceName,
 } from "../../config/workspaceConfig.js";
 import { openProject, closeSession } from "../../workspaceTokens/workspaceTokenStore.js";
 
@@ -13,7 +13,7 @@ import { openProject, closeSession } from "../../workspaceTokens/workspaceTokenS
 export function registerProjectHandlers(server: McpServer): void {
   server.tool("list_projects", "List available projects", {}, async () => {
     try {
-      const projects = getProjects();
+      const projects = getWorkspaces();
 
       if (projects.length === 0) {
         return {
@@ -60,7 +60,7 @@ export function registerProjectHandlers(server: McpServer): void {
     },
     async ({ projectName }) => {
       try {
-        if (!validateProjectName(projectName)) {
+        if (!validateWorkspaceName(projectName)) {
           return {
             isError: true,
             content: [
