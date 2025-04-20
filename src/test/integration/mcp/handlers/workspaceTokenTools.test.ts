@@ -24,8 +24,8 @@ describe("Session-Based Tools", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;
-  let openProjectSessionHandler: RequestHandler;
-  let closeProjectSessionHandler: RequestHandler;
+  let openWorkspaceHandler: RequestHandler;
+  let closeWorkspaceHandler: RequestHandler;
 
   beforeEach(function () {
     // Setup test environment
@@ -64,9 +64,9 @@ describe("Session-Based Tools", function () {
         handler: unknown
       ) => {
         if (name === "open_project_session") {
-          openProjectSessionHandler = handler as RequestHandler;
+          openWorkspaceHandler = handler as RequestHandler;
         } else if (name === "close_project_session") {
-          closeProjectSessionHandler = handler as RequestHandler;
+          closeWorkspaceHandler = handler as RequestHandler;
         }
       },
     } as unknown as McpServer;
@@ -81,7 +81,7 @@ describe("Session-Based Tools", function () {
 
   describe("open_project_session", function () {
     it("should open a session for a valid workspace", async function () {
-      const response = await openProjectSessionHandler({
+      const response = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
 
@@ -93,7 +93,7 @@ describe("Session-Based Tools", function () {
     });
 
     it("should return an error for invalid projects", async function () {
-      const response = await openProjectSessionHandler({
+      const response = await openWorkspaceHandler({
         projectName: "non-existent-workspace",
       });
 
@@ -108,13 +108,13 @@ describe("Session-Based Tools", function () {
   describe("close_project_session", function () {
     it("should close a valid session", async function () {
       // First open a session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
       const workspaceToken = openResponse.content[0].text;
 
       // Then close it
-      const closeResponse = await closeProjectSessionHandler({
+      const closeResponse = await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
 
@@ -124,7 +124,7 @@ describe("Session-Based Tools", function () {
     });
 
     it("should return an error for invalid session IDs", async function () {
-      const response = await closeProjectSessionHandler({
+      const response = await closeWorkspaceHandler({
         workspaceToken: "non-existent-session",
       });
 
@@ -137,7 +137,7 @@ describe("Session-Based Tools", function () {
   describe("Copy Mode Behavior", function () {
     it("should create temporary files when opening a session with copy=true", async function () {
       // Open a session for a project with copy=true
-      const response = await openProjectSessionHandler({
+      const response = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });
 
@@ -159,7 +159,7 @@ describe("Session-Based Tools", function () {
       ).to.equal("Test content");
 
       // Close the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
 

@@ -24,8 +24,8 @@ describe("File Handlers with Sessions", function () {
   let workspaceDir: string;
   let cleanup: () => void;
   let writeFileHandler: RequestHandler;
-  let openProjectSessionHandler: RequestHandler;
-  let closeProjectSessionHandler: RequestHandler;
+  let openWorkspaceHandler: RequestHandler;
+  let closeWorkspaceHandler: RequestHandler;
 
   beforeEach(function () {
     // Setup test environment
@@ -62,9 +62,9 @@ describe("File Handlers with Sessions", function () {
         if (name === "write_file") {
           writeFileHandler = handler as RequestHandler;
         } else if (name === "open_project_session") {
-          openProjectSessionHandler = handler as RequestHandler;
+          openWorkspaceHandler = handler as RequestHandler;
         } else if (name === "close_project_session") {
-          closeProjectSessionHandler = handler as RequestHandler;
+          closeWorkspaceHandler = handler as RequestHandler;
         }
       },
     } as unknown as McpServer;
@@ -81,7 +81,7 @@ describe("File Handlers with Sessions", function () {
   describe("write_file with sessions", function () {
     it("should write content to a file using a session", async function () {
       // First, open a workspace
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
 
@@ -105,7 +105,7 @@ describe("File Handlers with Sessions", function () {
       expect(fs.readFileSync(filePath, "utf8")).to.equal("Hello, world!");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -116,7 +116,7 @@ describe("File Handlers with Sessions", function () {
       fs.writeFileSync(filePath, "Initial content\n");
 
       // Open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
 
@@ -140,14 +140,14 @@ describe("File Handlers with Sessions", function () {
       );
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
 
     it("should create directories as needed", async function () {
       // Open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
 
@@ -170,7 +170,7 @@ describe("File Handlers with Sessions", function () {
       expect(fs.readFileSync(filePath, "utf8")).to.equal("Nested content");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -192,7 +192,7 @@ describe("File Handlers with Sessions", function () {
 
     it("should return error for invalid file paths", async function () {
       // Open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
 
@@ -211,7 +211,7 @@ describe("File Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Invalid file path");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -220,7 +220,7 @@ describe("File Handlers with Sessions", function () {
   describe("write_file with Copy Mode", function () {
     it("should write to a copy of the project and not modify original files", async function () {
       // Open a project session with copy=true
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });
 
@@ -243,14 +243,14 @@ describe("File Handlers with Sessions", function () {
       expect(fs.existsSync(filePath)).to.equal(false);
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
 
     it("should allow multiple write operations in the same session", async function () {
       // Open a project session with copy=true
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });
 
@@ -289,7 +289,7 @@ describe("File Handlers with Sessions", function () {
       );
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });

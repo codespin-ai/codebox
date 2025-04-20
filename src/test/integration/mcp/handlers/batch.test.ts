@@ -33,8 +33,8 @@ describe("Batch Command Handlers with Sessions", function () {
   let workspaceDir: string;
   let cleanup: () => void;
   let executeBatchCommandsHandler: RequestHandler;
-  let openProjectSessionHandler: RequestHandler;
-  let closeProjectSessionHandler: RequestHandler;
+  let openWorkspaceHandler: RequestHandler;
+  let closeWorkspaceHandler: RequestHandler;
   let dockerAvailable = false;
   let containerName: string;
   const projectName = "test-workspace";
@@ -78,9 +78,9 @@ describe("Batch Command Handlers with Sessions", function () {
         if (name === "execute_batch_commands") {
           executeBatchCommandsHandler = handler as RequestHandler;
         } else if (name === "open_project_session") {
-          openProjectSessionHandler = handler as RequestHandler;
+          openWorkspaceHandler = handler as RequestHandler;
         } else if (name === "close_project_session") {
-          closeProjectSessionHandler = handler as RequestHandler;
+          closeWorkspaceHandler = handler as RequestHandler;
         }
       },
     } as unknown as McpServer;
@@ -119,7 +119,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
     it("should execute a batch of commands in sequence using a session", async function () {
       // First, open a workspace
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName,
       });
 
@@ -148,14 +148,14 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(content).to.include("Second command");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
 
     it("should stop execution on error if stopOnError is true", async function () {
       // First, open a workspace
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName,
       });
 
@@ -185,14 +185,14 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(content).not.to.include("Third command");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
 
     it("should continue execution on error if stopOnError is false", async function () {
       // First, open a workspace
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName,
       });
 
@@ -222,7 +222,7 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(content).to.include("Third command");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -263,7 +263,7 @@ describe("Batch Command Handlers with Sessions", function () {
 
     it("should execute batch commands with copy mode without modifying original files", async function () {
       // First, open a workspace
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });
 
@@ -292,14 +292,14 @@ describe("Batch Command Handlers with Sessions", function () {
       expect(originalContent).to.equal("Original content");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
 
     it("should maintain changes across multiple batch command calls in the same session", async function () {
       // First, open a workspace
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });
 
@@ -334,7 +334,7 @@ describe("Batch Command Handlers with Sessions", function () {
       );
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });

@@ -24,8 +24,8 @@ describe("Batch File Handlers with Sessions", function () {
   let workspaceDir: string;
   let cleanup: () => void;
   let writeBatchFilesHandler: RequestHandler;
-  let openProjectSessionHandler: RequestHandler;
-  let closeProjectSessionHandler: RequestHandler;
+  let openWorkspaceHandler: RequestHandler;
+  let closeWorkspaceHandler: RequestHandler;
 
   beforeEach(function () {
     // Setup test environment
@@ -62,9 +62,9 @@ describe("Batch File Handlers with Sessions", function () {
         if (name === "write_batch_files") {
           writeBatchFilesHandler = handler as RequestHandler;
         } else if (name === "open_project_session") {
-          openProjectSessionHandler = handler as RequestHandler;
+          openWorkspaceHandler = handler as RequestHandler;
         } else if (name === "close_project_session") {
-          closeProjectSessionHandler = handler as RequestHandler;
+          closeWorkspaceHandler = handler as RequestHandler;
         }
       },
     } as unknown as McpServer;
@@ -81,7 +81,7 @@ describe("Batch File Handlers with Sessions", function () {
   describe("write_batch_files with sessions", function () {
     it("should write multiple files in a single operation using a session", async function () {
       // First, open a workspace
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
 
@@ -119,7 +119,7 @@ describe("Batch File Handlers with Sessions", function () {
       expect(fs.readFileSync(file2Path, "utf8")).to.equal("Content for file 2");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -130,7 +130,7 @@ describe("Batch File Handlers with Sessions", function () {
       fs.writeFileSync(validFilePath, "Initial content\n");
 
       // Open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
 
@@ -164,7 +164,7 @@ describe("Batch File Handlers with Sessions", function () {
       );
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -175,7 +175,7 @@ describe("Batch File Handlers with Sessions", function () {
       fs.writeFileSync(validFilePath, "Initial content\n");
 
       // Open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "test-workspace",
       });
 
@@ -209,7 +209,7 @@ describe("Batch File Handlers with Sessions", function () {
       );
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -237,7 +237,7 @@ describe("Batch File Handlers with Sessions", function () {
   describe("write_batch_files with Copy Mode", function () {
     it("should write multiple files to a copy without modifying original files", async function () {
       // Open a project session with copy=true
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName: "copy-workspace",
       });
 
@@ -272,7 +272,7 @@ describe("Batch File Handlers with Sessions", function () {
       expect(fs.existsSync(file2Path)).to.equal(false);
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
