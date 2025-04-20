@@ -15,7 +15,7 @@ interface WorkspaceTokenInfo {
   isTempDir: boolean; // Flag to determine if cleanup is needed when closing
 }
 
-// In-memory store of active sessions
+// In-memory store of activeworkspace tokens
 const activeWorkspaceTokens: Record<string, WorkspaceTokenInfo> = {};
 
 /**
@@ -38,7 +38,7 @@ export function openWorkspace(workspaceName: string): string | null {
   // If copy is enabled, create a temporary directory and copy files
   if (workspace.copy) {
     try {
-      const tempDir = createTempDirectory(`codebox-${workspaceName}-session-`);
+      const tempDir = createTempDirectory(`codebox-${workspaceName}-workspace-token-`);
       copyDirectory(workspace.hostPath, tempDir);
       workingDir = tempDir;
       isTempDir = true;

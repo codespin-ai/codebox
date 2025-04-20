@@ -26,7 +26,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Batch Command Handlers with Sessions", function () {
+describe("Batch Command Handlers with Workspace Tokens", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;
@@ -100,7 +100,7 @@ describe("Batch Command Handlers with Sessions", function () {
     cleanup();
   });
 
-  describe("execute_batch_commands with sessions", function () {
+  describe("execute_batch_commands withworkspace tokens", function () {
     beforeEach(async function () {
       // Create a test container
       await createTestContainer(containerName, dockerImage, workspaceDir);
@@ -117,7 +117,7 @@ describe("Batch Command Handlers with Sessions", function () {
       });
     });
 
-    it("should execute a batch of commands in sequence using a session", async function () {
+    it("should execute a batch of commands in sequence using a workspace token", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         workspaceName,
@@ -227,10 +227,10 @@ describe("Batch Command Handlers with Sessions", function () {
       });
     });
 
-    it("should return error for invalid sessions", async function () {
+    it("should return error for invalidworkspace tokens", async function () {
       // Execute batch commands with invalid workspace token
       const response = await executeBatchCommandsHandler({
-        workspaceToken: "invalid-session-id",
+        workspaceToken: "invalid-workspace-token-id",
         commands: ["echo 'This should fail'"],
       });
 
@@ -297,7 +297,7 @@ describe("Batch Command Handlers with Sessions", function () {
       });
     });
 
-    it("should maintain changes across multiple batch command calls in the same session", async function () {
+    it("should maintain changes across multiple batch command calls in the same workspace token", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         workspaceName: "copy-workspace",

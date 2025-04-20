@@ -26,7 +26,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Execute Handlers with Sessions", function () {
+describe("Execute Handlers with Workspace Tokens", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;
@@ -120,7 +120,7 @@ describe("Execute Handlers with Sessions", function () {
       });
     });
 
-    it("should execute a command in the container using a session", async function () {
+    it("should execute a command in the container using a workspace token", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         workspaceName,
@@ -168,10 +168,10 @@ describe("Execute Handlers with Sessions", function () {
       });
     });
 
-    it("should return error for invalid sessions", async function () {
+    it("should return error for invalidworkspace tokens", async function () {
       // Execute command with invalid workspace token
       const response = await executeCommandHandler({
-        workspaceToken: "invalid-session-id",
+        workspaceToken: "invalid-workspace-token-id",
         command: "echo 'This should fail'",
       });
 
@@ -197,7 +197,7 @@ describe("Execute Handlers with Sessions", function () {
       });
     });
 
-    it("should execute a command with the image using a session", async function () {
+    it("should execute a command with the image using a workspace token", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         workspaceName,
@@ -272,7 +272,7 @@ describe("Execute Handlers with Sessions", function () {
       });
     });
 
-    it("should maintain changes across multiple commands in the same session", async function () {
+    it("should maintain changes across multiple commands in the same workspace token", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         workspaceName,

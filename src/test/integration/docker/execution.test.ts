@@ -23,7 +23,7 @@ import {
   uniqueName
 } from "../testUtils.js";
 
-describe("Docker Execution with Sessions", function () {
+describe("Docker Execution with Workspace Tokens", function () {
   this.timeout(30000); // Docker operations can be slow
 
   let configDir: string;
@@ -348,13 +348,13 @@ describe("Docker Execution with Sessions", function () {
       expect(fs.existsSync(workingDir as string)).to.equal(false);
     });
 
-    it("should create separate temp directories for different sessions of the same workspace", async function () {
-      // Open two sessions for the same workspace
-      const sessionId1 = openWorkspace(workspaceName);
-      const sessionId2 = openWorkspace(workspaceName);
+    it("should create separate temp directories for differentworkspace tokens of the same workspace", async function () {
+      // Open twoworkspace tokens for the same workspace
+      const workspaceToken1 = openWorkspace(workspaceName);
+      const workspaceToken2 = openWorkspace(workspaceName);
 
-      const workingDir1 = getWorkingDirForWorkspaceToken(sessionId1 as string);
-      const workingDir2 = getWorkingDirForWorkspaceToken(sessionId2 as string);
+      const workingDir1 = getWorkingDirForWorkspaceToken(workspaceToken1 as string);
+      const workingDir2 = getWorkingDirForWorkspaceToken(workspaceToken2 as string);
 
       // Verify they are different directories
       expect(workingDir1).to.not.equal(workingDir2);
@@ -387,8 +387,8 @@ describe("Docker Execution with Sessions", function () {
       ).to.equal("Hello from Docker test!");
 
       // Clean up
-      closeWorkspace(sessionId1 as string);
-      closeWorkspace(sessionId2 as string);
+      closeWorkspace(workspaceToken1 as string);
+      closeWorkspace(workspaceToken2 as string);
     });
   });
 });

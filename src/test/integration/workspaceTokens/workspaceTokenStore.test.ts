@@ -147,8 +147,8 @@ describe("Workspace Token Store", function () {
       expect(workspaceTokenExists(workspaceToken as string)).to.equal(false);
     });
 
-    it("should return false for non-existent sessions", function () {
-      const result = closeWorkspace("non-existent-session");
+    it("should return false for non-existentworkspace tokens", function () {
+      const result = closeWorkspace("non-existent-workspace-token");
       expect(result).to.equal(false);
     });
 
@@ -181,7 +181,7 @@ describe("Workspace Token Store", function () {
   });
 
   describe("Workspace Token Isolation", function () {
-    it("should maintain isolated file changes between sessions with copy=true", function () {
+    it("should maintain isolated file changes betweenworkspace tokens with copy=true", function () {
       // Register a workspace with copy mode
       createTestConfig(configDir, {
         workspaces: [
@@ -194,12 +194,12 @@ describe("Workspace Token Store", function () {
         ],
       });
 
-      // Open two sessions for the same workspace
-      const sessionId1 = openWorkspace("test-workspace");
-      const sessionId2 = openWorkspace("test-workspace");
+      // Open twoworkspace tokens for the same workspace
+      const workspaceToken1 = openWorkspace("test-workspace");
+      const workspaceToken2 = openWorkspace("test-workspace");
 
-      const workingDir1 = getWorkingDirForWorkspaceToken(sessionId1 as string);
-      const workingDir2 = getWorkingDirForWorkspaceToken(sessionId2 as string);
+      const workingDir1 = getWorkingDirForWorkspaceToken(workspaceToken1 as string);
+      const workingDir2 = getWorkingDirForWorkspaceToken(workspaceToken2 as string);
 
       // Verify working directories are different
       expect(workingDir1).to.not.equal(workingDir2);
@@ -230,8 +230,8 @@ describe("Workspace Token Store", function () {
       ).to.equal("Original content");
 
       // Clean up
-      closeWorkspace(sessionId1 as string);
-      closeWorkspace(sessionId2 as string);
+      closeWorkspace(workspaceToken1 as string);
+      closeWorkspace(workspaceToken2 as string);
     });
   });
 });

@@ -36,7 +36,7 @@ function formatResults(
 export function registerBatchFileHandlers(server: McpServer): void {
   server.tool(
     "write_batch_files",
-    "Write content to multiple files in a workspace directory using a session",
+    "Write content to multiple files in a workspace directory using a workspace token",
     {
       workspaceToken: zod
         .string()

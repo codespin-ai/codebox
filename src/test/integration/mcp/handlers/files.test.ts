@@ -78,8 +78,8 @@ describe("File Handlers with Workspace Tokens", function () {
     cleanup();
   });
 
-  describe("write_file with sessions", function () {
-    it("should write content to a file using a session", async function () {
+  describe("write_file withworkspace tokens", function () {
+    it("should write content to a file using a workspace token", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         workspaceName: "test-workspace",
@@ -110,7 +110,7 @@ describe("File Handlers with Workspace Tokens", function () {
       });
     });
 
-    it("should append content to a file using a session", async function () {
+    it("should append content to a file using a workspace token", async function () {
       // First create a file to append to
       const filePath = path.join(workspaceDir, "append.txt");
       fs.writeFileSync(filePath, "Initial content\n");
@@ -177,7 +177,7 @@ describe("File Handlers with Workspace Tokens", function () {
 
     it("should return error for invalid workspace tokens", async function () {
       const response = await writeFileHandler({
-        workspaceToken: "invalid-session-id",
+        workspaceToken: "invalid-workspace-token-id",
         filePath: "test.txt",
         content: "This should fail",
         mode: "overwrite",
@@ -248,7 +248,7 @@ describe("File Handlers with Workspace Tokens", function () {
       });
     });
 
-    it("should allow multiple write operations in the same session", async function () {
+    it("should allow multiple write operations in the same workspace token", async function () {
       // Open a workspace with copy=true
       const openResponse = await openWorkspaceHandler({
         workspaceName: "copy-workspace",

@@ -14,7 +14,7 @@ import {
 export function registerFileHandlers(server: McpServer): void {
   server.tool(
     "write_file",
-    "Write content to a file in a workspace directory using a session",
+    "Write content to a file in a workspace directory using a workspace token",
     {
       workspaceToken: zod
         .string()

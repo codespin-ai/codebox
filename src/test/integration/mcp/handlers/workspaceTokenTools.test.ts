@@ -106,7 +106,7 @@ describe("Session-Based Tools", function () {
   });
 
   describe("close_workspace", function () {
-    it("should close a valid session", async function () {
+    it("should close a valid workspace token", async function () {
       // First open a session
       const openResponse = await openWorkspaceHandler({
         workspaceName: "test-workspace",
@@ -125,7 +125,7 @@ describe("Session-Based Tools", function () {
 
     it("should return an error for invalid workspace tokens", async function () {
       const response = await closeWorkspaceHandler({
-        workspaceToken: "non-existent-session",
+        workspaceToken: "non-existent-workspace-token",
       });
 
       // Verify the error response

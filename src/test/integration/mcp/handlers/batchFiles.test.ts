@@ -19,7 +19,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Batch File Handlers with Sessions", function () {
+describe("Batch File Handlers with Workspace Tokens", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;
@@ -78,8 +78,8 @@ describe("Batch File Handlers with Sessions", function () {
     cleanup();
   });
 
-  describe("write_batch_files with sessions", function () {
-    it("should write multiple files in a single operation using a session", async function () {
+  describe("write_batch_files withworkspace tokens", function () {
+    it("should write multiple files in a single operation using a workspace token", async function () {
       // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         workspaceName: "test-workspace",
@@ -214,9 +214,9 @@ describe("Batch File Handlers with Sessions", function () {
       });
     });
 
-    it("should return error for invalid sessions", async function () {
+    it("should return error for invalidworkspace tokens", async function () {
       const response = await writeBatchFilesHandler({
-        workspaceToken: "invalid-session-id",
+        workspaceToken: "invalid-workspace-token-id",
         files: [
           {
             filePath: "file.txt",
