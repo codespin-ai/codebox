@@ -41,13 +41,13 @@ describe("Session-Based Tools", function () {
     createTestConfig(configDir, {
       projects: [
         {
-          name: "test-project",
+          name: "test-workspace",
           hostPath: projectDir,
           dockerImage: "dummy-image",
           copy: false,
         },
         {
-          name: "copy-project",
+          name: "copy-workspace",
           hostPath: projectDir,
           dockerImage: "dummy-image",
           copy: true,
@@ -80,9 +80,9 @@ describe("Session-Based Tools", function () {
   });
 
   describe("open_project_session", function () {
-    it("should open a session for a valid project", async function () {
+    it("should open a session for a valid workspace", async function () {
       const response = await openProjectSessionHandler({
-        projectName: "test-project",
+        projectName: "test-workspace",
       });
 
       // Verify the response
@@ -94,13 +94,13 @@ describe("Session-Based Tools", function () {
 
     it("should return an error for invalid projects", async function () {
       const response = await openProjectSessionHandler({
-        projectName: "non-existent-project",
+        projectName: "non-existent-workspace",
       });
 
       // Verify the error response
       expect(response.isError).to.equal(true);
       expect(response.content[0].text).to.include(
-        "Invalid or unregistered project"
+        "Invalid or unregistered workspace"
       );
     });
   });
@@ -109,7 +109,7 @@ describe("Session-Based Tools", function () {
     it("should close a valid session", async function () {
       // First open a session
       const openResponse = await openProjectSessionHandler({
-        projectName: "test-project",
+        projectName: "test-workspace",
       });
       const workspaceToken = openResponse.content[0].text;
 
@@ -138,7 +138,7 @@ describe("Session-Based Tools", function () {
     it("should create temporary files when opening a session with copy=true", async function () {
       // Open a session for a project with copy=true
       const response = await openProjectSessionHandler({
-        projectName: "copy-project",
+        projectName: "copy-workspace",
       });
 
       const workspaceToken = response.content[0].text;

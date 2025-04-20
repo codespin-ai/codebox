@@ -148,7 +148,7 @@ export async function removeProject(
       console.log(`Removed project: ${removedName}`);
       return;
     }
-    console.log(`Project with name '${name}' not found`);
+    console.log(`Workspace with name '${name}' not found`);
     return;
   }
 
@@ -165,7 +165,7 @@ export async function removeProject(
       console.log(`Removed project: ${removedName}`);
       return;
     }
-    console.log(`Project not found for path: ${projectPath}`);
+    console.log(`Workspace not found for path: ${projectPath}`);
   } else {
     // It's a name - look for exact name match
     index = config.workspaces.findIndex((p) => p.name === target);
@@ -177,7 +177,7 @@ export async function removeProject(
       console.log(`Removed project: ${removedName}`);
       return;
     }
-    console.log(`Project with name '${target}' not found`);
+    console.log(`Workspace with name '${target}' not found`);
   }
 }
 

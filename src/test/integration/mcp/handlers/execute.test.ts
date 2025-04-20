@@ -37,7 +37,7 @@ describe("Execute Handlers with Sessions", function () {
   let closeProjectSessionHandler: RequestHandler;
   let dockerAvailable = false;
   let containerName: string;
-  const projectName = "test-project";
+  const projectName = "test-workspace";
   const dockerImage = "alpine:latest";
 
   before(async function () {

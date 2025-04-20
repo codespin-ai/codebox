@@ -16,7 +16,7 @@ interface McpResponse {
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
 
-describe("Project Handlers", function () {
+describe("Workspace Handlers", function () {
   let _testDir: string;
   let configDir: string;
   let projectDir: string;

@@ -32,8 +32,8 @@ export async function main() {
       }
     )
     .command(
-      "project",
-      "Project management commands",
+      "workspace",
+      "Workspace management commands",
       (yargs) => {
         return yargs
           .command(
@@ -49,7 +49,7 @@ export async function main() {
                 })
                 .option("image", {
                   type: "string",
-                  describe: "Docker image to use for this project",
+                  describe: "Docker image to use for this workspace",
                 })
                 .option("container", {
                   type: "string",

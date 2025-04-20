@@ -38,7 +38,7 @@ describe("Session Store", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "dummy-image",
             copy: false,
@@ -47,7 +47,7 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const workspaceToken = openProject("test-project");
+      const workspaceToken = openProject("test-workspace");
       expect(workspaceToken).to.be.a("string");
       expect(workspaceToken).to.not.equal(undefined);
       expect(workspaceToken).to.not.equal(null);
@@ -57,7 +57,7 @@ describe("Session Store", function () {
 
       // Verify project name is correct
       expect(getProjectNameForSession(workspaceToken as string)).to.equal(
-        "test-project"
+        "test-workspace"
       );
 
       // Verify working directory is the original project directory
@@ -69,7 +69,7 @@ describe("Session Store", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "dummy-image",
             copy: true,
@@ -78,7 +78,7 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const workspaceToken = openProject("test-project");
+      const workspaceToken = openProject("test-workspace");
       expect(workspaceToken).to.be.a("string");
       expect(workspaceToken).to.not.equal(undefined);
       expect(workspaceToken).to.not.equal(null);
@@ -88,7 +88,7 @@ describe("Session Store", function () {
 
       // Verify project name is correct
       expect(getProjectNameForSession(workspaceToken as string)).to.equal(
-        "test-project"
+        "test-workspace"
       );
 
       // Verify working directory is not the original project directory
@@ -109,7 +109,7 @@ describe("Session Store", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "dummy-image",
           },
@@ -117,7 +117,7 @@ describe("Session Store", function () {
       });
 
       // Try to open non-existent project
-      const workspaceToken = openProject("non-existent-project");
+      const workspaceToken = openProject("non-existent-workspace");
       expect(workspaceToken).to.equal(null);
     });
   });
@@ -128,7 +128,7 @@ describe("Session Store", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "dummy-image",
           },
@@ -136,7 +136,7 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const workspaceToken = openProject("test-project");
+      const workspaceToken = openProject("test-workspace");
       expect(workspaceToken).to.be.a("string");
 
       // Close the session
@@ -157,7 +157,7 @@ describe("Session Store", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "dummy-image",
             copy: true,
@@ -166,7 +166,7 @@ describe("Session Store", function () {
       });
 
       // Open a session
-      const workspaceToken = openProject("test-project");
+      const workspaceToken = openProject("test-workspace");
       const workingDir = getWorkingDirForSession(workspaceToken as string);
 
       // Verify temp directory exists
@@ -186,7 +186,7 @@ describe("Session Store", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "dummy-image",
             copy: true,
@@ -195,8 +195,8 @@ describe("Session Store", function () {
       });
 
       // Open two sessions for the same project
-      const sessionId1 = openProject("test-project");
-      const sessionId2 = openProject("test-project");
+      const sessionId1 = openProject("test-workspace");
+      const sessionId2 = openProject("test-workspace");
 
       const workingDir1 = getWorkingDirForSession(sessionId1 as string);
       const workingDir2 = getWorkingDirForSession(sessionId2 as string);

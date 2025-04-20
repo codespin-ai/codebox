@@ -37,7 +37,7 @@ describe("Batch Command Handlers with Sessions", function () {
   let closeProjectSessionHandler: RequestHandler;
   let dockerAvailable = false;
   let containerName: string;
-  const projectName = "test-project";
+  const projectName = "test-workspace";
   const dockerImage = "alpine:latest";
 
   before(async function () {
@@ -248,7 +248,7 @@ describe("Batch Command Handlers with Sessions", function () {
       createTestConfig(configDir, {
         projects: [
           {
-            name: "copy-project",
+            name: "copy-workspace",
             hostPath: projectDir,
             dockerImage: dockerImage,
             copy: true,
@@ -264,7 +264,7 @@ describe("Batch Command Handlers with Sessions", function () {
     it("should execute batch commands with copy mode without modifying original files", async function () {
       // First, open a project session
       const openResponse = await openProjectSessionHandler({
-        projectName: "copy-project",
+        projectName: "copy-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -300,7 +300,7 @@ describe("Batch Command Handlers with Sessions", function () {
     it("should maintain changes across multiple batch command calls in the same session", async function () {
       // First, open a project session
       const openResponse = await openProjectSessionHandler({
-        projectName: "copy-project",
+        projectName: "copy-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;

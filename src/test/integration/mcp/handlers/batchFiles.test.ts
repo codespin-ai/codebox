@@ -38,12 +38,12 @@ describe("Batch File Handlers with Sessions", function () {
     createTestConfig(configDir, {
       projects: [
         {
-          name: "test-project",
+          name: "test-workspace",
           hostPath: projectDir,
           dockerImage: "dummy-image",
         },
         {
-          name: "copy-project",
+          name: "copy-workspace",
           hostPath: projectDir,
           dockerImage: "dummy-image",
           copy: true,
@@ -82,7 +82,7 @@ describe("Batch File Handlers with Sessions", function () {
     it("should write multiple files in a single operation using a session", async function () {
       // First, open a project session
       const openResponse = await openProjectSessionHandler({
-        projectName: "test-project",
+        projectName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -131,7 +131,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       // Open a project session
       const openResponse = await openProjectSessionHandler({
-        projectName: "test-project",
+        projectName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -176,7 +176,7 @@ describe("Batch File Handlers with Sessions", function () {
 
       // Open a project session
       const openResponse = await openProjectSessionHandler({
-        projectName: "test-project",
+        projectName: "test-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;
@@ -238,7 +238,7 @@ describe("Batch File Handlers with Sessions", function () {
     it("should write multiple files to a copy without modifying original files", async function () {
       // Open a project session with copy=true
       const openResponse = await openProjectSessionHandler({
-        projectName: "copy-project",
+        projectName: "copy-workspace",
       });
 
       const workspaceToken = openResponse.content[0].text;

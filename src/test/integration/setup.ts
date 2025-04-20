@@ -51,7 +51,7 @@ export function setupTestEnvironment() {
   fs.mkdirSync(configDir, { recursive: true });
 
   // Create a project directory for testing
-  const projectDir = path.join(testDir, "test-project");
+  const projectDir = path.join(testDir, "test-workspace");
   fs.mkdirSync(projectDir, { recursive: true });
 
   // Cleanup function

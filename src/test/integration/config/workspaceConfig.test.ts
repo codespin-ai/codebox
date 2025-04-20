@@ -13,7 +13,7 @@ import {
 } from "../../../config/workspaceConfig.js";
 import { setupTestEnvironment } from "../setup.js";
 
-describe("Project Configuration", function () {
+describe("Workspace Configuration", function () {
   let testDir: string;
   let projectDir: string;
   let cleanup: () => void;
@@ -41,7 +41,7 @@ describe("Project Configuration", function () {
       const testConfig = {
         workspaces: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "node:18",
           },
@@ -61,13 +61,13 @@ describe("Project Configuration", function () {
     });
   });
 
-  describe("Project Management", function () {
+  describe("Workspace Management", function () {
     it("should find a project by name", function () {
       // Create test config with a project
       const testConfig = {
         workspaces: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "node:18",
           },
@@ -76,9 +76,9 @@ describe("Project Configuration", function () {
       saveConfig(testConfig);
 
       // Test getProjectByName
-      const project = getWorkspaceByName("test-project");
+      const project = getWorkspaceByName("test-workspace");
       expect(project).to.not.equal(null);
-      expect(project?.name).to.equal("test-project");
+      expect(project?.name).to.equal("test-workspace");
 
       // Test non-existent project
       const nonExistent = getWorkspaceByName("non-existent");
@@ -90,7 +90,7 @@ describe("Project Configuration", function () {
       const testConfig = {
         workspaces: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "node:18",
           },
@@ -99,7 +99,7 @@ describe("Project Configuration", function () {
       saveConfig(testConfig);
 
       // Test validateProjectName
-      expect(validateWorkspaceName("test-project")).to.equal(true);
+      expect(validateWorkspaceName("test-workspace")).to.equal(true);
       expect(validateWorkspaceName("non-existent")).to.equal(false);
     });
 
@@ -108,7 +108,7 @@ describe("Project Configuration", function () {
       const testConfig = {
         workspaces: [
           {
-            name: "test-project",
+            name: "test-workspace",
             hostPath: projectDir,
             dockerImage: "node:18",
           },

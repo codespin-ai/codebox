@@ -32,7 +32,7 @@ describe("Docker Execution with Sessions", function () {
   let dockerAvailable = false;
   let containerName: string;
   let networkName: string;
-  const projectName = "test-project";
+  const projectName = "test-workspace";
   const dockerImage = "alpine:latest";
 
   before(async function () {
@@ -348,7 +348,7 @@ describe("Docker Execution with Sessions", function () {
       expect(fs.existsSync(workingDir as string)).to.equal(false);
     });
 
-    it("should create separate temp directories for different sessions of the same project", async function () {
+    it("should create separate temp directories for different sessions of the same workspace", async function () {
       // Open two sessions for the same project
       const sessionId1 = openProject(projectName);
       const sessionId2 = openProject(projectName);
