@@ -121,7 +121,7 @@ describe("Execute Handlers with Sessions", function () {
     });
 
     it("should execute a command in the container using a session", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName,
       });
@@ -145,7 +145,7 @@ describe("Execute Handlers with Sessions", function () {
     });
 
     it("should handle command errors", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName,
       });
@@ -198,7 +198,7 @@ describe("Execute Handlers with Sessions", function () {
     });
 
     it("should execute a command with the image using a session", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName,
       });
@@ -242,7 +242,7 @@ describe("Execute Handlers with Sessions", function () {
     });
 
     it("should execute commands with file copying without modifying originals", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName,
       });
@@ -273,7 +273,7 @@ describe("Execute Handlers with Sessions", function () {
     });
 
     it("should maintain changes across multiple commands in the same session", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openWorkspaceHandler({
         projectName,
       });

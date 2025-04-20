@@ -80,7 +80,7 @@ describe("Batch File Handlers with Sessions", function () {
 
   describe("write_batch_files with sessions", function () {
     it("should write multiple files in a single operation using a session", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openProjectSessionHandler({
         projectName: "test-workspace",
       });

@@ -118,7 +118,7 @@ describe("Batch Command Handlers with Sessions", function () {
     });
 
     it("should execute a batch of commands in sequence using a session", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openProjectSessionHandler({
         projectName,
       });
@@ -154,7 +154,7 @@ describe("Batch Command Handlers with Sessions", function () {
     });
 
     it("should stop execution on error if stopOnError is true", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openProjectSessionHandler({
         projectName,
       });
@@ -191,7 +191,7 @@ describe("Batch Command Handlers with Sessions", function () {
     });
 
     it("should continue execution on error if stopOnError is false", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openProjectSessionHandler({
         projectName,
       });
@@ -262,7 +262,7 @@ describe("Batch Command Handlers with Sessions", function () {
     });
 
     it("should execute batch commands with copy mode without modifying original files", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openProjectSessionHandler({
         projectName: "copy-workspace",
       });
@@ -298,7 +298,7 @@ describe("Batch Command Handlers with Sessions", function () {
     });
 
     it("should maintain changes across multiple batch command calls in the same session", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openProjectSessionHandler({
         projectName: "copy-workspace",
       });

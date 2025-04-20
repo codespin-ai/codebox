@@ -80,7 +80,7 @@ describe("File Handlers with Sessions", function () {
 
   describe("write_file with sessions", function () {
     it("should write content to a file using a session", async function () {
-      // First, open a project session
+      // First, open a workspace
       const openResponse = await openProjectSessionHandler({
         projectName: "test-workspace",
       });
