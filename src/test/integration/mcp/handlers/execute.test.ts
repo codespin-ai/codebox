@@ -33,8 +33,8 @@ describe("Execute Handlers with Sessions", function () {
   let workspaceDir: string;
   let cleanup: () => void;
   let executeCommandHandler: RequestHandler;
-  let openProjectSessionHandler: RequestHandler;
-  let closeProjectSessionHandler: RequestHandler;
+  let openWorkspaceHandler: RequestHandler;
+  let closeWorkspaceHandler: RequestHandler;
   let dockerAvailable = false;
   let containerName: string;
   const projectName = "test-workspace";
@@ -81,9 +81,9 @@ describe("Execute Handlers with Sessions", function () {
         if (name === "execute_command") {
           executeCommandHandler = handler as RequestHandler;
         } else if (name === "open_project_session") {
-          openProjectSessionHandler = handler as RequestHandler;
+          openWorkspaceHandler = handler as RequestHandler;
         } else if (name === "close_project_session") {
-          closeProjectSessionHandler = handler as RequestHandler;
+          closeWorkspaceHandler = handler as RequestHandler;
         }
       },
     } as unknown as McpServer;
@@ -122,7 +122,7 @@ describe("Execute Handlers with Sessions", function () {
 
     it("should execute a command in the container using a session", async function () {
       // First, open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName,
       });
 
@@ -139,14 +139,14 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Hello from execute test!");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
 
     it("should handle command errors", async function () {
       // First, open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName,
       });
 
@@ -163,7 +163,7 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("No such file");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -199,7 +199,7 @@ describe("Execute Handlers with Sessions", function () {
 
     it("should execute a command with the image using a session", async function () {
       // First, open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName,
       });
 
@@ -216,7 +216,7 @@ describe("Execute Handlers with Sessions", function () {
       expect(response.content[0].text).to.include("Hello from execute test!");
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
@@ -243,7 +243,7 @@ describe("Execute Handlers with Sessions", function () {
 
     it("should execute commands with file copying without modifying originals", async function () {
       // First, open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName,
       });
 
@@ -267,14 +267,14 @@ describe("Execute Handlers with Sessions", function () {
       );
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
 
     it("should maintain changes across multiple commands in the same session", async function () {
       // First, open a project session
-      const openResponse = await openProjectSessionHandler({
+      const openResponse = await openWorkspaceHandler({
         projectName,
       });
 
@@ -302,7 +302,7 @@ describe("Execute Handlers with Sessions", function () {
       );
 
       // Clean up the session
-      await closeProjectSessionHandler({
+      await closeWorkspaceHandler({
         workspaceToken: workspaceToken,
       });
     });
