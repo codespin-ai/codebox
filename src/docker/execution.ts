@@ -115,8 +115,11 @@ async function executeInExistingContainer(
     throw new Error(`Container '${containerName}' not found or not running`);
   }
 
+  // Escape quotes in the command
+  const escapedCommand = command.replace(/"/g, '\\"');
+
   // Execute command in the running container with the user's UID/GID
-  const dockerCommand = `docker exec -i --user=${uid}:${gid} --workdir="${workdir}" ${containerName} /bin/sh -c "${command}"`;
+  const dockerCommand = `docker exec -i --user=${uid}:${gid} --workdir="${workdir}" ${containerName} /bin/sh -c "${escapedCommand}"`;
 
   return await execAsync(dockerCommand, {
     maxBuffer: 10 * 1024 * 1024, // 10MB buffer
@@ -133,6 +136,9 @@ async function executeWithDockerImage(
   containerPath = "/workspace",
   network?: string
 ): Promise<ExecuteResult> {
+  // Escape quotes in the command
+  const escapedCommand = command.replace(/"/g, '\\"');
+
   // Add network parameter if specified
   const networkParam = network ? `--network="${network}"` : "";
 
@@ -141,7 +147,7 @@ async function executeWithDockerImage(
     -v "${path}:${containerPath}" \
     --workdir="${containerPath}" \
     --user=${uid}:${gid} \
-    ${image} /bin/sh -c "${command}"`;
+    ${image} /bin/sh -c "${escapedCommand}"`;
 
   return await execAsync(dockerCommand, {
     maxBuffer: 10 * 1024 * 1024, // 10MB buffer
