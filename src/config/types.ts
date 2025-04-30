@@ -7,6 +7,7 @@ export interface WorkspaceConfig {
   containerName?: string;
   network?: string;
   copy?: boolean;
+  idleTimeout?: number; // Timeout in ms before automatically closing idle workspace
 }
 
 export interface SystemConfig {

@@ -2,7 +2,11 @@
 
 import yargs from "yargs";
 import { start } from "./commands/start.js";
-import { addWorkspace, listWorkspaces, removeWorkspace } from "./commands/workspace.js";
+import {
+  addWorkspace,
+  listWorkspaces,
+  removeWorkspace,
+} from "./commands/workspace.js";
 import process from "node:process";
 import fs from "node:fs";
 import path from "node:path";
@@ -77,6 +81,11 @@ export async function main() {
                     "Copy workspace files to a temporary directory before mounting",
                   default: false,
                 })
+                .option("idle-timeout", {
+                  type: "number",
+                  describe:
+                    "Timeout in milliseconds before automatically closing idle workspace (0 to disable)",
+                })
                 .check((argv) => {
                   if (!argv.image && !argv.container) {
                     throw new Error(
@@ -96,6 +105,7 @@ export async function main() {
                   containerPath: argv.containerPath,
                   network: argv.network,
                   copy: argv.copy,
+                  idleTimeout: argv["idle-timeout"],
                 },
                 { workingDir: process.cwd() }
               );

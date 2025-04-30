@@ -16,10 +16,25 @@ interface WorkspaceOptions {
   containerPath?: string;
   network?: string;
   copy?: boolean; // Added new option
+  idleTimeout?: number; // Added new option
 }
 
 interface CommandContext {
   workingDir: string;
+}
+
+// Default idle timeout: 10 minutes in milliseconds
+const DEFAULT_IDLE_TIMEOUT = 600000;
+
+// Helper function to format timeout for display
+function formatIdleTimeout(timeout: number | undefined): string {
+  if (timeout === 0) {
+    return "Disabled";
+  }
+
+  const timeoutValue = timeout || DEFAULT_IDLE_TIMEOUT;
+  const minutes = Math.floor(timeoutValue / 60000);
+  return `${timeoutValue} ms (${minutes} minute${minutes !== 1 ? "s" : ""})`;
 }
 
 export async function addWorkspace(
@@ -34,6 +49,7 @@ export async function addWorkspace(
     containerPath,
     network,
     copy = false, // Default to false
+    idleTimeout,
   } = options;
 
   if (!image && !containerName) {
@@ -111,6 +127,10 @@ export async function addWorkspace(
     }
     // Update copy setting
     config.workspaces[existingIndex].copy = copy;
+    // Update idle timeout if specified
+    if (idleTimeout !== undefined) {
+      config.workspaces[existingIndex].idleTimeout = idleTimeout;
+    }
     config.workspaces[existingIndex].path = workspacePath;
     saveConfig(config);
     console.log(`Updated workspace: ${workspaceName}`);
@@ -124,6 +144,7 @@ export async function addWorkspace(
       ...(containerName && { containerName }),
       ...(network && { network }),
       ...(copy && { copy: true }),
+      ...(idleTimeout !== undefined && { idleTimeout }),
     });
     saveConfig(config);
     console.log(`Added workspace: ${workspaceName}`);
@@ -220,6 +241,9 @@ export async function listWorkspaces(): Promise<void> {
     if (workspace.copy) {
       console.log(`   Copy Files: Yes`);
     }
+
+    // Show idle timeout
+    console.log(`   Idle Timeout: ${formatIdleTimeout(workspace.idleTimeout)}`);
 
     console.log();
   });
