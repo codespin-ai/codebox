@@ -40,7 +40,7 @@ describe("Workspace token Store", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             copy: false,
           },
         ],
@@ -56,12 +56,14 @@ describe("Workspace token Store", function () {
       expect(workspaceTokenExists(workspaceToken as string)).to.equal(true);
 
       // Verify workspace name is correct
-      expect(getWorkspaceNameForWorkspaceToken(workspaceToken as string)).to.equal(
-        "test-workspace"
-      );
+      expect(
+        getWorkspaceNameForWorkspaceToken(workspaceToken as string)
+      ).to.equal("test-workspace");
 
       // Verify working directory is the original workspace directory
-      expect(getWorkingDirForWorkspaceToken(workspaceToken as string)).to.equal(workspaceDir);
+      expect(getWorkingDirForWorkspaceToken(workspaceToken as string)).to.equal(
+        workspaceDir
+      );
     });
 
     it("should open a workspace token with copying files when copy=true", function () {
@@ -71,7 +73,7 @@ describe("Workspace token Store", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             copy: true,
           },
         ],
@@ -87,12 +89,14 @@ describe("Workspace token Store", function () {
       expect(workspaceTokenExists(workspaceToken as string)).to.equal(true);
 
       // Verify workspace name is correct
-      expect(getWorkspaceNameForWorkspaceToken(workspaceToken as string)).to.equal(
-        "test-workspace"
-      );
+      expect(
+        getWorkspaceNameForWorkspaceToken(workspaceToken as string)
+      ).to.equal("test-workspace");
 
       // Verify working directory is not the original workspace directory
-      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
       expect(workingDir).to.not.equal(workspaceDir);
 
       // Verify the test file was copied to the temp directory
@@ -111,7 +115,7 @@ describe("Workspace token Store", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
           },
         ],
       });
@@ -130,7 +134,7 @@ describe("Workspace token Store", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
           },
         ],
       });
@@ -159,7 +163,7 @@ describe("Workspace token Store", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             copy: true,
           },
         ],
@@ -167,7 +171,9 @@ describe("Workspace token Store", function () {
 
       // Open a workspace
       const workspaceToken = openWorkspace("test-workspace");
-      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
 
       // Verify temp directory exists
       expect(fs.existsSync(workingDir as string)).to.equal(true);
@@ -188,7 +194,7 @@ describe("Workspace token Store", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             copy: true,
           },
         ],
@@ -198,8 +204,12 @@ describe("Workspace token Store", function () {
       const workspaceToken1 = openWorkspace("test-workspace");
       const workspaceToken2 = openWorkspace("test-workspace");
 
-      const workingDir1 = getWorkingDirForWorkspaceToken(workspaceToken1 as string);
-      const workingDir2 = getWorkingDirForWorkspaceToken(workspaceToken2 as string);
+      const workingDir1 = getWorkingDirForWorkspaceToken(
+        workspaceToken1 as string
+      );
+      const workingDir2 = getWorkingDirForWorkspaceToken(
+        workspaceToken2 as string
+      );
 
       // Verify working directories are different
       expect(workingDir1).to.not.equal(workingDir2);

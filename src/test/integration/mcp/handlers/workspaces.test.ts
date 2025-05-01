@@ -60,7 +60,9 @@ describe("Workspace Handlers", function () {
 
       // Verify the response
       expect(response.isError).to.equal(undefined);
-      expect(response.content[0].text).to.include("No workspaces are registered");
+      expect(response.content[0].text).to.include(
+        "No workspaces are registered"
+      );
     });
 
     it("should list all registered workspaces", async function () {
@@ -70,7 +72,7 @@ describe("Workspace Handlers", function () {
           {
             name: "workspace1",
             path: `${workspaceDir}/workspace1`,
-            dockerImage: "image1",
+            image: "image1",
           },
           {
             name: "workspace2",

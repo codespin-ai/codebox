@@ -35,7 +35,7 @@ describe("Workspace Idle Timeout", function () {
           {
             name: "idle-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             idleTimeout: 300000, // 5 minutes
           },
         ],
@@ -64,7 +64,7 @@ describe("Workspace Idle Timeout", function () {
           {
             name: "active-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             idleTimeout: 300000, // 5 minutes
           },
         ],
@@ -96,7 +96,7 @@ describe("Workspace Idle Timeout", function () {
           {
             name: "disabled-timeout-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             idleTimeout: 0, // Disabled
           },
         ],
@@ -128,7 +128,7 @@ describe("Workspace Idle Timeout", function () {
           {
             name: "default-timeout-workspace",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             // No idleTimeout specified
           },
         ],
@@ -157,13 +157,13 @@ describe("Workspace Idle Timeout", function () {
           {
             name: "short-timeout",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             idleTimeout: 60000, // 1 minute
           },
           {
             name: "long-timeout",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             idleTimeout: 3600000, // 1 hour
           },
         ],
@@ -198,7 +198,7 @@ describe("Workspace Idle Timeout", function () {
           {
             name: "access-test",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             idleTimeout: 60000, // 1 minute
           },
         ],
@@ -241,7 +241,7 @@ describe("Workspace Idle Timeout", function () {
           {
             name: "changing-timeout",
             path: workspaceDir,
-            dockerImage: "dummy-image",
+            image: "dummy-image",
             idleTimeout: 300000, // 5 minutes
           },
         ],

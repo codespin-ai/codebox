@@ -43,13 +43,13 @@ describe("Workspace token based Tools", function () {
         {
           name: "test-workspace",
           path: workspaceDir,
-          dockerImage: "dummy-image",
+          image: "dummy-image",
           copy: false,
         },
         {
           name: "copy-workspace",
           path: workspaceDir,
-          dockerImage: "dummy-image",
+          image: "dummy-image",
           copy: true,
         },
       ],
@@ -120,7 +120,9 @@ describe("Workspace token based Tools", function () {
 
       // Verify the response
       expect(closeResponse.isError).to.equal(undefined);
-      expect(closeResponse.content[0].text).to.include("Workspace token closed");
+      expect(closeResponse.content[0].text).to.include(
+        "Workspace token closed"
+      );
     });
 
     it("should return an error for invalid workspace tokens", async function () {

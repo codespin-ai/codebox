@@ -43,10 +43,10 @@ export async function executeDockerCommand(
         command,
         workspace.containerPath
       );
-    } else if (workspace.dockerImage) {
+    } else if (workspace.image) {
       // Execute in new container from image
       return await executeWithDockerImage(
-        workspace.dockerImage,
+        workspace.image,
         hostDir,
         command,
         workspace.containerPath,

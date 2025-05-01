@@ -43,7 +43,7 @@ describe("Workspace Configuration", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "node:18",
+            image: "node:18",
           },
         ],
         debug: true,
@@ -69,7 +69,7 @@ describe("Workspace Configuration", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "node:18",
+            image: "node:18",
           },
         ],
       };
@@ -92,7 +92,7 @@ describe("Workspace Configuration", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "node:18",
+            image: "node:18",
           },
         ],
       };
@@ -110,7 +110,7 @@ describe("Workspace Configuration", function () {
           {
             name: "test-workspace",
             path: workspaceDir,
-            dockerImage: "node:18",
+            image: "node:18",
           },
         ],
       };

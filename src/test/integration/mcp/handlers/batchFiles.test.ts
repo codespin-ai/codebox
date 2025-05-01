@@ -40,12 +40,12 @@ describe("Batch File Handlers with Workspace tokens", function () {
         {
           name: "test-workspace",
           path: workspaceDir,
-          dockerImage: "dummy-image",
+          image: "dummy-image",
         },
         {
           name: "copy-workspace",
           path: workspaceDir,
-          dockerImage: "dummy-image",
+          image: "dummy-image",
           copy: true,
         },
       ],

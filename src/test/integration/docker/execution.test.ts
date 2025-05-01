@@ -20,7 +20,7 @@ import {
   isDockerAvailable,
   removeContainer,
   removeNetwork,
-  uniqueName
+  uniqueName,
 } from "../testUtils.js";
 
 describe("Docker Execution with Workspace tokens", function () {
@@ -129,7 +129,9 @@ describe("Docker Execution with Workspace tokens", function () {
       expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the workspace token
-      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
       expect(workingDir).to.equal(workspaceDir);
 
       // Execute command using workspace name and workspace token working directory
@@ -148,7 +150,9 @@ describe("Docker Execution with Workspace tokens", function () {
     it("should handle command errors", async function () {
       // Open a workspace token for testing
       const workspaceToken = openWorkspace(workspaceName);
-      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
 
       try {
         await executeDockerCommand(
@@ -177,7 +181,7 @@ describe("Docker Execution with Workspace tokens", function () {
           {
             name: workspaceName,
             path: workspaceDir,
-            dockerImage: dockerImage,
+            image: dockerImage,
           },
         ],
       });
@@ -189,7 +193,9 @@ describe("Docker Execution with Workspace tokens", function () {
       expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the workspace token
-      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
       expect(workingDir).to.equal(workspaceDir);
 
       // Execute command using workspace name and workspace token working directory
@@ -212,7 +218,7 @@ describe("Docker Execution with Workspace tokens", function () {
           {
             name: workspaceName,
             path: workspaceDir,
-            dockerImage: dockerImage,
+            image: dockerImage,
             containerPath: "/custom-path",
           },
         ],
@@ -220,7 +226,9 @@ describe("Docker Execution with Workspace tokens", function () {
 
       // Open a workspace token for testing
       const workspaceToken = openWorkspace(workspaceName);
-      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
 
       const { stdout } = await executeDockerCommand(
         workspaceName,
@@ -243,7 +251,7 @@ describe("Docker Execution with Workspace tokens", function () {
           {
             name: workspaceName,
             path: workspaceDir,
-            dockerImage: dockerImage,
+            image: dockerImage,
             network: networkName,
           },
         ],
@@ -253,7 +261,9 @@ describe("Docker Execution with Workspace tokens", function () {
     it("should use the specified network", async function () {
       // Open a workspace token for testing
       const workspaceToken = openWorkspace(workspaceName);
-      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
 
       try {
         // Just verify the Docker command includes the network parameter
@@ -286,7 +296,7 @@ describe("Docker Execution with Workspace tokens", function () {
           {
             name: workspaceName,
             path: workspaceDir,
-            dockerImage: dockerImage,
+            image: dockerImage,
             copy: true,
           },
         ],
@@ -299,7 +309,9 @@ describe("Docker Execution with Workspace tokens", function () {
       expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the workspace token - should be a temp directory
-      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
       expect(workingDir).to.not.equal(workspaceDir); // Should be a different directory
 
       // Verify the temp directory contains the test file
@@ -353,8 +365,12 @@ describe("Docker Execution with Workspace tokens", function () {
       const workspaceToken1 = openWorkspace(workspaceName);
       const workspaceToken2 = openWorkspace(workspaceName);
 
-      const workingDir1 = getWorkingDirForWorkspaceToken(workspaceToken1 as string);
-      const workingDir2 = getWorkingDirForWorkspaceToken(workspaceToken2 as string);
+      const workingDir1 = getWorkingDirForWorkspaceToken(
+        workspaceToken1 as string
+      );
+      const workingDir2 = getWorkingDirForWorkspaceToken(
+        workspaceToken2 as string
+      );
 
       // Verify they are different directories
       expect(workingDir1).to.not.equal(workingDir2);

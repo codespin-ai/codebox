@@ -65,7 +65,10 @@ describe("Batch Command Handlers with Workspace tokens", function () {
     containerName = uniqueName("codebox-test-container");
 
     // Create a test file in the workspace directory
-    createTestFile(path.join(workspaceDir, "test.txt"), "Hello from batch test!");
+    createTestFile(
+      path.join(workspaceDir, "test.txt"),
+      "Hello from batch test!"
+    );
 
     // Create a simple server to register handlers
     const server = {
@@ -250,7 +253,7 @@ describe("Batch Command Handlers with Workspace tokens", function () {
           {
             name: "copy-workspace",
             path: workspaceDir,
-            dockerImage: dockerImage,
+            image: dockerImage,
             copy: true,
           },
         ],
@@ -329,9 +332,9 @@ describe("Batch Command Handlers with Workspace tokens", function () {
       expect(response.content[0].text).to.include("Second batch");
 
       // The file should not exist in the original workspace directory
-      expect(fs.existsSync(path.join(workspaceDir, "multi-batch.txt"))).to.equal(
-        false
-      );
+      expect(
+        fs.existsSync(path.join(workspaceDir, "multi-batch.txt"))
+      ).to.equal(false);
 
       // Clean up the workspace token
       await closeWorkspaceHandler({

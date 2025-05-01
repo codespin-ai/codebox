@@ -3,7 +3,7 @@ export interface WorkspaceConfig {
   name: string;
   path: string;
   containerPath?: string;
-  dockerImage?: string;
+  image?: string;
   containerName?: string;
   network?: string;
   copy?: boolean;

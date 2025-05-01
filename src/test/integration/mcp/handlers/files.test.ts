@@ -40,12 +40,12 @@ describe("File Handlers with Workspace tokens", function () {
         {
           name: "test-workspace",
           path: workspaceDir,
-          dockerImage: "dummy-image",
+          image: "dummy-image",
         },
         {
           name: "copy-workspace",
           path: workspaceDir,
-          dockerImage: "dummy-image",
+          image: "dummy-image",
           copy: true,
         },
       ],
@@ -281,12 +281,12 @@ describe("File Handlers with Workspace tokens", function () {
       });
 
       // Neither file should exist in the original workspace directory
-      expect(fs.existsSync(path.join(workspaceDir, "multi-file1.txt"))).to.equal(
-        false
-      );
-      expect(fs.existsSync(path.join(workspaceDir, "multi-file2.txt"))).to.equal(
-        false
-      );
+      expect(
+        fs.existsSync(path.join(workspaceDir, "multi-file1.txt"))
+      ).to.equal(false);
+      expect(
+        fs.existsSync(path.join(workspaceDir, "multi-file2.txt"))
+      ).to.equal(false);
 
       // Clean up the workspace token
       await closeWorkspaceHandler({

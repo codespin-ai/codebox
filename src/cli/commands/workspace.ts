@@ -114,7 +114,7 @@ export async function addWorkspace(
   if (existingIndex !== -1) {
     // Update existing workspace's configuration
     if (image) {
-      config.workspaces[existingIndex].dockerImage = image;
+      config.workspaces[existingIndex].image = image;
     }
     if (containerName) {
       config.workspaces[existingIndex].containerName = containerName;
@@ -140,7 +140,7 @@ export async function addWorkspace(
       name: workspaceName,
       path: workspacePath,
       ...(containerPath && { containerPath }),
-      ...(image && { dockerImage: image }),
+      ...(image && { image: image }),
       ...(containerName && { containerName }),
       ...(network && { network }),
       ...(copy && { copy: true }),
@@ -225,8 +225,8 @@ export async function listWorkspaces(): Promise<void> {
       console.log(`   Container: ${workspace.containerName}`);
     }
 
-    if (workspace.dockerImage) {
-      console.log(`   Docker Image: ${workspace.dockerImage}`);
+    if (workspace.image) {
+      console.log(`   Docker Image: ${workspace.image}`);
     }
 
     if (workspace.containerPath) {
