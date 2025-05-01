@@ -17,6 +17,8 @@ interface WorkspaceOptions {
   network?: string;
   copy?: boolean; // Added new option
   idleTimeout?: number; // Added new option
+  runTemplate?: string; // Added new option
+  execTemplate?: string; // Added new option
 }
 
 interface CommandContext {
@@ -50,6 +52,8 @@ export async function addWorkspace(
     network,
     copy = false, // Default to false
     idleTimeout,
+    runTemplate,
+    execTemplate,
   } = options;
 
   if (!image && !containerName) {
@@ -131,6 +135,14 @@ export async function addWorkspace(
     if (idleTimeout !== undefined) {
       config.workspaces[existingIndex].idleTimeout = idleTimeout;
     }
+    // Update run template if specified
+    if (runTemplate !== undefined) {
+      config.workspaces[existingIndex].runTemplate = runTemplate;
+    }
+    // Update exec template if specified
+    if (execTemplate !== undefined) {
+      config.workspaces[existingIndex].execTemplate = execTemplate;
+    }
     config.workspaces[existingIndex].path = workspacePath;
     saveConfig(config);
     console.log(`Updated workspace: ${workspaceName}`);
@@ -145,6 +157,8 @@ export async function addWorkspace(
       ...(network && { network }),
       ...(copy && { copy: true }),
       ...(idleTimeout !== undefined && { idleTimeout }),
+      ...(runTemplate !== undefined && { runTemplate }),
+      ...(execTemplate !== undefined && { execTemplate }),
     });
     saveConfig(config);
     console.log(`Added workspace: ${workspaceName}`);
@@ -244,6 +258,16 @@ export async function listWorkspaces(): Promise<void> {
 
     // Show idle timeout
     console.log(`   Idle Timeout: ${formatIdleTimeout(workspace.idleTimeout)}`);
+
+    // Show run template if specified
+    if (workspace.runTemplate) {
+      console.log(`   Run Template: ${workspace.runTemplate}`);
+    }
+
+    // Show exec template if specified
+    if (workspace.execTemplate) {
+      console.log(`   Exec Template: ${workspace.execTemplate}`);
+    }
 
     console.log();
   });

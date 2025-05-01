@@ -243,6 +243,92 @@ describe("Docker Execution with Workspace tokens", function () {
     });
   });
 
+  describe("Run Template Support", function () {
+    it("should use the run template with variable substitution", async function () {
+      // Register the image with a custom run template in the config
+      createTestConfig(configDir, {
+        workspaces: [
+          {
+            name: workspaceName,
+            path: workspaceDir,
+            image: dockerImage,
+            network: networkName,
+            // Use echo to verify all variables are being substituted correctly
+            runTemplate:
+              'docker run -i --rm -v "{{path}}:{{containerPath}}" --network="{{network}}" --workdir="{{containerPath}}" --user={{uid}}:{{gid}} {{image}} /bin/sh -c "echo \'Template variables - Path:{{path}} ContainerPath:{{containerPath}} Network:{{network}} Image:{{image}} Command:{{command}}\'"',
+          },
+        ],
+      });
+
+      // Open a workspace token for testing
+      const workspaceToken = openWorkspace(workspaceName);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
+
+      // Execute command using the template
+      const { stdout } = await executeDockerCommand(
+        workspaceName,
+        "test command",
+        workingDir as string
+      );
+
+      // Verify all template variables were substituted correctly
+      expect(stdout).to.include(`Path:${workingDir}`);
+      expect(stdout).to.include("ContainerPath:/workspace");
+      expect(stdout).to.include(`Network:${networkName}`);
+      expect(stdout).to.include(`Image:${dockerImage}`);
+      expect(stdout).to.include("Command:test command");
+
+      // Close the workspace token
+      closeWorkspace(workspaceToken as string);
+    });
+  });
+
+  describe("Exec Template Support", function () {
+    beforeEach(async function () {
+      // Create a test container
+      await createTestContainer(containerName, dockerImage, workspaceDir);
+
+      // Register the container with a custom exec template in the config
+      createTestConfig(configDir, {
+        workspaces: [
+          {
+            name: workspaceName,
+            path: workspaceDir,
+            containerName: containerName,
+            containerPath: "/workspace",
+            execTemplate:
+              'docker exec -i --workdir="{{containerPath}}" --user={{uid}}:{{gid}} {{containerName}} /bin/sh -c "echo \'Exec Template: ContainerName:{{containerName}} ContainerPath:{{containerPath}} Command:{{command}}\'"',
+          },
+        ],
+      });
+    });
+
+    it("should use the exec template with variable substitution", async function () {
+      // Open a workspace token for testing
+      const workspaceToken = openWorkspace(workspaceName);
+      const workingDir = getWorkingDirForWorkspaceToken(
+        workspaceToken as string
+      );
+
+      // Execute command using the template
+      const { stdout } = await executeDockerCommand(
+        workspaceName,
+        "test exec command",
+        workingDir as string
+      );
+
+      // Verify all template variables were substituted correctly
+      expect(stdout).to.include(`ContainerName:${containerName}`);
+      expect(stdout).to.include("ContainerPath:/workspace");
+      expect(stdout).to.include("Command:test exec command");
+
+      // Close the workspace token
+      closeWorkspace(workspaceToken as string);
+    });
+  });
+
   describe("Network Support", function () {
     beforeEach(function () {
       // Register the image with network in the config

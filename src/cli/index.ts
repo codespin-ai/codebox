@@ -86,6 +86,16 @@ export async function main() {
                   describe:
                     "Timeout in milliseconds before automatically closing idle workspace (0 to disable)",
                 })
+                .option("run-template", {
+                  type: "string",
+                  describe:
+                    "Custom template for docker run command with variables like {{image}}, {{path}}, {{containerPath}}, {{command}}, {{network}}, {{uid}}, {{gid}}",
+                })
+                .option("exec-template", {
+                  type: "string",
+                  describe:
+                    "Custom template for docker exec command with variables like {{containerName}}, {{containerPath}}, {{command}}, {{uid}}, {{gid}}",
+                })
                 .check((argv) => {
                   if (!argv.image && !argv.container) {
                     throw new Error(
@@ -106,6 +116,8 @@ export async function main() {
                   network: argv.network,
                   copy: argv.copy,
                   idleTimeout: argv["idle-timeout"],
+                  runTemplate: argv["run-template"],
+                  execTemplate: argv["exec-template"],
                 },
                 { workingDir: process.cwd() }
               );

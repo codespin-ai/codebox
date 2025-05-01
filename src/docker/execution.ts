@@ -41,7 +41,8 @@ export async function executeDockerCommand(
       return await executeInExistingContainer(
         workspace.containerName,
         command,
-        workspace.containerPath
+        workspace.containerPath,
+        workspace.execTemplate
       );
     } else if (workspace.image) {
       // Execute in new container from image
@@ -50,7 +51,8 @@ export async function executeDockerCommand(
         hostDir,
         command,
         workspace.containerPath,
-        workspace.network
+        workspace.network,
+        workspace.runTemplate
       );
     } else {
       throw new Error(
@@ -103,12 +105,30 @@ export async function checkNetworkExists(
 }
 
 /**
+ * Apply template variables to a template
+ */
+function applyTemplateVariables(
+  template: string,
+  variables: Record<string, string | number | undefined>
+): string {
+  let result = template;
+  for (const [key, value] of Object.entries(variables)) {
+    if (value !== undefined) {
+      const regex = new RegExp(`{{${key}}}`, "g");
+      result = result.replace(regex, String(value));
+    }
+  }
+  return result;
+}
+
+/**
  * Execute command inside an existing Docker container
  */
 async function executeInExistingContainer(
   containerName: string,
   command: string,
-  workdir = "/workspace"
+  workdir = "/workspace",
+  execTemplate?: string
 ): Promise<ExecuteResult> {
   // Check if container is running
   if (!(await checkContainerRunning(containerName))) {
@@ -118,8 +138,23 @@ async function executeInExistingContainer(
   // Escape quotes in the command
   const escapedCommand = command.replace(/"/g, '\\"');
 
-  // Execute command in the running container with the user's UID/GID
-  const dockerCommand = `docker exec -i --user=${uid}:${gid} --workdir="${workdir}" ${containerName} /bin/sh -c "${escapedCommand}"`;
+  let dockerCommand: string;
+
+  if (execTemplate) {
+    // Use the provided template with variable substitution
+    const templateVariables = {
+      containerName,
+      containerPath: workdir,
+      command: escapedCommand,
+      uid,
+      gid,
+    };
+
+    dockerCommand = applyTemplateVariables(execTemplate, templateVariables);
+  } else {
+    // Use the default docker exec command format
+    dockerCommand = `docker exec -i --user=${uid}:${gid} --workdir="${workdir}" ${containerName} /bin/sh -c "${escapedCommand}"`;
+  }
 
   return await execAsync(dockerCommand, {
     maxBuffer: 10 * 1024 * 1024, // 10MB buffer
@@ -134,20 +169,39 @@ async function executeWithDockerImage(
   path: string,
   command: string,
   containerPath = "/workspace",
-  network?: string
+  network?: string,
+  runTemplate?: string
 ): Promise<ExecuteResult> {
   // Escape quotes in the command
   const escapedCommand = command.replace(/"/g, '\\"');
 
-  // Add network parameter if specified
-  const networkParam = network ? `--network="${network}"` : "";
+  let dockerCommand: string;
 
-  const dockerCommand = `docker run -i --rm \
-    ${networkParam} \
-    -v "${path}:${containerPath}" \
-    --workdir="${containerPath}" \
-    --user=${uid}:${gid} \
-    ${image} /bin/sh -c "${escapedCommand}"`;
+  if (runTemplate) {
+    // Use the provided template with variable substitution
+    const templateVariables = {
+      image,
+      path,
+      containerPath,
+      command: escapedCommand,
+      network,
+      uid,
+      gid,
+    };
+
+    dockerCommand = applyTemplateVariables(runTemplate, templateVariables);
+  } else {
+    // Use the default docker command format
+    // Add network parameter if specified
+    const networkParam = network ? `--network="${network}"` : "";
+
+    dockerCommand = `docker run -i --rm \
+      ${networkParam} \
+      -v "${path}:${containerPath}" \
+      --workdir="${containerPath}" \
+      --user=${uid}:${gid} \
+      ${image} /bin/sh -c "${escapedCommand}"`;
+  }
 
   return await execAsync(dockerCommand, {
     maxBuffer: 10 * 1024 * 1024, // 10MB buffer

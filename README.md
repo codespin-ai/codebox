@@ -59,6 +59,12 @@ codebox workspace add --container my-running-container
 # Enable copy mode to isolate file changes from your source directory
 # (Only works with --image, not with --container)
 codebox workspace add --image node:18 --copy
+
+# Use a custom template for docker run commands
+codebox workspace add --image node:18 --run-template "docker run -i --rm -v \"{{path}}:{{containerPath}}\" --workdir=\"{{containerPath}}\" {{image}} /bin/sh -c \"{{command}}\""
+
+# Use a custom template for docker exec commands
+codebox workspace add --container my-container --exec-template "docker exec -i --workdir=\"{{containerPath}}\" {{containerName}} /bin/sh -c \"{{command}}\""
 ```
 
 #### Listing Workspaces
@@ -109,12 +115,14 @@ Workspaces are stored in `~/.codespin/codebox.json` with the following structure
       "containerPath": "/my-project",
       "image": "node:18",
       "network": "my_compose_network",
-      "copy": true
+      "copy": true,
+      "runTemplate": "docker run -i --rm -v \"{{path}}:{{containerPath}}\" --workdir=\"{{containerPath}}\" {{image}} /bin/sh -c \"{{command}}\""
     },
     {
       "name": "python-api",
       "path": "/home/user/workspaces/python-api",
-      "containerName": "running-python-container"
+      "containerName": "running-python-container",
+      "execTemplate": "docker exec -i --workdir=\"{{containerPath}}\" {{containerName}} /bin/sh -c \"{{command}}\""
     }
   ],
   "debug": false
@@ -130,6 +138,8 @@ Each workspace has:
 - `containerName`: Name of an existing running container
 - `network`: (Optional) Docker network to connect the container to
 - `copy`: (Optional) When **true**, files are copied to a temporary directory before mounting, protecting your source files
+- `runTemplate`: (Optional) Custom template for docker run commands (used with `image`)
+- `execTemplate`: (Optional) Custom template for docker exec commands (used with `containerName`)
 
 ## Copy Mode
 
@@ -148,6 +158,45 @@ Copy mode is useful for:
 - Avoiding permission issues with mounted volumes
 
 **Note:** Copy mode only works when using Docker images (with `--image`), not with existing containers (with `--container`). When using an existing container, the copy option is ignored.
+
+## Command Templates
+
+Codebox allows you to customize how Docker commands are executed through templates:
+
+### Run Template Variables
+
+When using `--run-template` with a workspace that uses `--image`, you can use these variables:
+
+- `{{image}}` - The Docker image name
+- `{{path}}` - The host directory path
+- `{{containerPath}}` - The path inside the container
+- `{{command}}` - The command to execute
+- `{{network}}` - The Docker network (if specified)
+- `{{uid}}` - User ID for Docker execution
+- `{{gid}}` - Group ID for Docker execution
+
+### Exec Template Variables
+
+When using `--exec-template` with a workspace that uses `--container`, you can use these variables:
+
+- `{{containerName}}` - The container name
+- `{{containerPath}}` - The working directory inside the container
+- `{{command}}` - The command to execute
+- `{{uid}}` - User ID for Docker execution
+- `{{gid}}` - Group ID for Docker execution
+
+### Example Use Cases
+
+- Use alternative container technologies:
+
+  ```bash
+  codebox workspace add --image alpine:latest --run-template "podman run -i --rm -v {{path}}:{{containerPath}} {{image}} sh -c \"{{command}}\""
+  ```
+
+- Add custom Docker options:
+  ```bash
+  codebox workspace add --image node:18 --run-template "docker run -i --rm -v \"{{path}}:{{containerPath}}\" --workdir=\"{{containerPath}}\" --memory=512m --cpus=0.5 {{image}} /bin/sh -c \"{{command}}\""
+  ```
 
 ## Troubleshooting
 
