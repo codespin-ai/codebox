@@ -107,7 +107,7 @@ Workspaces are stored in `~/.codespin/codebox.json` with the following structure
       "name": "my-node-app",
       "path": "/home/user/workspaces/my-node-app",
       "containerPath": "/my-project",
-      "dockerImage": "node:18",
+      "image": "node:18",
       "network": "my_compose_network",
       "copy": true
     },
@@ -126,7 +126,7 @@ Each workspace has:
 - `name`: Identifier for the workspace
 - `path`: Workspace path on the host machine
 - `containerPath`: (Optional) Path in the container where the workspace is mounted (defaults to `/workspace`)
-- `dockerImage`: Docker image to use for new containers
+- `image`: Docker image to use for new containers
 - `containerName`: Name of an existing running container
 - `network`: (Optional) Docker network to connect the container to
 - `copy`: (Optional) When **true**, files are copied to a temporary directory before mounting, protecting your source files
