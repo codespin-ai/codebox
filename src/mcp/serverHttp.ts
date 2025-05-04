@@ -4,13 +4,14 @@ import { randomUUID } from "crypto";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { createServer } from "./server.js";
+import * as http from "http";
 
 export async function startHttpServer(
   options: {
     host?: string;
     port?: number;
   } = {}
-): Promise<void> {
+): Promise<http.Server> {
   const host = options.host ?? "0.0.0.0";
   const port = options.port ?? 4000;
   const app = express();
@@ -73,9 +74,11 @@ export async function startHttpServer(
     transports[sid].handleRequest(req, res);
   });
 
-  app.listen(port, host, () => {
+  const server = app.listen(port, host, () => {
     console.error(
       `Codebox MCP HTTP server listening at http://${host}:${port}/mcp`
     );
   });
+
+  return server;
 }

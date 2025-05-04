@@ -2,6 +2,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { expect } from "chai";
+import * as http from "http";
 import * as path from "path";
 import { startHttpServer } from "../../../mcp/serverHttp.js";
 import { createTestConfig, setupTestEnvironment } from "../setup.js";
@@ -12,6 +13,7 @@ import {
   removeContainer,
   uniqueName,
 } from "../testUtils.js";
+import { Socket } from "net";
 
 // Define the tool response type for proper typing
 interface ToolResponse {
@@ -28,6 +30,7 @@ describe("MCP HTTP Server Integration Tests", function () {
   let configDir: string;
   let workspaceDir: string;
   let cleanup: () => void;
+  let httpServer: http.Server;
   let port: number;
   let baseUrl: string;
   let client: Client;
@@ -51,13 +54,53 @@ describe("MCP HTTP Server Integration Tests", function () {
     port = getRandomPort();
     baseUrl = `http://localhost:${port}/mcp`;
 
-    // Start HTTP server
-    await startHttpServer({
+    // Start HTTP server and store the reference
+    httpServer = await startHttpServer({
       host: "localhost",
       port: port,
     });
 
     return port;
+  }
+
+  // Helper to safely close an HTTP server with timeout
+  async function closeHttpServer(
+    server: http.Server,
+    timeoutMs = 5000
+  ): Promise<void> {
+    if (!server) return;
+
+    // Get all active connections
+    const connections: Record<string, Socket> = {};
+    server.on("connection", (conn) => {
+      const key = conn.remoteAddress + ":" + conn.remotePort;
+      connections[key] = conn;
+      conn.on("close", () => {
+        delete connections[key];
+      });
+    });
+
+    return new Promise<void>((resolve) => {
+      // Set a timeout to force close if taking too long
+      const timeout = setTimeout(() => {
+        console.warn("Force closing HTTP server after timeout");
+        // Destroy all remaining connections
+        Object.values(connections).forEach((conn) => {
+          try {
+            if (conn.destroy) conn.destroy();
+          } catch (e) {
+            console.error("Error destroying connection:", e);
+          }
+        });
+        resolve();
+      }, timeoutMs);
+
+      // Try to close the server gracefully
+      server.close(() => {
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
   }
 
   beforeEach(async function () {
@@ -90,15 +133,7 @@ describe("MCP HTTP Server Integration Tests", function () {
   });
 
   afterEach(async function () {
-    if (dockerAvailable) {
-      // Clean up Docker resources
-      await removeContainer(containerName);
-    }
-
-    // Clean up test environment
-    cleanup();
-
-    // Close the client if connected
+    // First close the client if connected to free up connections
     if (client) {
       try {
         await client.close();
@@ -106,6 +141,19 @@ describe("MCP HTTP Server Integration Tests", function () {
         console.warn("Error closing client:", error);
       }
     }
+
+    // Close the HTTP server if it exists with a timeout
+    if (httpServer) {
+      await closeHttpServer(httpServer, 3000);
+    }
+
+    if (dockerAvailable) {
+      // Clean up Docker resources
+      await removeContainer(containerName);
+    }
+
+    // Clean up test environment
+    cleanup();
   });
 
   describe("Basic HTTP Connectivity", function () {
@@ -129,6 +177,7 @@ describe("MCP HTTP Server Integration Tests", function () {
     });
   });
 
+  // Rest of the test file remains the same
   describe("Workspace Operations via HTTP", function () {
     beforeEach(function () {
       if (!dockerAvailable) {
