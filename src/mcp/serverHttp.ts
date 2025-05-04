@@ -11,12 +11,14 @@ export async function startHttpServer(
     host?: string;
     port?: number;
     allowedOrigins?: string[];
+    idleTimeout?: number;
   } = {}
 ): Promise<http.Server> {
   // Default to localhost only for security
   const host = options.host ?? "127.0.0.1";
-  const port = options.port ?? 4000;
+  const port = options.port ?? 13014;
   const allowedOrigins = options.allowedOrigins || ["http://localhost:" + port];
+  const IDLE_TIMEOUT = options.idleTimeout ?? 30 * 60 * 1000; // 30 minutes in milliseconds
 
   const app = express();
   app.use(express.json());
@@ -49,6 +51,26 @@ export async function startHttpServer(
   });
 
   const transports: Record<string, StreamableHTTPServerTransport> = {};
+  const sessionActivity: Record<string, number> = {};
+
+  // Session scavenging interval
+  const scavengerInterval = setInterval(() => {
+    const now = Date.now();
+    Object.entries(sessionActivity).forEach(([sid, lastActivity]) => {
+      if (now - lastActivity > IDLE_TIMEOUT) {
+        if (transports[sid]) {
+          console.log(
+            `Closing idle session ${sid} after ${Math.round(
+              (now - lastActivity) / 1000 / 60
+            )} minutes of inactivity`
+          );
+          transports[sid].close();
+          // transport.onclose will handle cleanup from transports object
+        }
+        delete sessionActivity[sid];
+      }
+    });
+  }, 60000); // Check every minute
 
   app.post("/mcp", async (req: Request, res: Response, _next: NextFunction) => {
     const sessionId = req.header("mcp-session-id");
@@ -56,17 +78,21 @@ export async function startHttpServer(
 
     if (sessionId && transports[sessionId]) {
       transport = transports[sessionId];
+      // Update activity timestamp
+      sessionActivity[sessionId] = Date.now();
     } else if (!sessionId && isInitializeRequest(req.body)) {
       transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => randomUUID(),
         onsessioninitialized: (sid) => {
           transports[sid] = transport;
+          sessionActivity[sid] = Date.now();
         },
       });
 
       transport.onclose = () => {
         if (transport.sessionId) {
           delete transports[transport.sessionId];
+          delete sessionActivity[transport.sessionId];
         }
       };
 
@@ -93,6 +119,8 @@ export async function startHttpServer(
       res.status(400).send("Invalid or missing session ID");
       return;
     }
+    // Update activity timestamp
+    sessionActivity[sid] = Date.now();
     transports[sid].handleRequest(req, res);
   });
 
@@ -102,6 +130,8 @@ export async function startHttpServer(
       res.status(400).send("Invalid or missing session ID");
       return;
     }
+    // Update activity timestamp (even for delete operations)
+    sessionActivity[sid] = Date.now();
     transports[sid].handleRequest(req, res);
   });
 
@@ -109,6 +139,11 @@ export async function startHttpServer(
     console.error(
       `Codebox MCP HTTP server listening at http://${host}:${port}/mcp`
     );
+  });
+
+  // Clean up the interval when the server closes
+  server.on("close", () => {
+    clearInterval(scavengerInterval);
   });
 
   return server;

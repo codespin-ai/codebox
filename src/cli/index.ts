@@ -47,7 +47,7 @@ export async function main() {
           })
           .option("port", {
             type: "number",
-            describe: "Port to listen on (default: 4000)",
+            describe: "Port to listen on (default: 13014)",
           })
           .option("allowed-origins", {
             type: "array",
