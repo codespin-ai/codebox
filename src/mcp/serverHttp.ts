@@ -10,12 +10,43 @@ export async function startHttpServer(
   options: {
     host?: string;
     port?: number;
+    allowedOrigins?: string[];
   } = {}
 ): Promise<http.Server> {
-  const host = options.host ?? "0.0.0.0";
+  // Default to localhost only for security
+  const host = options.host ?? "127.0.0.1";
   const port = options.port ?? 4000;
+  const allowedOrigins = options.allowedOrigins || ["http://localhost:" + port];
+
   const app = express();
   app.use(express.json());
+
+  // Fix the middleware type error by not returning a value
+  app.use((req, res, next) => {
+    // Check origin header for all requests
+    const origin = req.headers.origin;
+    if (origin) {
+      if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+      } else {
+        res.status(403).json({
+          jsonrpc: "2.0",
+          error: {
+            code: -32000,
+            message: "Origin not allowed",
+          },
+          id: null,
+        });
+        // Don't call next() when sending an error response
+        return;
+      }
+    }
+
+    // Add basic security headers
+    res.setHeader("X-Content-Type-Options", "nosniff");
+
+    next();
+  });
 
   const transports: Record<string, StreamableHTTPServerTransport> = {};
 

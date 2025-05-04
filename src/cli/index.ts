@@ -42,16 +42,22 @@ export async function main() {
         y
           .option("host", {
             type: "string",
-            describe: "Host to bind (default: 0.0.0.0)",
+            describe: "Host to bind (default: 127.0.0.1)",
           })
           .option("port", {
             type: "number",
             describe: "Port to listen on (default: 4000)",
+          })
+          .option("allowed-origins", {
+            type: "array",
+            describe:
+              "Allowed origins for CORS (default: http://localhost:<port>)",
           }),
       async (argv) => {
         await startHttpServer({
           host: argv.host as string | undefined,
           port: argv.port as number | undefined,
+          allowedOrigins: argv["allowed-origins"] as string[] | undefined,
         });
       }
     )

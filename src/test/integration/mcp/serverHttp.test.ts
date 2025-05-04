@@ -56,8 +56,9 @@ describe("MCP HTTP Server Integration Tests", function () {
 
     // Start HTTP server and store the reference
     httpServer = await startHttpServer({
-      host: "localhost",
+      host: "127.0.0.1", // Using the secure default
       port: port,
+      allowedOrigins: ["*"], // For testing, accept all origins
     });
 
     return port;
