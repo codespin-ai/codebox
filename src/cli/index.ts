@@ -181,9 +181,15 @@ export async function main() {
           "You must specify a workspace command (add/remove/list)"
         );
     })
-    .command("version", "Display the current version", {}, async () => {
-      console.log(getVersion());
-    })
+    .command(
+      "version",
+      "Display the current version",
+      // Fix: Provide a properly defined builder function
+      (yargs) => yargs,
+      async () => {
+        console.log(getVersion());
+      }
+    )
     .demandCommand(1, "You need to specify a command")
     .showHelpOnFail(true)
     .help("help")
