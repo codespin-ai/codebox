@@ -22,15 +22,16 @@ export function getVersion() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const packagePath = path.resolve(__dirname, "../../package.json");
   const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-  return `Codebox v${packageJson.version}`;
+  return packageJson.version;
 }
 
 export async function main() {
   await yargs(process.argv.slice(2))
+    .version(getVersion()) // Use the built-in version option
     .command(
       "start",
       "Start the MCP server for executing commands in containers",
-      undefined,
+      {},
       async () => {
         await start({ workingDir: process.cwd() });
       }
@@ -181,15 +182,9 @@ export async function main() {
           "You must specify a workspace command (add/remove/list)"
         );
     })
-    .command(
-      "version",
-      "Display the current version",
-      // Fix: Provide a properly defined builder function
-      (yargs) => yargs,
-      async () => {
-        console.log(getVersion());
-      }
-    )
+    // Add custom version output format
+    .scriptName("codebox")
+    .epilogue(`Run 'codebox --version' to see the current version`)
     .demandCommand(1, "You need to specify a command")
     .showHelpOnFail(true)
     .help("help")
