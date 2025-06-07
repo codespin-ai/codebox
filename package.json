@@ -1,6 +1,6 @@
 {
   "name": "@codespin/codebox",
-  "version": "0.0.47",
+  "version": "0.0.48",
   "description": "An MCP server for executing commands in Docker containers",
   "type": "module",
   "main": "dist/cli/index.js",
@@ -23,24 +23,24 @@
   "author": "Codespin AI",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.10.1",
-    "@types/express": "^5.0.1",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@types/express": "^5.0.3",
     "express": "^5.1.0",
     "source-map-support": "^0.5.21",
     "uuid": "^11.1.0",
-    "yargs": "^17.7.2",
-    "zod": "^3.24.3"
+    "yargs": "^18.0.0",
+    "zod": "^3.25.56"
   },
   "devDependencies": {
-    "@types/chai": "^5.2.1",
+    "@types/chai": "^5.2.2",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.30",
     "@types/source-map-support": "^0.5.10",
     "@types/yargs": "^17.0.33",
     "chai": "^5.2.0",
-    "eslint": "^9.25.0",
-    "mocha": "^11.1.0",
+    "eslint": "^9.28.0",
+    "mocha": "^11.5.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.30.1"
+    "typescript-eslint": "^8.33.1"
   }
 }

@@ -62,7 +62,7 @@ export async function main() {
         });
       }
     )
-    .command("workspace", "Workspace management commands", (yargs) => {
+    .command(["workspace", "ws"], "Workspace management commands", (yargs) => {
       return yargs
         .command(
           "add [dirname]",
@@ -148,7 +148,7 @@ export async function main() {
           }
         )
         .command(
-          "remove [target]",
+          ["remove [target]", "rm [target]"],
           "Remove a workspace from the registry by name or path",
           (y) => {
             return y
@@ -174,9 +174,14 @@ export async function main() {
             );
           }
         )
-        .command("list", "List all registered workspaces", {}, async () => {
-          await listWorkspaces();
-        })
+        .command(
+          ["list", "ls"],
+          "List all registered workspaces",
+          {},
+          async () => {
+            await listWorkspaces();
+          }
+        )
         .demandCommand(
           1,
           "You must specify a workspace command (add/remove/list)"
