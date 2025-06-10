@@ -233,6 +233,8 @@ export async function listWorkspaces(): Promise<void> {
     const exists = fs.existsSync(workspace.path);
 
     console.log(`${index + 1}. ${workspace.name}`);
+    console.log(`   Dir: ${workspace.path}`);
+
     console.log(`   Status: ${exists ? "exists" : "missing"}`);
 
     if (workspace.containerName) {
