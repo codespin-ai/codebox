@@ -1,6 +1,6 @@
 # Codebox
 
-Codebox is an MCP Server for running commands within Docker containers for **specific workspaces**. It simplifies the process of executing code and commands in isolated, reproducible environments.
+Codebox is an MCP Server designed to run commands inside Docker containers, enabling an agent to safely modify your project files while preventing access to the rest of your computer.
 
 ## Installation
 
