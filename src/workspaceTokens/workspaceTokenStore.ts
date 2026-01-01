@@ -2,23 +2,20 @@
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { getWorkspaceByName } from "../config/workspaceConfig.js";
-import {
-  copyDirectory,
-  createTempDirectory,
-  removeDirectory,
-} from "../fs/dirUtils.js";
+import { copyDirectory, createTempDirectory, removeDirectory } from "../fs/dirUtils.js";
+import { logger } from "../logging/console-logger.js";
 
 // Default idle timeout (10 minutes in milliseconds)
 const DEFAULT_IDLE_TIMEOUT = 600000;
 
 // Workspace token information including working directory
-interface WorkspaceTokenInfo {
+type WorkspaceTokenInfo = {
   workspaceName: string;
   workingDir: string; // Either original path or temp directory
   isTempDir: boolean; // Flag to determine if cleanup is needed when closing
   lastAccessTime: number; // Timestamp of last access
   idleTimeout: number; // Timeout in ms before auto-closing (0 means disabled)
-}
+};
 
 // In-memory store of activeworkspace tokens
 const activeWorkspaceTokens: Record<string, WorkspaceTokenInfo> = {};
@@ -53,9 +50,7 @@ export function startIdleWorkspaceCleanup(checkInterval = 60000): void {
  * @param currentTime The current time to use for comparison (defaults to Date.now())
  * @returns Array of closed workspace token IDs
  */
-export function checkAndCloseIdleWorkspaces(
-  currentTime = Date.now()
-): string[] {
+export function checkAndCloseIdleWorkspaces(currentTime = Date.now()): string[] {
   const tokensToClose: string[] = [];
 
   // Check each workspace token
@@ -72,10 +67,10 @@ export function checkAndCloseIdleWorkspaces(
   // Close idle workspaces
   for (const token of tokensToClose) {
     try {
-      console.log(`Auto-closing idle workspace token: ${token}`);
+      logger.info(`Auto-closing idle workspace token: ${token}`);
       closeWorkspace(token);
     } catch (error) {
-      console.error(`Error closing workspace token ${token}:`, error);
+      logger.error(`Error closing workspace token ${token}`, error);
     }
   }
 
@@ -97,8 +92,9 @@ export function stopIdleWorkspaceCleanup(): void {
  * @param workspaceToken The workspace token to update
  */
 export function updateWorkspaceTokenAccessTime(workspaceToken: string): void {
-  if (workspaceToken in activeWorkspaceTokens) {
-    activeWorkspaceTokens[workspaceToken].lastAccessTime = Date.now();
+  const tokenInfo = activeWorkspaceTokens[workspaceToken];
+  if (tokenInfo) {
+    tokenInfo.lastAccessTime = Date.now();
   }
 }
 
@@ -122,26 +118,19 @@ export function openWorkspace(workspaceName: string): string | null {
   // If copy is enabled, create a temporary directory and copy files
   if (workspace.copy) {
     try {
-      const tempDir = createTempDirectory(
-        `codebox-${workspaceName}-workspace-token-`
-      );
+      const tempDir = createTempDirectory(`codebox-${workspaceName}-workspace-token-`);
       copyDirectory(workspace.path, tempDir);
       workingDir = tempDir;
       isTempDir = true;
     } catch (error) {
-      console.error(
-        `Failed to create temporary directory for workspace ${workspaceName}:`,
-        error
-      );
+      logger.error(`Failed to create temporary directory for workspace ${workspaceName}`, error);
       return null;
     }
   }
 
   // Get the idle timeout, defaulting to DEFAULT_IDLE_TIMEOUT if not specified
   const idleTimeout =
-    workspace.idleTimeout !== undefined
-      ? workspace.idleTimeout
-      : DEFAULT_IDLE_TIMEOUT;
+    workspace.idleTimeout !== undefined ? workspace.idleTimeout : DEFAULT_IDLE_TIMEOUT;
 
   // Store the workspace token information
   activeWorkspaceTokens[workspaceToken] = {
@@ -160,12 +149,11 @@ export function openWorkspace(workspaceName: string): string | null {
  * @param workspaceToken The workspace token
  * @returns Workspace name or null if workspace token doesn't exist
  */
-export function getWorkspaceNameForWorkspaceToken(
-  workspaceToken: string
-): string | null {
-  if (workspaceToken in activeWorkspaceTokens) {
+export function getWorkspaceNameForWorkspaceToken(workspaceToken: string): string | null {
+  const tokenInfo = activeWorkspaceTokens[workspaceToken];
+  if (tokenInfo) {
     updateWorkspaceTokenAccessTime(workspaceToken);
-    return activeWorkspaceTokens[workspaceToken].workspaceName;
+    return tokenInfo.workspaceName;
   }
   return null;
 }
@@ -175,12 +163,11 @@ export function getWorkspaceNameForWorkspaceToken(
  * @param workspaceToken The workspace token
  * @returns Working directory path or null if workspace token doesn't exist
  */
-export function getWorkingDirForWorkspaceToken(
-  workspaceToken: string
-): string | null {
-  if (workspaceToken in activeWorkspaceTokens) {
+export function getWorkingDirForWorkspaceToken(workspaceToken: string): string | null {
+  const tokenInfo = activeWorkspaceTokens[workspaceToken];
+  if (tokenInfo) {
     updateWorkspaceTokenAccessTime(workspaceToken);
-    return activeWorkspaceTokens[workspaceToken].workingDir;
+    return tokenInfo.workingDir;
   }
   return null;
 }
@@ -206,10 +193,10 @@ export function workspaceTokenExists(workspaceToken: string): boolean {
 export function getWorkspaceTokenInfo(
   workspaceToken: string
 ): Omit<WorkspaceTokenInfo, "lastAccessTime" | "idleTimeout"> | null {
-  if (workspaceToken in activeWorkspaceTokens) {
+  const tokenInfo = activeWorkspaceTokens[workspaceToken];
+  if (tokenInfo) {
     updateWorkspaceTokenAccessTime(workspaceToken);
-    const { workspaceName, workingDir, isTempDir } =
-      activeWorkspaceTokens[workspaceToken];
+    const { workspaceName, workingDir, isTempDir } = tokenInfo;
     return { workspaceName, workingDir, isTempDir };
   }
   return null;
@@ -221,18 +208,14 @@ export function getWorkspaceTokenInfo(
  * @returns True if workspace token was closed, false if it didn't exist
  */
 export function closeWorkspace(workspaceToken: string): boolean {
-  if (workspaceToken in activeWorkspaceTokens) {
-    const workspaceTokenInfo = activeWorkspaceTokens[workspaceToken];
-
+  const workspaceTokenInfo = activeWorkspaceTokens[workspaceToken];
+  if (workspaceTokenInfo) {
     // Clean up temporary directory if one was created
-    if (
-      workspaceTokenInfo.isTempDir &&
-      fs.existsSync(workspaceTokenInfo.workingDir)
-    ) {
+    if (workspaceTokenInfo.isTempDir && fs.existsSync(workspaceTokenInfo.workingDir)) {
       try {
         removeDirectory(workspaceTokenInfo.workingDir);
       } catch (error) {
-        console.error(`Error cleaning up temporary directory: ${error}`);
+        logger.error("Error cleaning up temporary directory", error);
       }
     }
 
@@ -248,10 +231,7 @@ export function closeWorkspace(workspaceToken: string): boolean {
  * Get the raw workspace token store - for testing only
  * @internal
  */
-export function _getActiveWorkspaceTokens(): Record<
-  string,
-  WorkspaceTokenInfo
-> {
+export function _getActiveWorkspaceTokens(): Record<string, WorkspaceTokenInfo> {
   return activeWorkspaceTokens;
 }
 
@@ -259,12 +239,10 @@ export function _getActiveWorkspaceTokens(): Record<
  * Set the last access time for a workspace token - for testing only
  * @internal
  */
-export function _setWorkspaceTokenLastAccessTime(
-  workspaceToken: string,
-  time: number
-): boolean {
-  if (workspaceToken in activeWorkspaceTokens) {
-    activeWorkspaceTokens[workspaceToken].lastAccessTime = time;
+export function _setWorkspaceTokenLastAccessTime(workspaceToken: string, time: number): boolean {
+  const tokenInfo = activeWorkspaceTokens[workspaceToken];
+  if (tokenInfo) {
+    tokenInfo.lastAccessTime = time;
     return true;
   }
   return false;
@@ -274,12 +252,10 @@ export function _setWorkspaceTokenLastAccessTime(
  * Set the idle timeout for a workspace token - for testing only
  * @internal
  */
-export function _setWorkspaceTokenIdleTimeout(
-  workspaceToken: string,
-  timeout: number
-): boolean {
-  if (workspaceToken in activeWorkspaceTokens) {
-    activeWorkspaceTokens[workspaceToken].idleTimeout = timeout;
+export function _setWorkspaceTokenIdleTimeout(workspaceToken: string, timeout: number): boolean {
+  const tokenInfo = activeWorkspaceTokens[workspaceToken];
+  if (tokenInfo) {
+    tokenInfo.idleTimeout = timeout;
     return true;
   }
   return false;

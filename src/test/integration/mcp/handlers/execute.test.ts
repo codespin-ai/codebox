@@ -1,5 +1,5 @@
 // src/test/integration/mcp/handlers/execute.test.ts
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
@@ -15,13 +15,13 @@ import {
 } from "../../testUtils.js";
 
 // Response type for MCP tools
-interface McpResponse {
+type McpResponse = {
   isError?: boolean;
   content: {
     type: string;
     text: string;
   }[];
-}
+};
 
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
@@ -65,19 +65,11 @@ describe("Execute Handlers with Workspace tokens", function () {
     containerName = uniqueName("codebox-test-container");
 
     // Create a test file in the workspace directory
-    createTestFile(
-      path.join(workspaceDir, "test.txt"),
-      "Hello from execute test!"
-    );
+    createTestFile(path.join(workspaceDir, "test.txt"), "Hello from execute test!");
 
     // Create a simple server to register handlers
     const server = {
-      tool: (
-        name: string,
-        description: string,
-        schema: object,
-        handler: unknown
-      ) => {
+      tool: (name: string, description: string, schema: object, handler: unknown) => {
         if (name === "execute_command") {
           executeCommandHandler = handler as RequestHandler;
         } else if (name === "open_workspace") {
@@ -177,9 +169,7 @@ describe("Execute Handlers with Workspace tokens", function () {
 
       // Verify the error response
       expect(response.isError).to.equal(true);
-      expect(response.content[0].text).to.include(
-        "Invalid or expired workspace token"
-      );
+      expect(response.content[0].text).to.include("Invalid or expired workspace token");
     });
   });
 
@@ -262,9 +252,7 @@ describe("Execute Handlers with Workspace tokens", function () {
 
       // But the original file should remain unchanged
       const filePath = path.join(workspaceDir, "for-copy-test.txt");
-      expect(fs.readFileSync(filePath, "utf8")).to.equal(
-        "This file should not change"
-      );
+      expect(fs.readFileSync(filePath, "utf8")).to.equal("This file should not change");
 
       // Clean up the workspace token
       await closeWorkspaceHandler({
@@ -297,9 +285,7 @@ describe("Execute Handlers with Workspace tokens", function () {
       expect(response.content[0].text).to.include("First command");
 
       // The file should not exist in the original workspace directory
-      expect(fs.existsSync(path.join(workspaceDir, "token-test.txt"))).to.equal(
-        false
-      );
+      expect(fs.existsSync(path.join(workspaceDir, "token-test.txt"))).to.equal(false);
 
       // Clean up the workspace token
       await closeWorkspaceHandler({

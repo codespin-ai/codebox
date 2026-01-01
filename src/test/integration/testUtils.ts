@@ -99,10 +99,7 @@ export function createTestFile(filePath: string, content: string): void {
 /**
  * Check if a file exists with the expected content
  */
-export function verifyFileContent(
-  filePath: string,
-  expectedContent: string
-): boolean {
+export function verifyFileContent(filePath: string, expectedContent: string): boolean {
   if (!fs.existsSync(filePath)) {
     return false;
   }

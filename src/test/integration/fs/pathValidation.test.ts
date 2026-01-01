@@ -39,9 +39,7 @@ describe("Path Validation", function () {
 
     it("should throw for non-existent directories", function () {
       const nonExistentDir = path.join(testDir, "non-existent");
-      expect(() => validateDirectory(nonExistentDir)).to.throw(
-        "Directory not found"
-      );
+      expect(() => validateDirectory(nonExistentDir)).to.throw("Directory not found");
     });
 
     it("should throw for file paths", function () {
@@ -49,9 +47,7 @@ describe("Path Validation", function () {
       const filePath = path.join(workspaceDir, "file.txt");
       fs.writeFileSync(filePath, "content");
 
-      expect(() => validateDirectory(filePath)).to.throw(
-        "Path is not a directory"
-      );
+      expect(() => validateDirectory(filePath)).to.throw("Path is not a directory");
     });
   });
 
@@ -72,9 +68,7 @@ describe("Path Validation", function () {
       expect(validateFilePath(workspaceDir, "../outside.txt")).to.equal(false);
 
       // Path with directory traversal
-      expect(validateFilePath(workspaceDir, "nested/../../outside.txt")).to.equal(
-        false
-      );
+      expect(validateFilePath(workspaceDir, "nested/../../outside.txt")).to.equal(false);
     });
   });
 

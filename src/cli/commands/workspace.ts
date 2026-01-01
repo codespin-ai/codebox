@@ -5,25 +5,34 @@ import { promisify } from "util";
 import { getConfig, saveConfig } from "../../config/workspaceConfig.js";
 import { validateDirectory } from "../../fs/pathValidation.js";
 
+// CLI output helpers - write directly to stdout/stderr for user-facing output
+function print(message: string): void {
+  process.stdout.write(message + "\n");
+}
+
+function printWarning(message: string): void {
+  process.stderr.write("Warning: " + message + "\n");
+}
+
 const execAsync = promisify(exec);
 
-interface WorkspaceOptions {
-  dirname?: string;
-  target?: string;
-  image?: string;
-  containerName?: string;
-  name?: string;
-  containerPath?: string;
-  network?: string;
-  copy?: boolean; // Added new option
-  idleTimeout?: number; // Added new option
-  runTemplate?: string; // Added new option
-  execTemplate?: string; // Added new option
-}
+type WorkspaceOptions = {
+  dirname?: string | undefined;
+  target?: string | undefined;
+  image?: string | undefined;
+  containerName?: string | undefined;
+  name?: string | undefined;
+  containerPath?: string | undefined;
+  network?: string | undefined;
+  copy?: boolean | undefined;
+  idleTimeout?: number | undefined;
+  runTemplate?: string | undefined;
+  execTemplate?: string | undefined;
+};
 
-interface CommandContext {
+type CommandContext = {
   workingDir: string;
-}
+};
 
 // Default idle timeout: 10 minutes in milliseconds
 const DEFAULT_IDLE_TIMEOUT = 600000;
@@ -57,9 +66,7 @@ export async function addWorkspace(
   } = options;
 
   if (!image && !containerName) {
-    throw new Error(
-      "Either Docker image (--image) or container name (--container) is required"
-    );
+    throw new Error("Either Docker image (--image) or container name (--container) is required");
   }
 
   // Resolve to absolute path
@@ -74,36 +81,28 @@ export async function addWorkspace(
   // Verify container exists if specified
   if (containerName) {
     try {
-      const { stdout } = await execAsync(
-        `docker ps -q -f "name=^${containerName}$"`
-      );
+      const { stdout } = await execAsync(`docker ps -q -f "name=^${containerName}$"`);
       if (!stdout.trim()) {
-        console.warn(
-          `Warning: Container '${containerName}' not found or not running. Commands will fail until container is available.`
+        printWarning(
+          `Container '${containerName}' not found or not running. Commands will fail until container is available.`
         );
       }
     } catch (_error) {
-      console.warn(
-        `Warning: Could not verify container '${containerName}'. Make sure Docker is running.`
-      );
+      printWarning(`Could not verify container '${containerName}'. Make sure Docker is running.`);
     }
   }
 
   // Verify network exists if specified
   if (network) {
     try {
-      const { stdout } = await execAsync(
-        `docker network inspect ${network} --format "{{.Name}}"`
-      );
+      const { stdout } = await execAsync(`docker network inspect ${network} --format "{{.Name}}"`);
       if (!stdout.trim()) {
-        console.warn(
-          `Warning: Network '${network}' not found. Commands may fail until network is available.`
+        printWarning(
+          `Network '${network}' not found. Commands may fail until network is available.`
         );
       }
     } catch (_error) {
-      console.warn(
-        `Warning: Could not verify network '${network}'. Make sure Docker is running.`
-      );
+      printWarning(`Could not verify network '${network}'. Make sure Docker is running.`);
     }
   }
 
@@ -111,41 +110,43 @@ export async function addWorkspace(
   const config = getConfig();
 
   // Check if workspace already exists by name
-  const existingIndex = config.workspaces.findIndex(
-    (p) => p.name === workspaceName
-  );
+  const existingIndex = config.workspaces.findIndex((p) => p.name === workspaceName);
 
   if (existingIndex !== -1) {
+    const existing = config.workspaces[existingIndex];
+    if (!existing) {
+      throw new Error("Workspace not found at expected index");
+    }
     // Update existing workspace's configuration
     if (image) {
-      config.workspaces[existingIndex].image = image;
+      existing.image = image;
     }
     if (containerName) {
-      config.workspaces[existingIndex].containerName = containerName;
+      existing.containerName = containerName;
     }
     if (containerPath) {
-      config.workspaces[existingIndex].containerPath = containerPath;
+      existing.containerPath = containerPath;
     }
     if (network) {
-      config.workspaces[existingIndex].network = network;
+      existing.network = network;
     }
     // Update copy setting
-    config.workspaces[existingIndex].copy = copy;
+    existing.copy = copy;
     // Update idle timeout if specified
     if (idleTimeout !== undefined) {
-      config.workspaces[existingIndex].idleTimeout = idleTimeout;
+      existing.idleTimeout = idleTimeout;
     }
     // Update run template if specified
     if (runTemplate !== undefined) {
-      config.workspaces[existingIndex].runTemplate = runTemplate;
+      existing.runTemplate = runTemplate;
     }
     // Update exec template if specified
     if (execTemplate !== undefined) {
-      config.workspaces[existingIndex].execTemplate = execTemplate;
+      existing.execTemplate = execTemplate;
     }
-    config.workspaces[existingIndex].path = workspacePath;
+    existing.path = workspacePath;
     saveConfig(config);
-    console.log(`Updated workspace: ${workspaceName}`);
+    print(`Updated workspace: ${workspaceName}`);
   } else {
     // Add new workspace
     config.workspaces.push({
@@ -161,7 +162,7 @@ export async function addWorkspace(
       ...(execTemplate !== undefined && { execTemplate }),
     });
     saveConfig(config);
-    console.log(`Added workspace: ${workspaceName}`);
+    print(`Added workspace: ${workspaceName}`);
   }
 }
 
@@ -176,14 +177,15 @@ export async function removeWorkspace(
   // If name is explicitly provided via --name, look for it first
   if (name) {
     index = config.workspaces.findIndex((p) => p.name === name);
-    if (index !== -1) {
-      const removedName = config.workspaces[index].name;
+    const workspace = config.workspaces[index];
+    if (index !== -1 && workspace) {
+      const removedName = workspace.name;
       config.workspaces.splice(index, 1);
       saveConfig(config);
-      console.log(`Removed workspace: ${removedName}`);
+      print(`Removed workspace: ${removedName}`);
       return;
     }
-    console.log(`Workspace with name '${name}' not found`);
+    print(`Workspace with name '${name}' not found`);
     return;
   }
 
@@ -192,27 +194,29 @@ export async function removeWorkspace(
     // It's a path - resolve it and find the matching workspace
     const workspacePath = path.resolve(context.workingDir, target);
     index = config.workspaces.findIndex((p) => p.path === workspacePath);
+    const workspace = config.workspaces[index];
 
-    if (index !== -1) {
-      const removedName = config.workspaces[index].name;
+    if (index !== -1 && workspace) {
+      const removedName = workspace.name;
       config.workspaces.splice(index, 1);
       saveConfig(config);
-      console.log(`Removed workspace: ${removedName}`);
+      print(`Removed workspace: ${removedName}`);
       return;
     }
-    console.log(`Workspace not found for path: ${workspacePath}`);
+    print(`Workspace not found for path: ${workspacePath}`);
   } else {
     // It's a name - look for exact name match
     index = config.workspaces.findIndex((p) => p.name === target);
+    const workspace = config.workspaces[index];
 
-    if (index !== -1) {
-      const removedName = config.workspaces[index].name;
+    if (index !== -1 && workspace) {
+      const removedName = workspace.name;
       config.workspaces.splice(index, 1);
       saveConfig(config);
-      console.log(`Removed workspace: ${removedName}`);
+      print(`Removed workspace: ${removedName}`);
       return;
     }
-    console.log(`Workspace with name '${target}' not found`);
+    print(`Workspace with name '${target}' not found`);
   }
 }
 
@@ -220,57 +224,57 @@ export async function listWorkspaces(): Promise<void> {
   const config = getConfig();
 
   if (config.workspaces.length === 0) {
-    console.log(
+    print(
       "No workspaces are registered. Use 'codebox workspace add <dirname> --image <image_name>' or 'codebox workspace add <dirname> --container <container_name>' to add workspaces."
     );
     return;
   }
 
-  console.log("Registered workspaces:");
-  console.log("-------------------");
+  print("Registered workspaces:");
+  print("-------------------");
 
   config.workspaces.forEach((workspace, index) => {
     const exists = fs.existsSync(workspace.path);
 
-    console.log(`${index + 1}. ${workspace.name}`);
-    console.log(`   Dir: ${workspace.path}`);
+    print(`${index + 1}. ${workspace.name}`);
+    print(`   Dir: ${workspace.path}`);
 
-    console.log(`   Status: ${exists ? "exists" : "missing"}`);
+    print(`   Status: ${exists ? "exists" : "missing"}`);
 
     if (workspace.containerName) {
-      console.log(`   Container: ${workspace.containerName}`);
+      print(`   Container: ${workspace.containerName}`);
     }
 
     if (workspace.image) {
-      console.log(`   Docker Image: ${workspace.image}`);
+      print(`   Docker Image: ${workspace.image}`);
     }
 
     if (workspace.containerPath) {
-      console.log(`   Container Path: ${workspace.containerPath}`);
+      print(`   Container Path: ${workspace.containerPath}`);
     }
 
     if (workspace.network) {
-      console.log(`   Docker Network: ${workspace.network}`);
+      print(`   Docker Network: ${workspace.network}`);
     }
 
     // Show copy setting if enabled
     if (workspace.copy) {
-      console.log(`   Copy Files: Yes`);
+      print(`   Copy Files: Yes`);
     }
 
     // Show idle timeout
-    console.log(`   Idle Timeout: ${formatIdleTimeout(workspace.idleTimeout)}`);
+    print(`   Idle Timeout: ${formatIdleTimeout(workspace.idleTimeout)}`);
 
     // Show run template if specified
     if (workspace.runTemplate) {
-      console.log(`   Run Template: ${workspace.runTemplate}`);
+      print(`   Run Template: ${workspace.runTemplate}`);
     }
 
     // Show exec template if specified
     if (workspace.execTemplate) {
-      console.log(`   Exec Template: ${workspace.execTemplate}`);
+      print(`   Exec Template: ${workspace.execTemplate}`);
     }
 
-    console.log();
+    print("");
   });
 }

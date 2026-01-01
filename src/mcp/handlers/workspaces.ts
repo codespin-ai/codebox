@@ -1,10 +1,7 @@
 // src/mcp/handlers/workspaces.ts
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
-import {
-  getWorkspaces,
-  validateWorkspaceName,
-} from "../../config/workspaceConfig.js";
+import { getWorkspaces, validateWorkspaceName } from "../../config/workspaceConfig.js";
 import { closeWorkspace, openWorkspace } from "../../workspaceTokens/workspaceTokenStore.js";
 
 /**

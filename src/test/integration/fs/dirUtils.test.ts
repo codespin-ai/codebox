@@ -2,11 +2,7 @@
 import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
-import {
-  createTempDirectory,
-  copyDirectory,
-  removeDirectory,
-} from "../../../fs/dirUtils.js";
+import { createTempDirectory, copyDirectory, removeDirectory } from "../../../fs/dirUtils.js";
 import { setupTestEnvironment } from "../setup.js";
 
 describe("Directory Utilities", function () {
@@ -87,18 +83,14 @@ describe("Directory Utilities", function () {
 
       // Verify the files were copied
       expect(fs.existsSync(path.join(targetDir, "file1.txt"))).to.equal(true);
-      expect(
-        fs.readFileSync(path.join(targetDir, "file1.txt"), "utf8")
-      ).to.equal("File 1 content");
+      expect(fs.readFileSync(path.join(targetDir, "file1.txt"), "utf8")).to.equal("File 1 content");
 
       // Verify nested directory and its files were copied
       expect(fs.existsSync(path.join(targetDir, "nested"))).to.equal(true);
-      expect(
-        fs.existsSync(path.join(targetDir, "nested", "file2.txt"))
-      ).to.equal(true);
-      expect(
-        fs.readFileSync(path.join(targetDir, "nested", "file2.txt"), "utf8")
-      ).to.equal("File 2 content");
+      expect(fs.existsSync(path.join(targetDir, "nested", "file2.txt"))).to.equal(true);
+      expect(fs.readFileSync(path.join(targetDir, "nested", "file2.txt"), "utf8")).to.equal(
+        "File 2 content"
+      );
     });
 
     it("should handle copying to an existing directory", function () {
@@ -112,18 +104,14 @@ describe("Directory Utilities", function () {
       copyDirectory(workspaceDir, targetDir);
 
       // Verify the existing file is still there
-      expect(fs.existsSync(path.join(targetDir, "existing.txt"))).to.equal(
-        true
+      expect(fs.existsSync(path.join(targetDir, "existing.txt"))).to.equal(true);
+      expect(fs.readFileSync(path.join(targetDir, "existing.txt"), "utf8")).to.equal(
+        "Existing file"
       );
-      expect(
-        fs.readFileSync(path.join(targetDir, "existing.txt"), "utf8")
-      ).to.equal("Existing file");
 
       // Verify the copied files are there too
       expect(fs.existsSync(path.join(targetDir, "file1.txt"))).to.equal(true);
-      expect(
-        fs.readFileSync(path.join(targetDir, "file1.txt"), "utf8")
-      ).to.equal("File 1 content");
+      expect(fs.readFileSync(path.join(targetDir, "file1.txt"), "utf8")).to.equal("File 1 content");
     });
   });
 
@@ -135,10 +123,7 @@ describe("Directory Utilities", function () {
       fs.mkdirSync(dirToRemove, { recursive: true });
       fs.writeFileSync(path.join(dirToRemove, "test.txt"), "Test content");
       fs.mkdirSync(path.join(dirToRemove, "nested"), { recursive: true });
-      fs.writeFileSync(
-        path.join(dirToRemove, "nested", "nested.txt"),
-        "Nested content"
-      );
+      fs.writeFileSync(path.join(dirToRemove, "nested", "nested.txt"), "Nested content");
 
       // Verify the directory exists before removal
       expect(fs.existsSync(dirToRemove)).to.equal(true);

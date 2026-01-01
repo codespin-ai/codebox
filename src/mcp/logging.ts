@@ -1,10 +1,10 @@
 // src/mcp/logging.ts
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { logMcpCall } from "../logging/logger.js";
-import { ZodRawShape } from "zod";
-import { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
+import type { ZodRawShape } from "zod";
+import type { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
 import { isDebugEnabled } from "../config/workspaceConfig.js";
-import {
+import type {
   ServerNotification,
   ServerRequest,
   ToolAnnotations,
@@ -26,10 +26,7 @@ type ToolCallback = (
 }>;
 
 // Wraps a tool handler with logging
-export function wrapToolHandler(
-  name: string,
-  handler: ToolCallback
-): ToolCallback {
+export function wrapToolHandler(name: string, handler: ToolCallback): ToolCallback {
   return async (args, extra) => {
     const startTime = new Date();
     let response: Awaited<ReturnType<ToolCallback>> | undefined = undefined;

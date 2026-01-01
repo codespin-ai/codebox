@@ -1,5 +1,5 @@
 // src/mcp/handlers/execute.ts
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import { executeDockerCommand } from "../../docker/execution.js";
 import {
@@ -17,9 +17,7 @@ export function registerExecuteHandlers(server: McpServer): void {
     "Execute a command in a Docker container using a workspace token",
     {
       command: zod.string().describe("The command to execute in the container"),
-      workspaceToken: zod
-        .string()
-        .describe("The workspace token from open_workspace"),
+      workspaceToken: zod.string().describe("The workspace token from open_workspace"),
     },
     async ({ command, workspaceToken }) => {
       // Validate the workspace token
@@ -52,11 +50,7 @@ export function registerExecuteHandlers(server: McpServer): void {
       }
 
       try {
-        const { stdout, stderr } = await executeDockerCommand(
-          workspaceName,
-          command,
-          workingDir
-        );
+        const { stdout, stderr } = await executeDockerCommand(workspaceName, command, workingDir);
         const output = stdout + (stderr ? `\nSTDERR:\n${stderr}` : "");
 
         return {

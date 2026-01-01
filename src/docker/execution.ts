@@ -8,10 +8,10 @@ const execAsync = promisify(exec);
 /**
  * Result of executing a command in Docker
  */
-export interface ExecuteResult {
+export type ExecuteResult = {
   stdout: string;
   stderr: string;
-}
+};
 
 /**
  * Get the UID/GID for Docker container execution
@@ -55,9 +55,7 @@ export async function executeDockerCommand(
         workspace.runTemplate
       );
     } else {
-      throw new Error(
-        "No Docker image or container configured for this workspace"
-      );
+      throw new Error("No Docker image or container configured for this workspace");
     }
   } catch (error) {
     const stdout = (error as { stdout?: string }).stdout || "";
@@ -75,13 +73,9 @@ export async function executeDockerCommand(
 /**
  * Check if a Docker container exists and is running
  */
-export async function checkContainerRunning(
-  containerName: string
-): Promise<boolean> {
+export async function checkContainerRunning(containerName: string): Promise<boolean> {
   try {
-    const { stdout } = await execAsync(
-      `docker ps -q -f "name=^${containerName}$"`
-    );
+    const { stdout } = await execAsync(`docker ps -q -f "name=^${containerName}$"`);
     return !!stdout.trim();
   } catch {
     return false;
@@ -91,9 +85,7 @@ export async function checkContainerRunning(
 /**
  * Check if a Docker network exists
  */
-export async function checkNetworkExists(
-  networkName: string
-): Promise<boolean> {
+export async function checkNetworkExists(networkName: string): Promise<boolean> {
   try {
     const { stdout } = await execAsync(
       `docker network inspect ${networkName} --format "{{.Name}}"`

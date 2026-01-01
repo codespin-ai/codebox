@@ -15,9 +15,7 @@ export function writeWorkspaceFile(
 ): void {
   // Validate the file path - strict validation for security
   if (!validateFilePath(workspaceDir, filePath)) {
-    throw new Error(
-      `Invalid file path: ${filePath} - path traversal attempt detected`
-    );
+    throw new Error(`Invalid file path: ${filePath} - path traversal attempt detected`);
   }
 
   // Get the full path
@@ -40,9 +38,7 @@ export function writeWorkspaceFile(
 export function readWorkspaceFile(workspaceDir: string, filePath: string): string {
   // Validate the file path - strict validation for security
   if (!validateFilePath(workspaceDir, filePath)) {
-    throw new Error(
-      `Invalid file path: ${filePath} - path traversal attempt detected`
-    );
+    throw new Error(`Invalid file path: ${filePath} - path traversal attempt detected`);
   }
 
   // Get the full path
@@ -60,10 +56,7 @@ export function readWorkspaceFile(workspaceDir: string, filePath: string): strin
 /**
  * Check if a file exists in a workspace directory
  */
-export function workspaceFileExists(
-  workspaceDir: string,
-  filePath: string
-): boolean {
+export function workspaceFileExists(workspaceDir: string, filePath: string): boolean {
   // Validate the file path - strict validation for security
   if (!validateFilePath(workspaceDir, filePath)) {
     return false; // Don't throw, just return false for non-existent checks

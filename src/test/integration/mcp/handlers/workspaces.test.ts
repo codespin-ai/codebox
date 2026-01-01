@@ -1,17 +1,17 @@
 // src/test/integration/mcp/handlers/workspaces.test.ts
 import { expect } from "chai";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
 
 // Response type for MCP tools
-interface McpResponse {
+type McpResponse = {
   isError?: boolean;
   content: {
     type: string;
     text: string;
   }[];
-}
+};
 
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
@@ -33,12 +33,7 @@ describe("Workspace Handlers", function () {
 
     // Create a simple server to register handlers
     const server = {
-      tool: (
-        name: string,
-        description: string,
-        schema: object,
-        handler: unknown
-      ) => {
+      tool: (name: string, description: string, schema: object, handler: unknown) => {
         if (name === "list_workspaces") {
           listWorkspacesHandler = handler as RequestHandler;
         }
@@ -60,9 +55,7 @@ describe("Workspace Handlers", function () {
 
       // Verify the response
       expect(response.isError).to.equal(undefined);
-      expect(response.content[0].text).to.include(
-        "No workspaces are registered"
-      );
+      expect(response.content[0].text).to.include("No workspaces are registered");
     });
 
     it("should list all registered workspaces", async function () {

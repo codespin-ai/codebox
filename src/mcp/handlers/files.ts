@@ -1,5 +1,5 @@
 // src/mcp/handlers/files.ts
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import { writeWorkspaceFile } from "../../fs/fileIO.js";
 import { validateFilePath } from "../../fs/pathValidation.js";
@@ -16,12 +16,8 @@ export function registerFileHandlers(server: McpServer): void {
     "write_file",
     "Write content to a file in a workspace directory using a workspace token",
     {
-      workspaceToken: zod
-        .string()
-        .describe("The workspace token from open_workspace"),
-      filePath: zod
-        .string()
-        .describe("Relative path to the file from workspace root"),
+      workspaceToken: zod.string().describe("The workspace token from open_workspace"),
+      filePath: zod.string().describe("Relative path to the file from workspace root"),
       content: zod.string().describe("Content to write to the file"),
       mode: zod
         .enum(["overwrite", "append"])
@@ -77,9 +73,7 @@ export function registerFileHandlers(server: McpServer): void {
           content: [
             {
               type: "text",
-              text: `Successfully ${
-                mode === "append" ? "appended to" : "wrote"
-              } file: ${filePath}`,
+              text: `Successfully ${mode === "append" ? "appended to" : "wrote"} file: ${filePath}`,
             },
           ],
         };

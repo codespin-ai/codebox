@@ -56,14 +56,12 @@ describe("Workspace token Store", function () {
       expect(workspaceTokenExists(workspaceToken as string)).to.equal(true);
 
       // Verify workspace name is correct
-      expect(
-        getWorkspaceNameForWorkspaceToken(workspaceToken as string)
-      ).to.equal("test-workspace");
+      expect(getWorkspaceNameForWorkspaceToken(workspaceToken as string)).to.equal(
+        "test-workspace"
+      );
 
       // Verify working directory is the original workspace directory
-      expect(getWorkingDirForWorkspaceToken(workspaceToken as string)).to.equal(
-        workspaceDir
-      );
+      expect(getWorkingDirForWorkspaceToken(workspaceToken as string)).to.equal(workspaceDir);
     });
 
     it("should open a workspace token with copying files when copy=true", function () {
@@ -89,23 +87,19 @@ describe("Workspace token Store", function () {
       expect(workspaceTokenExists(workspaceToken as string)).to.equal(true);
 
       // Verify workspace name is correct
-      expect(
-        getWorkspaceNameForWorkspaceToken(workspaceToken as string)
-      ).to.equal("test-workspace");
+      expect(getWorkspaceNameForWorkspaceToken(workspaceToken as string)).to.equal(
+        "test-workspace"
+      );
 
       // Verify working directory is not the original workspace directory
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
       expect(workingDir).to.not.equal(workspaceDir);
 
       // Verify the test file was copied to the temp directory
-      expect(
-        fs.existsSync(path.join(workingDir as string, "test.txt"))
-      ).to.equal(true);
-      expect(
-        fs.readFileSync(path.join(workingDir as string, "test.txt"), "utf8")
-      ).to.equal("Original content");
+      expect(fs.existsSync(path.join(workingDir as string, "test.txt"))).to.equal(true);
+      expect(fs.readFileSync(path.join(workingDir as string, "test.txt"), "utf8")).to.equal(
+        "Original content"
+      );
     });
 
     it("should return null for non-existent workspaces", function () {
@@ -171,9 +165,7 @@ describe("Workspace token Store", function () {
 
       // Open a workspace
       const workspaceToken = openWorkspace("test-workspace");
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
 
       // Verify temp directory exists
       expect(fs.existsSync(workingDir as string)).to.equal(true);
@@ -204,12 +196,8 @@ describe("Workspace token Store", function () {
       const workspaceToken1 = openWorkspace("test-workspace");
       const workspaceToken2 = openWorkspace("test-workspace");
 
-      const workingDir1 = getWorkingDirForWorkspaceToken(
-        workspaceToken1 as string
-      );
-      const workingDir2 = getWorkingDirForWorkspaceToken(
-        workspaceToken2 as string
-      );
+      const workingDir1 = getWorkingDirForWorkspaceToken(workspaceToken1 as string);
+      const workingDir2 = getWorkingDirForWorkspaceToken(workspaceToken2 as string);
 
       // Verify working directories are different
       expect(workingDir1).to.not.equal(workingDir2);
@@ -227,17 +215,17 @@ describe("Workspace token Store", function () {
       );
 
       // Verify changes are isolated
-      expect(
-        fs.readFileSync(path.join(workingDir1 as string, "test.txt"), "utf8")
-      ).to.equal("Modified in workspace token 1");
-      expect(
-        fs.readFileSync(path.join(workingDir2 as string, "test.txt"), "utf8")
-      ).to.equal("Modified in workspace token 2");
+      expect(fs.readFileSync(path.join(workingDir1 as string, "test.txt"), "utf8")).to.equal(
+        "Modified in workspace token 1"
+      );
+      expect(fs.readFileSync(path.join(workingDir2 as string, "test.txt"), "utf8")).to.equal(
+        "Modified in workspace token 2"
+      );
 
       // Verify original file is unchanged
-      expect(
-        fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")
-      ).to.equal("Original content");
+      expect(fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")).to.equal(
+        "Original content"
+      );
 
       // Clean up
       closeWorkspace(workspaceToken1 as string);

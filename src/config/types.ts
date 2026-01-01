@@ -1,5 +1,5 @@
 // src/config/types.ts
-export interface WorkspaceConfig {
+export type WorkspaceConfig = {
   name: string;
   path: string;
   containerPath?: string;
@@ -10,9 +10,9 @@ export interface WorkspaceConfig {
   idleTimeout?: number; // Timeout in ms before automatically closing idle workspace
   runTemplate?: string; // Custom template for docker run command
   execTemplate?: string; // Custom template for docker exec command
-}
+};
 
-export interface SystemConfig {
+export type SystemConfig = {
   workspaces: WorkspaceConfig[];
   debug?: boolean;
-}
+};

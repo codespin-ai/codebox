@@ -2,7 +2,7 @@
 import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerBatchHandlers } from "../../../../mcp/handlers/batch.js";
 import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { setupTestEnvironment, createTestConfig } from "../../setup.js";
@@ -15,13 +15,13 @@ import {
 } from "../../testUtils.js";
 
 // Response type for MCP tools
-interface McpResponse {
+type McpResponse = {
   isError?: boolean;
   content: {
     type: string;
     text: string;
   }[];
-}
+};
 
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
@@ -65,19 +65,11 @@ describe("Batch Command Handlers with Workspace tokens", function () {
     containerName = uniqueName("codebox-test-container");
 
     // Create a test file in the workspace directory
-    createTestFile(
-      path.join(workspaceDir, "test.txt"),
-      "Hello from batch test!"
-    );
+    createTestFile(path.join(workspaceDir, "test.txt"), "Hello from batch test!");
 
     // Create a simple server to register handlers
     const server = {
-      tool: (
-        name: string,
-        description: string,
-        schema: object,
-        handler: unknown
-      ) => {
+      tool: (name: string, description: string, schema: object, handler: unknown) => {
         if (name === "execute_batch_commands") {
           executeBatchCommandsHandler = handler as RequestHandler;
         } else if (name === "open_workspace") {
@@ -239,9 +231,7 @@ describe("Batch Command Handlers with Workspace tokens", function () {
 
       // Verify the error response
       expect(response.isError).to.equal(true);
-      expect(response.content[0].text).to.include(
-        "Invalid or expired workspace token"
-      );
+      expect(response.content[0].text).to.include("Invalid or expired workspace token");
     });
   });
 
@@ -288,10 +278,7 @@ describe("Batch Command Handlers with Workspace tokens", function () {
       expect(response.content[0].text).to.include("Added new line");
 
       // But the original file should remain unchanged
-      const originalContent = fs.readFileSync(
-        path.join(workspaceDir, "copy-output.txt"),
-        "utf8"
-      );
+      const originalContent = fs.readFileSync(path.join(workspaceDir, "copy-output.txt"), "utf8");
       expect(originalContent).to.equal("Original content");
 
       // Clean up the workspace token
@@ -332,9 +319,7 @@ describe("Batch Command Handlers with Workspace tokens", function () {
       expect(response.content[0].text).to.include("Second batch");
 
       // The file should not exist in the original workspace directory
-      expect(
-        fs.existsSync(path.join(workspaceDir, "multi-batch.txt"))
-      ).to.equal(false);
+      expect(fs.existsSync(path.join(workspaceDir, "multi-batch.txt"))).to.equal(false);
 
       // Clean up the workspace token
       await closeWorkspaceHandler({

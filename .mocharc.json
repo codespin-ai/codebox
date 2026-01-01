@@ -1,0 +1,6 @@
+{
+  "extension": ["js"],
+  "spec": "dist/test/**/*.test.js",
+  "timeout": 30000,
+  "recursive": true
+}

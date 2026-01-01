@@ -1,5 +1,5 @@
 // src/mcp/handlers/batch.ts
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import { executeDockerCommand } from "../../docker/execution.js";
 import {
@@ -16,12 +16,8 @@ export function registerBatchHandlers(server: McpServer): void {
     "execute_batch_commands",
     "Execute multiple commands in sequence using a workspace token",
     {
-      commands: zod
-        .array(zod.string())
-        .describe("Array of commands to execute in sequence"),
-      workspaceToken: zod
-        .string()
-        .describe("The workspace token from open_workspace"),
+      commands: zod.array(zod.string()).describe("Array of commands to execute in sequence"),
+      workspaceToken: zod.string().describe("The workspace token from open_workspace"),
       stopOnError: zod
         .boolean()
         .optional()
@@ -62,11 +58,7 @@ export function registerBatchHandlers(server: McpServer): void {
 
       for (const command of commands) {
         try {
-          const { stdout, stderr } = await executeDockerCommand(
-            workspaceName,
-            command,
-            workingDir
-          );
+          const { stdout, stderr } = await executeDockerCommand(workspaceName, command, workingDir);
           const output = stdout + (stderr ? `\nSTDERR:\n${stderr}` : "");
 
           // Add the command and its output to results

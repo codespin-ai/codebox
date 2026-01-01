@@ -20,10 +20,7 @@ export function validateDirectory(dirPath: string): void {
 /**
  * Validate that a file path is within a workspace directory
  */
-export function validateFilePath(
-  workspaceDir: string,
-  filePath: string
-): boolean {
+export function validateFilePath(workspaceDir: string, filePath: string): boolean {
   // Get absolute path of workspace directory
   const resolvedWorkspaceDir = path.resolve(workspaceDir);
 
@@ -39,8 +36,7 @@ export function validateFilePath(
 
     // Check if the normalized path starts with the workspace directory
     return (
-      fullPath === resolvedWorkspaceDir ||
-      fullPath.startsWith(resolvedWorkspaceDir + path.sep)
+      fullPath === resolvedWorkspaceDir || fullPath.startsWith(resolvedWorkspaceDir + path.sep)
     );
   } catch {
     // Any path resolution errors are treated as security issues

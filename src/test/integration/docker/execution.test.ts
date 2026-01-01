@@ -61,10 +61,7 @@ describe("Docker Execution with Workspace tokens", function () {
     networkName = uniqueName("codebox-test-network");
 
     // Create a test file in the workspace directory
-    createTestFile(
-      path.join(workspaceDir, "test.txt"),
-      "Hello from Docker test!"
-    );
+    createTestFile(path.join(workspaceDir, "test.txt"), "Hello from Docker test!");
 
     // Create Docker network
     await createNetwork(networkName);
@@ -129,9 +126,7 @@ describe("Docker Execution with Workspace tokens", function () {
       expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the workspace token
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
       expect(workingDir).to.equal(workspaceDir);
 
       // Execute command using workspace name and workspace token working directory
@@ -150,9 +145,7 @@ describe("Docker Execution with Workspace tokens", function () {
     it("should handle command errors", async function () {
       // Open a workspace token for testing
       const workspaceToken = openWorkspace(workspaceName);
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
 
       try {
         await executeDockerCommand(
@@ -163,9 +156,7 @@ describe("Docker Execution with Workspace tokens", function () {
         // Should not reach here
         expect.fail("Command should have thrown an error");
       } catch (error: unknown) {
-        expect((error as Error).message).to.include(
-          "No such file or directory"
-        );
+        expect((error as Error).message).to.include("No such file or directory");
       } finally {
         // Close the workspace token
         closeWorkspace(workspaceToken as string);
@@ -193,9 +184,7 @@ describe("Docker Execution with Workspace tokens", function () {
       expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the workspace token
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
       expect(workingDir).to.equal(workspaceDir);
 
       // Execute command using workspace name and workspace token working directory
@@ -226,9 +215,7 @@ describe("Docker Execution with Workspace tokens", function () {
 
       // Open a workspace token for testing
       const workspaceToken = openWorkspace(workspaceName);
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
 
       const { stdout } = await executeDockerCommand(
         workspaceName,
@@ -262,9 +249,7 @@ describe("Docker Execution with Workspace tokens", function () {
 
       // Open a workspace token for testing
       const workspaceToken = openWorkspace(workspaceName);
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
 
       // Execute command using the template
       const { stdout } = await executeDockerCommand(
@@ -308,9 +293,7 @@ describe("Docker Execution with Workspace tokens", function () {
     it("should use the exec template with variable substitution", async function () {
       // Open a workspace token for testing
       const workspaceToken = openWorkspace(workspaceName);
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
 
       // Execute command using the template
       const { stdout } = await executeDockerCommand(
@@ -347,9 +330,7 @@ describe("Docker Execution with Workspace tokens", function () {
     it("should use the specified network", async function () {
       // Open a workspace token for testing
       const workspaceToken = openWorkspace(workspaceName);
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
 
       try {
         // Just verify the Docker command includes the network parameter
@@ -364,9 +345,7 @@ describe("Docker Execution with Workspace tokens", function () {
         expect(stdout).to.include("Testing network connection");
       } catch (error: unknown) {
         // If there's a network-related error, it will be caught here
-        expect.fail(
-          `Network connection test failed: ${(error as Error).message}`
-        );
+        expect.fail(`Network connection test failed: ${(error as Error).message}`);
       } finally {
         // Close the workspace token
         closeWorkspace(workspaceToken as string);
@@ -395,15 +374,11 @@ describe("Docker Execution with Workspace tokens", function () {
       expect(workspaceToken).to.not.equal(null);
 
       // Get the working directory from the workspace token - should be a temp directory
-      const workingDir = getWorkingDirForWorkspaceToken(
-        workspaceToken as string
-      );
+      const workingDir = getWorkingDirForWorkspaceToken(workspaceToken as string);
       expect(workingDir).to.not.equal(workspaceDir); // Should be a different directory
 
       // Verify the temp directory contains the test file
-      expect(
-        fs.existsSync(path.join(workingDir as string, "test.txt"))
-      ).to.equal(true);
+      expect(fs.existsSync(path.join(workingDir as string, "test.txt"))).to.equal(true);
 
       // Execute a command that modifies a file in the temp directory
       await executeDockerCommand(
@@ -413,14 +388,14 @@ describe("Docker Execution with Workspace tokens", function () {
       );
 
       // Verify the file in temp directory was modified
-      expect(
-        fs.readFileSync(path.join(workingDir as string, "test.txt"), "utf8")
-      ).to.include("Modified content");
+      expect(fs.readFileSync(path.join(workingDir as string, "test.txt"), "utf8")).to.include(
+        "Modified content"
+      );
 
       // Verify the original file was not modified
-      expect(
-        fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")
-      ).to.equal("Hello from Docker test!");
+      expect(fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")).to.equal(
+        "Hello from Docker test!"
+      );
 
       // Create a new file in the temp directory
       await executeDockerCommand(
@@ -430,14 +405,10 @@ describe("Docker Execution with Workspace tokens", function () {
       );
 
       // Verify the new file exists in temp directory
-      expect(
-        fs.existsSync(path.join(workingDir as string, "new-file.txt"))
-      ).to.equal(true);
+      expect(fs.existsSync(path.join(workingDir as string, "new-file.txt"))).to.equal(true);
 
       // Verify the new file doesn't exist in the original directory
-      expect(fs.existsSync(path.join(workspaceDir, "new-file.txt"))).to.equal(
-        false
-      );
+      expect(fs.existsSync(path.join(workspaceDir, "new-file.txt"))).to.equal(false);
 
       // Close the workspace token - should clean up the temp directory
       closeWorkspace(workspaceToken as string);
@@ -451,12 +422,8 @@ describe("Docker Execution with Workspace tokens", function () {
       const workspaceToken1 = openWorkspace(workspaceName);
       const workspaceToken2 = openWorkspace(workspaceName);
 
-      const workingDir1 = getWorkingDirForWorkspaceToken(
-        workspaceToken1 as string
-      );
-      const workingDir2 = getWorkingDirForWorkspaceToken(
-        workspaceToken2 as string
-      );
+      const workingDir1 = getWorkingDirForWorkspaceToken(workspaceToken1 as string);
+      const workingDir2 = getWorkingDirForWorkspaceToken(workspaceToken2 as string);
 
       // Verify they are different directories
       expect(workingDir1).to.not.equal(workingDir2);
@@ -476,17 +443,17 @@ describe("Docker Execution with Workspace tokens", function () {
       );
 
       // Verify changes are isolated to each token
-      expect(
-        fs.readFileSync(path.join(workingDir1 as string, "test.txt"), "utf8")
-      ).to.include("Modified in workspace token 1");
-      expect(
-        fs.readFileSync(path.join(workingDir2 as string, "test.txt"), "utf8")
-      ).to.include("Modified in workspace token 2");
+      expect(fs.readFileSync(path.join(workingDir1 as string, "test.txt"), "utf8")).to.include(
+        "Modified in workspace token 1"
+      );
+      expect(fs.readFileSync(path.join(workingDir2 as string, "test.txt"), "utf8")).to.include(
+        "Modified in workspace token 2"
+      );
 
       // Original file should be unchanged
-      expect(
-        fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")
-      ).to.equal("Hello from Docker test!");
+      expect(fs.readFileSync(path.join(workspaceDir, "test.txt"), "utf8")).to.equal(
+        "Hello from Docker test!"
+      );
 
       // Clean up
       closeWorkspace(workspaceToken1 as string);

@@ -94,19 +94,13 @@ export function logMcpCall({
     fs.appendFileSync(logFile, logEntry);
 
     // Save payload and response to separate files
-    const payloadFile = path.join(
-      requestsDir,
-      `${datePart}_${requestId}_payload.json`
-    );
-    const responseFile = path.join(
-      requestsDir,
-      `${datePart}_${requestId}_response.json`
-    );
+    const payloadFile = path.join(requestsDir, `${datePart}_${requestId}_payload.json`);
+    const responseFile = path.join(requestsDir, `${datePart}_${requestId}_response.json`);
 
     fs.writeFileSync(payloadFile, JSON.stringify(payload, null, 2));
     fs.writeFileSync(responseFile, JSON.stringify(response, null, 2));
-  } catch (error) {
-    console.error("Error logging MCP call:", error);
+  } catch (_error) {
+    // Silently fail - we don't want logging failures to affect operation
   }
 }
 

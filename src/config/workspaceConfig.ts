@@ -2,7 +2,8 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { WorkspaceConfig, SystemConfig } from "./types.js";
+import type { WorkspaceConfig, SystemConfig } from "./types.js";
+import { logger } from "../logging/console-logger.js";
 
 // Configurable base path for testing
 let configBasePath = os.homedir();
@@ -50,7 +51,7 @@ export function getConfig(): SystemConfig {
       debug: data.debug,
     };
   } catch {
-    console.error("Failed to parse config file, creating new one");
+    logger.error("Failed to parse config file, creating new one");
     return { workspaces: [] };
   }
 }
@@ -85,18 +86,14 @@ export function getWorkspaceByName(workspaceName: string): WorkspaceConfig | nul
 export function validateWorkspaceName(workspaceName: string): boolean {
   const workspace = getWorkspaceByName(workspaceName);
   return (
-    workspace !== null &&
-    fs.existsSync(workspace.path) &&
-    fs.statSync(workspace.path).isDirectory()
+    workspace !== null && fs.existsSync(workspace.path) && fs.statSync(workspace.path).isDirectory()
   );
 }
 
 /**
  * Find a workspace that contains the given directory
  */
-export function getWorkspaceForDirectory(
-  workspaceDir: string
-): WorkspaceConfig | null {
+export function getWorkspaceForDirectory(workspaceDir: string): WorkspaceConfig | null {
   const resolvedPath = path.resolve(workspaceDir);
   const workspaces = getWorkspaces();
 
@@ -121,10 +118,7 @@ export function validateWorkspace(workspaceDir: string): boolean {
   const resolvedPath = path.resolve(workspaceDir);
 
   // Ensure path exists and is a directory
-  if (
-    !fs.existsSync(resolvedPath) ||
-    !fs.statSync(resolvedPath).isDirectory()
-  ) {
+  if (!fs.existsSync(resolvedPath) || !fs.statSync(resolvedPath).isDirectory()) {
     return false;
   }
 

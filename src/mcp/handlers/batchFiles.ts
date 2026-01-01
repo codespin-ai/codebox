@@ -1,5 +1,5 @@
 // src/mcp/handlers/batchFiles.ts
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import { writeWorkspaceFile } from "../../fs/fileIO.js";
 import { validateFilePath } from "../../fs/pathValidation.js";
@@ -38,15 +38,11 @@ export function registerBatchFileHandlers(server: McpServer): void {
     "write_batch_files",
     "Write content to multiple files in a workspace directory using a workspace token",
     {
-      workspaceToken: zod
-        .string()
-        .describe("The workspace token from open_workspace"),
+      workspaceToken: zod.string().describe("The workspace token from open_workspace"),
       files: zod
         .array(
           zod.object({
-            filePath: zod
-              .string()
-              .describe("Relative path to the file from workspace root"),
+            filePath: zod.string().describe("Relative path to the file from workspace root"),
             content: zod.string().describe("Content to write to the file"),
             mode: zod
               .enum(["overwrite", "append"])
@@ -134,9 +130,7 @@ export function registerBatchFileHandlers(server: McpServer): void {
           results.push({
             filePath,
             success: true,
-            message: `Successfully ${
-              mode === "append" ? "appended to" : "wrote"
-            } file`,
+            message: `Successfully ${mode === "append" ? "appended to" : "wrote"} file`,
           });
         } catch (error) {
           hasError = true;

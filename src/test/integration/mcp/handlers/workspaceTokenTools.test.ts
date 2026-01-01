@@ -1,5 +1,5 @@
 // src/test/integration/mcp/handlers/workspaceTokenTools.test.ts
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { expect } from "chai";
 import * as fs from "fs";
 import * as path from "path";
@@ -9,13 +9,13 @@ import { createTestFile } from "../../testUtils.js";
 import { getWorkingDirForWorkspaceToken } from "../../../../workspaceTokens/workspaceTokenStore.js";
 
 // Response type for MCP tools
-interface McpResponse {
+type McpResponse = {
   isError?: boolean;
   content: {
     type: string;
     text: string;
   }[];
-}
+};
 
 // Mock request handler type
 type RequestHandler = (args: Record<string, unknown>) => Promise<McpResponse>;
@@ -57,12 +57,7 @@ describe("Workspace token based Tools", function () {
 
     // Create a simple server to register handlers
     const server = {
-      tool: (
-        name: string,
-        description: string,
-        schema: object,
-        handler: unknown
-      ) => {
+      tool: (name: string, description: string, schema: object, handler: unknown) => {
         if (name === "open_workspace") {
           openWorkspaceHandler = handler as RequestHandler;
         } else if (name === "close_workspace") {
@@ -99,9 +94,7 @@ describe("Workspace token based Tools", function () {
 
       // Verify the error response
       expect(response.isError).to.equal(true);
-      expect(response.content[0].text).to.include(
-        "Invalid or unregistered workspace"
-      );
+      expect(response.content[0].text).to.include("Invalid or unregistered workspace");
     });
   });
 
@@ -120,9 +113,7 @@ describe("Workspace token based Tools", function () {
 
       // Verify the response
       expect(closeResponse.isError).to.equal(undefined);
-      expect(closeResponse.content[0].text).to.include(
-        "Workspace token closed"
-      );
+      expect(closeResponse.content[0].text).to.include("Workspace token closed");
     });
 
     it("should return an error for invalid workspace tokens", async function () {
@@ -153,12 +144,10 @@ describe("Workspace token based Tools", function () {
       expect(fs.existsSync(workingDir as string)).to.equal(true);
 
       // Verify the test file was copied to the working directory
-      expect(
-        fs.existsSync(path.join(workingDir as string, "test.txt"))
-      ).to.equal(true);
-      expect(
-        fs.readFileSync(path.join(workingDir as string, "test.txt"), "utf8")
-      ).to.equal("Test content");
+      expect(fs.existsSync(path.join(workingDir as string, "test.txt"))).to.equal(true);
+      expect(fs.readFileSync(path.join(workingDir as string, "test.txt"), "utf8")).to.equal(
+        "Test content"
+      );
 
       // Close the workspace token
       await closeWorkspaceHandler({

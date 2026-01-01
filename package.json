@@ -5,12 +5,14 @@
   "type": "module",
   "main": "dist/cli/index.js",
   "scripts": {
-    "clean": "rm -rf ./dist",
-    "build": "npm run clean && npx tsc",
+    "build": "shx rm -rf dist && tsc && shx chmod +x dist/cli/index.js",
     "start": "node dist/cli/index.js",
-    "test": "npm run build && npx mocha \"dist/test/**/*.test.js\"",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"*.json\" \"*.js\" \"*.md\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"*.json\" \"*.js\" \"*.md\"",
+    "test": "npm run build:test && mocha",
+    "build:test": "shx rm -rf dist && tsc -p tsconfig.test.json && shx chmod +x dist/cli/index.js"
   },
   "bin": {
     "codebox": "dist/cli/index.js"
@@ -24,22 +26,34 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "@types/express": "^5.0.3",
+    "cors": "^2.8.5",
+    "diff": "^8.0.0",
     "express": "^5.1.0",
+    "ignore": "^7.0.0",
+    "minimatch": "^10.0.1",
     "source-map-support": "^0.5.21",
     "uuid": "^11.1.0",
     "yargs": "^18.0.0",
     "zod": "^3.25.56"
   },
   "devDependencies": {
-    "@types/chai": "^5.2.2",
+    "@eslint/js": "^9.18.0",
+    "@types/chai": "^5.2.3",
+    "@types/cors": "^2.8.17",
+    "@types/diff": "^7.0.0",
+    "@types/express": "^5.0.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.15.30",
     "@types/source-map-support": "^0.5.10",
+    "@types/supertest": "^6.0.3",
     "@types/yargs": "^17.0.33",
-    "chai": "^5.2.0",
+    "chai": "^6.2.2",
     "eslint": "^9.28.0",
+    "globals": "^15.14.0",
     "mocha": "^11.5.0",
+    "prettier": "^3.4.2",
+    "shx": "^0.3.4",
+    "supertest": "^7.1.4",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.1"
   }

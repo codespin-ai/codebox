@@ -100,10 +100,7 @@ export function cleanupTestEnvironment(testDir: string): void {
 /**
  * Creates a test configuration file
  */
-export function createTestConfig(
-  configDir: string,
-  config: Record<string, unknown>
-): void {
+export function createTestConfig(configDir: string, config: Record<string, unknown>): void {
   const configFile = path.join(configDir, "codebox.json");
   fs.writeFileSync(configFile, JSON.stringify(config, null, 2), "utf8");
 }
