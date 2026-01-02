@@ -146,15 +146,18 @@ Codebox implements the **Model Context Protocol (MCP)**. AI assistants can:
 ### Available MCP Tools
 
 #### Workspace Management
+
 - `list_workspaces` - List all registered workspaces
 - `open_workspace` - Open a workspace and get a token
 - `close_workspace` - Close a workspace token
 
 #### File Writing
+
 - `write_file` - Write or append to a file
 - `write_batch_files` - Write multiple files in one request
 
 #### Command Execution
+
 - `execute_command` - Execute a command in the workspace container
 - `execute_batch_commands` - Execute multiple commands in sequence
 

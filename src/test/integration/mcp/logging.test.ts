@@ -1,7 +1,11 @@
 // src/test/integration/mcp/logging.test.ts
 import { expect } from "chai";
 import { describe, it, beforeEach, afterEach } from "mocha";
-import { wrapToolHandler, addLoggingToServer, createLoggingEnabledServer } from "../../../mcp/logging.js";
+import {
+  wrapToolHandler,
+  addLoggingToServer,
+  createLoggingEnabledServer,
+} from "../../../mcp/logging.js";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { setupTestEnvironment, createTestConfig } from "../setup.js";
 

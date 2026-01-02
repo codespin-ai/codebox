@@ -6,7 +6,7 @@ import { validateFilePath } from "../../fs/pathValidation.js";
 import {
   getWorkingDirForWorkspaceToken,
   workspaceTokenExists,
-} from "../../workspaceTokens/workspaceTokenStore.js";
+} from "../../workspaceTokens/index.js";
 
 /**
  * Register file operation handlers with the MCP server

@@ -3,11 +3,10 @@ import { expect } from "chai";
 import { describe, it, beforeEach, afterEach } from "mocha";
 import express from "express";
 import request from "supertest";
-import { registerAuthorizationRoutes } from "../../../../routes/oauth/authorization.js";
+import { registerAuthorizationRoutes } from "../../../../routes/oauth/authorization/index.js";
 import {
   _clearAllTokens,
   setRegisteredClient,
-  getPendingAuthorization,
   getAuthorizationCode,
 } from "../../../../auth/token-store.js";
 import * as crypto from "crypto";
@@ -157,10 +156,7 @@ describe("OAuth Authorization Routes", () => {
 
   describe("POST /authorize", () => {
     it("should reject missing CSRF token", async () => {
-      const res = await request(app)
-        .post("/authorize")
-        .type("form")
-        .send({ action: "allow" });
+      const res = await request(app).post("/authorize").type("form").send({ action: "allow" });
 
       expect(res.status).to.equal(400);
       expect(res.text).to.include("missing CSRF token");

@@ -33,18 +33,14 @@ describe("Auth Middleware", () => {
     });
 
     it("should reject requests with non-Bearer Authorization", async () => {
-      const res = await request(app)
-        .get("/protected")
-        .set("Authorization", "Basic dXNlcjpwYXNz");
+      const res = await request(app).get("/protected").set("Authorization", "Basic dXNlcjpwYXNz");
 
       expect(res.status).to.equal(401);
       expect(res.body.error).to.equal("unauthorized");
     });
 
     it("should reject requests with invalid token", async () => {
-      const res = await request(app)
-        .get("/protected")
-        .set("Authorization", "Bearer invalid-token");
+      const res = await request(app).get("/protected").set("Authorization", "Bearer invalid-token");
 
       expect(res.status).to.equal(401);
       expect(res.body.error).to.equal("invalid_token");
@@ -57,9 +53,7 @@ describe("Auth Middleware", () => {
         expiresAt: Date.now() + TOKEN_EXPIRATION_MS,
       });
 
-      const res = await request(app)
-        .get("/protected")
-        .set("Authorization", `Bearer ${validToken}`);
+      const res = await request(app).get("/protected").set("Authorization", `Bearer ${validToken}`);
 
       expect(res.status).to.equal(200);
       expect(res.body.success).to.be.true;

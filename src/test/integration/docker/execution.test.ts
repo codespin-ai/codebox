@@ -11,7 +11,7 @@ import {
   closeWorkspace,
   getWorkingDirForWorkspaceToken,
   openWorkspace,
-} from "../../../workspaceTokens/workspaceTokenStore.js";
+} from "../../../workspaceTokens/index.js";
 import { createTestConfig, setupTestEnvironment } from "../setup.js";
 import {
   createNetwork,

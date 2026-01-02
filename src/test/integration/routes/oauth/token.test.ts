@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { describe, it, beforeEach, afterEach } from "mocha";
 import express from "express";
 import request from "supertest";
-import { registerTokenRoutes } from "../../../../routes/oauth/token.js";
+import { registerTokenRoutes } from "../../../../routes/oauth/token/index.js";
 import {
   _clearAllTokens,
   setRegisteredClient,

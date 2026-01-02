@@ -6,7 +6,7 @@ import { validateFilePath } from "../../fs/pathValidation.js";
 import {
   getWorkingDirForWorkspaceToken,
   workspaceTokenExists,
-} from "../../workspaceTokens/workspaceTokenStore.js";
+} from "../../workspaceTokens/index.js";
 
 /**
  * Format batch operation results for output

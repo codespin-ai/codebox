@@ -21,10 +21,12 @@ describe("OAuth Registration Routes", () => {
 
   describe("POST /register", () => {
     it("should register a new client with redirect_uris", async () => {
-      const res = await request(app).post("/register").send({
-        redirect_uris: ["http://localhost:3000/callback"],
-        client_name: "Test App",
-      });
+      const res = await request(app)
+        .post("/register")
+        .send({
+          redirect_uris: ["http://localhost:3000/callback"],
+          client_name: "Test App",
+        });
 
       expect(res.status).to.equal(201);
       expect(res.body.client_id).to.be.a("string");
@@ -35,9 +37,11 @@ describe("OAuth Registration Routes", () => {
     });
 
     it("should store the registered client", async () => {
-      const res = await request(app).post("/register").send({
-        redirect_uris: ["http://localhost:3000/callback"],
-      });
+      const res = await request(app)
+        .post("/register")
+        .send({
+          redirect_uris: ["http://localhost:3000/callback"],
+        });
 
       const client = getRegisteredClient(res.body.client_id);
       expect(client).to.not.be.undefined;
@@ -65,22 +69,26 @@ describe("OAuth Registration Routes", () => {
     });
 
     it("should register client without client_name", async () => {
-      const res = await request(app).post("/register").send({
-        redirect_uris: ["http://localhost:3000/callback"],
-      });
+      const res = await request(app)
+        .post("/register")
+        .send({
+          redirect_uris: ["http://localhost:3000/callback"],
+        });
 
       expect(res.status).to.equal(201);
       expect(res.body.client_name).to.be.undefined;
     });
 
     it("should support multiple redirect_uris", async () => {
-      const res = await request(app).post("/register").send({
-        redirect_uris: [
-          "http://localhost:3000/callback",
-          "http://localhost:3001/callback",
-          "https://example.com/oauth/callback",
-        ],
-      });
+      const res = await request(app)
+        .post("/register")
+        .send({
+          redirect_uris: [
+            "http://localhost:3000/callback",
+            "http://localhost:3001/callback",
+            "https://example.com/oauth/callback",
+          ],
+        });
 
       expect(res.status).to.equal(201);
       expect(res.body.redirect_uris).to.have.length(3);

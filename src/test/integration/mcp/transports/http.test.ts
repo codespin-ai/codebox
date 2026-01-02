@@ -3,8 +3,8 @@ import { expect } from "chai";
 import { describe, it, beforeEach, afterEach } from "mocha";
 import request from "supertest";
 import type * as http from "http";
-import { startHttpTransport } from "../../../../mcp/transports/http.js";
-import { _clearAllTokens, setAccessToken, TOKEN_EXPIRATION_MS } from "../../../../auth/token-store.js";
+import { startHttpTransport } from "../../../../mcp/transports/http/index.js";
+import { _clearAllTokens } from "../../../../auth/token-store.js";
 
 describe("HTTP Transport", () => {
   let server: http.Server;
@@ -114,8 +114,8 @@ describe("HTTP Transport", () => {
 
       expect(res.status).to.equal(400);
       // The error message may say "Session not found" or "missing or invalid mcp-session-id"
-      expect(res.body.error.message).to.satisfy((msg: string) =>
-        msg.includes("Session not found") || msg.includes("mcp-session-id")
+      expect(res.body.error.message).to.satisfy(
+        (msg: string) => msg.includes("Session not found") || msg.includes("mcp-session-id")
       );
     });
   });

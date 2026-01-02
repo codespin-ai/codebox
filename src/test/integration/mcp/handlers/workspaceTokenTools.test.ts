@@ -6,7 +6,7 @@ import * as path from "path";
 import { registerWorkspaceHandlers } from "../../../../mcp/handlers/workspaces.js";
 import { createTestConfig, setupTestEnvironment } from "../../setup.js";
 import { createTestFile } from "../../testUtils.js";
-import { getWorkingDirForWorkspaceToken } from "../../../../workspaceTokens/workspaceTokenStore.js";
+import { getWorkingDirForWorkspaceToken } from "../../../../workspaceTokens/index.js";
 
 // Response type for MCP tools
 type McpResponse = {

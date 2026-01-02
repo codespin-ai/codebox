@@ -1,4 +1,4 @@
 // Transport exports
 export { startStdioTransport } from "./stdio.js";
-export { startHttpTransport } from "./http.js";
-export type { HttpTransportOptions } from "./http.js";
+export { startHttpTransport } from "./http/index.js";
+export type { HttpTransportOptions } from "./http/index.js";

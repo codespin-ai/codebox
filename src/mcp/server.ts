@@ -9,7 +9,7 @@ import { registerWorkspaceHandlers } from "./handlers/workspaces.js";
 import { registerExecuteHandlers } from "./handlers/execute.js";
 import { registerBatchHandlers } from "./handlers/batch.js";
 import { registerBatchFileHandlers } from "./handlers/batchFiles.js";
-import { startIdleWorkspaceCleanup } from "../workspaceTokens/workspaceTokenStore.js";
+import { startIdleWorkspaceCleanup } from "../workspaceTokens/index.js";
 import { logger } from "../logging/console-logger.js";
 
 /**

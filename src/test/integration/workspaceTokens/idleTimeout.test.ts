@@ -8,7 +8,7 @@ import {
   checkAndCloseIdleWorkspaces,
   _setWorkspaceTokenLastAccessTime,
   _setWorkspaceTokenIdleTimeout,
-} from "../../../workspaceTokens/workspaceTokenStore.js";
+} from "../../../workspaceTokens/index.js";
 
 describe("Workspace Idle Timeout", function () {
   let configDir: string;
