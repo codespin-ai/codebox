@@ -34,19 +34,44 @@ mcpServers:
 #### 2 HTTP/Stream transport — start the server over HTTP
 
 ```bash
-codebox http --host 127.0.0.1 --port 13014 --allowed-origins http://localhost:3000
+# Initialize OAuth credentials first (creates .env file)
+codebox init
+
+# Start with HTTP transport and OAuth authentication
+codebox start --http
+
+# Or without authentication (for development)
+codebox start --http --no-auth
 ```
 
 _Options_
 
 | Flag                | Default                   | Purpose                                          |
 | ------------------- | ------------------------- | ------------------------------------------------ |
+| `--http`            | `false`                   | Enable HTTP streaming transport                  |
+| `--no-auth`         | `false`                   | Disable OAuth authentication (HTTP mode only)    |
 | `--host`            | `127.0.0.1`               | Host to bind                                     |
 | `--port`            | `13014`                   | Port to listen on                                |
 | `--allowed-origins` | `http://localhost:<port>` | Allowed origins for CORS (`*` to allow all)      |
 | `--idle-timeout`    | `1800000` (30 minutes)    | Auto-close idle HTTP sessions after milliseconds |
 
-> The HTTP endpoint is `/mcp`. An MCP client (e.g. `@modelcontextprotocol/sdk`’s `StreamableHTTPClientTransport`) should send the initialize request, receive a `mcp-session-id` header, and include that header on subsequent requests.
+> The HTTP endpoint is `/mcp`. An MCP client (e.g. `@modelcontextprotocol/sdk`'s `StreamableHTTPClientTransport`) should send the initialize request, receive a `mcp-session-id` header, and include that header on subsequent requests.
+
+### OAuth 2.1 Authentication (HTTP Mode)
+
+When running in HTTP mode, Codebox supports OAuth 2.1 authentication with the following features:
+
+- **Discovery Endpoints**: `/.well-known/oauth-authorization-server` and `/.well-known/oauth-protected-resource`
+- **Dynamic Client Registration**: `POST /register`
+- **Authorization Code Flow with PKCE**: `GET/POST /authorize` (S256 required)
+- **Token Endpoint**: `POST /token` (authorization_code, refresh_token, client_credentials grants)
+
+To initialize OAuth credentials:
+
+```bash
+codebox init          # Creates .env with CLIENT_ID and CLIENT_SECRET
+codebox init --force  # Overwrites existing .env
+```
 
 ### Managing Workspaces
 
@@ -113,10 +138,28 @@ Codebox implements the **Model Context Protocol (MCP)**. AI assistants can:
 1. **List workspaces** using the `list_workspaces` tool.
 2. **Open a workspace** via `open_workspace`; returns a workspace token (and a temp copy if `copy=true`).
 3. **Execute commands** with `execute_command` or `execute_batch_commands`, passing the token.
-4. **Read or write files** with `write_file` or `write_batch_files`.
+4. **Write files** with `write_file` or `write_batch_files`.
 5. **Close the workspace** with `close_workspace`; cleans up any temporary directories immediately.
 
 > Workspace tokens may be closed automatically after their `idleTimeout` expires; clients should handle token expiration and re-open if necessary.
+
+### Available MCP Tools
+
+#### Workspace Management
+
+- `list_workspaces` - List all registered workspaces
+- `open_workspace` - Open a workspace and get a token
+- `close_workspace` - Close a workspace token
+
+#### File Writing
+
+- `write_file` - Write or append to a file
+- `write_batch_files` - Write multiple files in one request
+
+#### Command Execution
+
+- `execute_command` - Execute a command in the workspace container
+- `execute_batch_commands` - Execute multiple commands in sequence
 
 ## Workspace Configuration
 
@@ -212,9 +255,10 @@ When using `--exec-template` with a workspace that uses `--container`, you can u
 ## Troubleshooting
 
 1. **HTTP / CORS** — If you see `Origin not allowed`, adjust `--allowed-origins` (or use `*` in dev).
-2. **Debug logging** — Set `"debug": true` in `~/.codespin/codebox.json`; logs appear in `~/.codespin/logs/<YYYY-MM-DD>.log`.
-3. **Docker connectivity** — Ensure Docker is running, you have proper permissions, and specified containers/networks exist.
-4. **Idle workspace closed** — If tokens disappear, increase or disable their `idleTimeout`.
+2. **OAuth errors** — Run `codebox init` to generate credentials, or use `--no-auth` for development.
+3. **Debug logging** — Set `"debug": true` in `~/.codespin/codebox.json`; logs appear in `~/.codespin/logs/<YYYY-MM-DD>.log`.
+4. **Docker connectivity** — Ensure Docker is running, you have proper permissions, and specified containers/networks exist.
+5. **Idle workspace closed** — If tokens disappear, increase or disable their `idleTimeout`.
 
 ## License
 

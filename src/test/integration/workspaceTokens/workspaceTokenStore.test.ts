@@ -8,7 +8,7 @@ import {
   getWorkingDirForWorkspaceToken,
   openWorkspace,
   workspaceTokenExists,
-} from "../../../workspaceTokens/workspaceTokenStore.js";
+} from "../../../workspaceTokens/index.js";
 import { createTestConfig, setupTestEnvironment } from "../setup.js";
 import { createTestFile } from "../testUtils.js";
 

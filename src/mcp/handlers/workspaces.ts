@@ -2,7 +2,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as zod from "zod";
 import { getWorkspaces, validateWorkspaceName } from "../../config/workspaceConfig.js";
-import { closeWorkspace, openWorkspace } from "../../workspaceTokens/workspaceTokenStore.js";
+import { closeWorkspace, openWorkspace } from "../../workspaceTokens/index.js";
 
 /**
  * Register workspace-related handlers with the MCP server

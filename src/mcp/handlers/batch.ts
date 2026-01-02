@@ -6,7 +6,7 @@ import {
   getWorkspaceNameForWorkspaceToken,
   getWorkingDirForWorkspaceToken,
   workspaceTokenExists,
-} from "../../workspaceTokens/workspaceTokenStore.js";
+} from "../../workspaceTokens/index.js";
 
 /**
  * Register batch command execution handlers with the MCP server

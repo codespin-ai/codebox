@@ -4,7 +4,7 @@ import * as os from "os";
 import * as path from "path";
 import { install } from "source-map-support";
 import { setConfigBasePath } from "../../config/workspaceConfig.js";
-import { closeWorkspace, openWorkspace } from "../../workspaceTokens/workspaceTokenStore.js";
+import { closeWorkspace, openWorkspace } from "../../workspaceTokens/index.js";
 
 // Install source map support for better error stack traces
 install();

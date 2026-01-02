@@ -3,8 +3,8 @@
 
 import yargs from "yargs";
 import { start } from "./commands/start.js";
-import { startHttpTransport } from "../mcp/transports/http.js";
-import { addWorkspace, listWorkspaces, removeWorkspace } from "./commands/workspace.js";
+import { startHttpTransport } from "../mcp/transports/http/index.js";
+import { addWorkspace, listWorkspaces, removeWorkspace } from "./commands/workspace/index.js";
 import process from "node:process";
 import fs from "node:fs";
 import path from "node:path";

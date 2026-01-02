@@ -9,12 +9,7 @@ import { registerWorkspaceHandlers } from "./handlers/workspaces.js";
 import { registerExecuteHandlers } from "./handlers/execute.js";
 import { registerBatchHandlers } from "./handlers/batch.js";
 import { registerBatchFileHandlers } from "./handlers/batchFiles.js";
-import { registerReadFileHandlers } from "./handlers/read-file.js";
-import { registerDirectoryHandlers } from "./handlers/directory.js";
-import { registerSearchHandlers } from "./handlers/search.js";
-import { registerReplaceHandlers } from "./handlers/replace.js";
-import { registerFileOpsHandlers } from "./handlers/file-ops.js";
-import { startIdleWorkspaceCleanup } from "../workspaceTokens/workspaceTokenStore.js";
+import { startIdleWorkspaceCleanup } from "../workspaceTokens/index.js";
 import { logger } from "../logging/console-logger.js";
 
 /**
@@ -45,11 +40,6 @@ export async function createServer(): Promise<McpServer> {
   registerExecuteHandlers(server);
   registerBatchHandlers(server);
   registerBatchFileHandlers(server);
-  registerReadFileHandlers(server);
-  registerDirectoryHandlers(server);
-  registerSearchHandlers(server);
-  registerReplaceHandlers(server);
-  registerFileOpsHandlers(server);
 
   return server;
 }

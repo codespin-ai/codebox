@@ -1,23 +1,13 @@
-// src/docker/execution.ts
-import { exec } from "child_process";
-import { promisify } from "util";
+// Docker execution - main entry point
 import { getWorkspaceByName } from "../config/workspaceConfig.js";
+import type { ExecuteResult } from "./types.js";
+import { executeInExistingContainer } from "./exec-container.js";
+import { executeWithDockerImage } from "./run-container.js";
 
-const execAsync = promisify(exec);
-
-/**
- * Result of executing a command in Docker
- */
-export type ExecuteResult = {
-  stdout: string;
-  stderr: string;
-};
-
-/**
- * Get the UID/GID for Docker container execution
- */
-export const uid = process.getuid?.();
-export const gid = process.getgid?.();
+// Re-export types and utilities
+export type { ExecuteResult } from "./types.js";
+export { uid, gid } from "./exec-container.js";
+export { checkContainerRunning, checkNetworkExists } from "./container-check.js";
 
 /**
  * Execute a command in a Docker container based on workspace configuration
@@ -68,134 +58,4 @@ export async function executeDockerCommand(
       }${combinedOutput}`
     );
   }
-}
-
-/**
- * Check if a Docker container exists and is running
- */
-export async function checkContainerRunning(containerName: string): Promise<boolean> {
-  try {
-    const { stdout } = await execAsync(`docker ps -q -f "name=^${containerName}$"`);
-    return !!stdout.trim();
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Check if a Docker network exists
- */
-export async function checkNetworkExists(networkName: string): Promise<boolean> {
-  try {
-    const { stdout } = await execAsync(
-      `docker network inspect ${networkName} --format "{{.Name}}"`
-    );
-    return !!stdout.trim();
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Apply template variables to a template
- */
-function applyTemplateVariables(
-  template: string,
-  variables: Record<string, string | number | undefined>
-): string {
-  let result = template;
-  for (const [key, value] of Object.entries(variables)) {
-    if (value !== undefined) {
-      const regex = new RegExp(`{{${key}}}`, "g");
-      result = result.replace(regex, String(value));
-    }
-  }
-  return result;
-}
-
-/**
- * Execute command inside an existing Docker container
- */
-async function executeInExistingContainer(
-  containerName: string,
-  command: string,
-  workdir = "/workspace",
-  execTemplate?: string
-): Promise<ExecuteResult> {
-  // Check if container is running
-  if (!(await checkContainerRunning(containerName))) {
-    throw new Error(`Container '${containerName}' not found or not running`);
-  }
-
-  // Escape quotes in the command
-  const escapedCommand = command.replace(/"/g, '\\"');
-
-  let dockerCommand: string;
-
-  if (execTemplate) {
-    // Use the provided template with variable substitution
-    const templateVariables = {
-      containerName,
-      containerPath: workdir,
-      command: escapedCommand,
-      uid,
-      gid,
-    };
-
-    dockerCommand = applyTemplateVariables(execTemplate, templateVariables);
-  } else {
-    // Use the default docker exec command format
-    dockerCommand = `docker exec -i --user=${uid}:${gid} --workdir="${workdir}" ${containerName} /bin/sh -c "${escapedCommand}"`;
-  }
-
-  return await execAsync(dockerCommand, {
-    maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-  });
-}
-
-/**
- * Execute command in a new Docker container from an image
- */
-async function executeWithDockerImage(
-  image: string,
-  path: string,
-  command: string,
-  containerPath = "/workspace",
-  network?: string,
-  runTemplate?: string
-): Promise<ExecuteResult> {
-  // Escape quotes in the command
-  const escapedCommand = command.replace(/"/g, '\\"');
-
-  let dockerCommand: string;
-
-  if (runTemplate) {
-    // Use the provided template with variable substitution
-    const templateVariables = {
-      image,
-      path,
-      containerPath,
-      command: escapedCommand,
-      network,
-      uid,
-      gid,
-    };
-
-    dockerCommand = applyTemplateVariables(runTemplate, templateVariables);
-  } else {
-    // Use the default docker command format
-    // Add network parameter if specified
-    const networkParam = network ? `--network="${network}"` : "";
-
-    dockerCommand = `docker run -i --rm \
-      ${networkParam} \
-      -v "${path}:${containerPath}" \
-      --workdir="${containerPath}" \
-      --user=${uid}:${gid} \
-      ${image} /bin/sh -c "${escapedCommand}"`;
-  }
-
-  return await execAsync(dockerCommand, {
-    maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-  });
 }
